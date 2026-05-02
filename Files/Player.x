@@ -1,12 +1,40 @@
 #import "Headers.h"
 
+float playbackRate = 1.0;
+
+static void YouModAddEndTime(YTPlayerViewController *self, YTSingleVideoController *video, YTSingleVideoTime *time) {
+    if (!IS_ENABLED(ShowExtraTimeRemaining)) return;
+
+    CGFloat rate = playbackRate != 0 ? playbackRate : 1.0;
+    NSTimeInterval remainingTime = (lround(video.totalMediaTime) - lround(time.time)) / rate;
+
+    NSDate *estimatedEndTime = [NSDate dateWithTimeIntervalSinceNow:remainingTime];
+
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"]];
+    [dateFormatter setDateFormat:@"HH:mm"];
+    // [dateFormatter setDateFormat:ytlBool(@"24hrFormat") ? @"HH:mm" : @"h:mm a"];
+
+    NSString *formattedEndTime = [dateFormatter stringFromDate:estimatedEndTime];
+
+    YTPlayerView *playerView = (YTPlayerView *)self.view;
+    if (![playerView.overlayView isKindOfClass:%c(YTMainAppVideoPlayerOverlayView)]) return;
+
+    YTMainAppVideoPlayerOverlayView *overlay = (YTMainAppVideoPlayerOverlayView*)playerView.overlayView;
+    YTLabel *durationLabel = overlay.playerBar.durationLabel;
+    overlay.playerBar.endTimeString = formattedEndTime;
+
+    if (![durationLabel.text containsString:formattedEndTime]) {
+        durationLabel.text = [durationLabel.text stringByAppendingString:[NSString stringWithFormat:@" • %@", formattedEndTime]];
+        [durationLabel sizeToFit];
+    }
+}
+
 %hook YTMainAppControlsOverlayView
 // Hide autoplay Switch
 - (void)setAutoplaySwitchButtonRenderer:(id)arg1 { if (!IS_ENABLED(HideAutoPlayToggle)) %orig; }
 // Hide captions Button
 - (void)setClosedCaptionsOrSubtitlesButtonAvailable:(BOOL)arg1 { if (!IS_ENABLED(HideCaptionsButton)) %orig; }
-// Hide cast button
-- (id)playbackRouteButton { return IS_ENABLED(HideCastButtonPlayer) ? nil : %orig; }
 - (void)setPreviousButtonHidden:(BOOL)arg { IS_ENABLED(HidePrevButton) ? %orig(YES) : %orig; }
 - (void)setNextButtonHidden:(BOOL)arg { IS_ENABLED(HideNextButton) ? %orig(YES) : %orig; }
 // Hide video title in full screen
@@ -47,7 +75,10 @@
 // Hide Watermarks
 - (BOOL)isWatermarkEnabled { return IS_ENABLED(HideWaterMark) ? NO : %orig; }
 - (void)setWatermarkEnabled:(BOOL)arg { IS_ENABLED(HideWaterMark) ? %orig(NO) : %orig; }
-- (id)playbackRouteButton { return IS_ENABLED(HideCastButtonPlayer) ? nil : %orig; }
+- (void)layoutSubviews {
+    %orig;
+    if (IS_ENABLED(HideCastButtonPlayer)) self.playbackRouteButton.hidden = YES;    
+}
 %end
 
 // No Endscreen Cards
@@ -120,6 +151,14 @@
 %hook YTFullscreenActionsView
 - (BOOL)enabled { return IS_ENABLED(HideFullAction) ? NO : %orig; }
 - (void)setEnabled:(BOOL)arg1 { IS_ENABLED(HideFullAction) ? %orig(NO) : %orig; }
+- (CGSize)sizeThatFits:(CGSize)size { return IS_ENABLED(HideFullAction) ? CGSizeMake(1, 35) : %orig; }
+%end
+
+// Disable Ambiant mode (Hide the lights)
+%hook YTCinematicContainerView
+- (void)layoutSubviews { if (!IS_ENABLED(RemoveAmbiant)) %orig; }
+- (void)loadWithModel:(id)arg { if (!IS_ENABLED(RemoveAmbiant)) %orig; }
+- (id)initWithFrame:(CGRect)arg { return IS_ENABLED(RemoveAmbiant) ? nil : %orig; }
 %end
 
 // Disable Autoplay 
@@ -244,14 +283,21 @@
     %orig;
     if (IS_ENABLED(AutoFullScreen)) [self performSelector:@selector(YouModAutoFullscreen) withObject:nil afterDelay:0.75];
     // if (ytlBool(@"shortsToRegular")) [self performSelector:@selector(shortsToRegular) withObject:nil afterDelay:0.75];
-    // if (ytlBool(@"disableAutoCaptions")) [self performSelector:@selector(turnOffCaptions) withObject:nil afterDelay:1.0];
+    if (IS_ENABLED(DisablesCaptions)) [self performSelector:@selector(YouModTurnOffCaptions) withObject:nil afterDelay:0.75];
 }
 
 - (void)prepareToLoadWithPlayerTransition:(id)arg1 expectedLayout:(id)arg2 {
     %orig;
     if (IS_ENABLED(AutoFullScreen)) [self performSelector:@selector(YouModAutoFullscreen) withObject:nil afterDelay:0.75];
     // if (ytlBool(@"shortsToRegular")) [self performSelector:@selector(shortsToRegular) withObject:nil afterDelay:0.75];
-    // if (ytlBool(@"disableAutoCaptions")) [self performSelector:@selector(turnOffCaptions) withObject:nil afterDelay:1.0];
+    if (IS_ENABLED(DisablesCaptions)) [self performSelector:@selector(YouModTurnOffCaptions) withObject:nil afterDelay:0.75];
+}
+
+%new
+- (void)YouModTurnOffCaptions {
+    if ([self.view.superview isKindOfClass:NSClassFromString(@"YTWatchView")]) {
+        [self setActiveCaptionTrack:nil source:0];
+    }
 }
 
 %new
@@ -260,6 +306,20 @@
     [watchController showFullScreen];
 }
 
+- (void)singleVideo:(YTSingleVideoController *)video currentVideoTimeDidChange:(YTSingleVideoTime *)time {
+    %orig;
+    YouModAddEndTime(self, video, time);
+}
+
+- (void)potentiallyMutatedSingleVideo:(YTSingleVideoController *)video currentVideoTimeDidChange:(YTSingleVideoTime *)time {
+    %orig;
+    YouModAddEndTime(self, video, time);
+}
+
+- (void)setPlaybackRate:(float)rate {
+    playbackRate = rate;
+    %orig;
+}
 %end
 
 /*
@@ -270,13 +330,6 @@
         if ([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:vidLink]]) {
             [[UIApplication sharedApplication] openURL:[NSURL URLWithString:vidLink] options:@{} completionHandler:nil];
         }
-    }
-}
-
-%new
-- (void)turnOffCaptions {
-    if ([self.view.superview isKindOfClass:NSClassFromString(@"YTWatchView")]) {
-        [self setActiveCaptionTrack:nil]; // will try this - got removed
     }
 }
 %end
@@ -353,16 +406,50 @@
 
 %hook YTPlayerViewController
 %property (nonatomic, retain) UIPanGestureRecognizer *YouModPanGesture;
+%property (nonatomic, retain) UILabel *YouModGestureHUD;
+%new
+- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer {
+    if (gestureRecognizer == self.YouModPanGesture) {
+        UIPanGestureRecognizer *panGesture = (UIPanGestureRecognizer *)gestureRecognizer;
+        CGPoint startLocation = [panGesture locationInView:self.view];
+        CGFloat viewWidth = self.view.bounds.size.width;
+
+        float areaPercent = 0.15;
+        int areaSetting = INTFORVAL(GestureActivationArea);
+        if (areaSetting == 0) areaPercent = 0.10;
+        else if (areaSetting == 2) areaPercent = 0.20;
+        else if (areaSetting == 3) areaPercent = 0.25;
+        else if (areaSetting == 4) areaPercent = 0.30;
+        else if (areaSetting == 5) areaPercent = 0.35;
+        else if (areaSetting == 6) areaPercent = 0.40;
+        else if (areaSetting == 7) areaPercent = 0.45;
+        else if (areaSetting == 8) areaPercent = 0.50;
+
+        int leftAction = [[NSUserDefaults standardUserDefaults] objectForKey:LeftSideGesture] ? INTFORVAL(LeftSideGesture) : 1;
+        int rightAction = [[NSUserDefaults standardUserDefaults] objectForKey:RightSideGesture] ? INTFORVAL(RightSideGesture) : 2;
+
+        // Ignore touches in the center area -> YouTube's default features (swipe down to dismiss, etc.) work normally
+        if (startLocation.x > viewWidth * areaPercent && startLocation.x < viewWidth * (1.0 - areaPercent)) return NO;
+
+        // Ignore touches in the area where 'None' is selected in settings
+        if (startLocation.x <= viewWidth * areaPercent && leftAction == 0) return NO;
+        if (startLocation.x >= viewWidth * (1.0 - areaPercent) && rightAction == 0) return NO;
+
+        // Only works for vertical swipes -> Does not interfere with YouTube's horizontal seek bar
+        CGPoint velocity = [panGesture velocityInView:self.view];
+        if (fabs(velocity.x) > fabs(velocity.y)) return NO;
+
+        return YES;
+    }
+    return YES;
+}
 %new
 - (void)YouModHandlePanGesture:(UIPanGestureRecognizer *)panGestureRecognizer {
     static float initialVolume;
     static float initialBrightness;
-    static BOOL isValidHorizontalPan = NO; 
-    static GestureSection gestureSection = GestureSectionInvalid;
-    static CGPoint startLocation;
-    static CGFloat deadzoneStartingXTranslation;
-    static CGFloat adjustedTranslationX;
-    static CGFloat deadzoneRadius = 20.0;
+    static float initialSpeed;
+    static int controlType = 0;
+    static CGFloat deadzoneStartingTranslation;
     static CGFloat sensitivityFactor = 1.0;
 
     static MPVolumeView *volumeView;
@@ -379,72 +466,140 @@
         }
     });
 
-    if (panGestureRecognizer.state == UIGestureRecognizerStateBegan) {
-        startLocation = [panGestureRecognizer locationInView:self.view];
-        CGFloat viewHeight = self.view.bounds.size.height;
+    if (IS_ENABLED(GestureHUD)) {
+        if (!self.YouModGestureHUD) {
+            self.YouModGestureHUD = [[UILabel alloc] initWithFrame:CGRectZero];
+            self.YouModGestureHUD.backgroundColor = [UIColor colorWithWhite:0.0 alpha:0.5];
+            self.YouModGestureHUD.textColor = [UIColor colorWithWhite:1.0 alpha:0.75];
+            self.YouModGestureHUD.tintColor = [UIColor colorWithWhite:1.0 alpha:0.75];
+            self.YouModGestureHUD.textAlignment = NSTextAlignmentCenter;
+            self.YouModGestureHUD.layer.masksToBounds = YES;
+            self.YouModGestureHUD.alpha = 0.0;
+            [self.view addSubview:self.YouModGestureHUD];
+        }
+    }
 
-        if (startLocation.y <= viewHeight / 2.0) {
-            gestureSection = GestureSectionTop; 
+    if (panGestureRecognizer.state == UIGestureRecognizerStateBegan) {
+        CGPoint startLocation = [panGestureRecognizer locationInView:self.view];
+        CGFloat viewWidth = self.view.bounds.size.width;
+
+        float areaPercent = 0.15;
+        int areaSetting = INTFORVAL(GestureActivationArea);
+        if (areaSetting == 0) areaPercent = 0.10;
+        else if (areaSetting == 2) areaPercent = 0.20;
+        else if (areaSetting == 3) areaPercent = 0.25;
+        else if (areaSetting == 4) areaPercent = 0.30;
+        else if (areaSetting == 5) areaPercent = 0.35;
+        else if (areaSetting == 6) areaPercent = 0.40;
+        else if (areaSetting == 7) areaPercent = 0.45;
+        else if (areaSetting == 8) areaPercent = 0.50;
+
+        int leftAction = [[NSUserDefaults standardUserDefaults] objectForKey:LeftSideGesture] ? INTFORVAL(LeftSideGesture) : 1;
+        int rightAction = [[NSUserDefaults standardUserDefaults] objectForKey:RightSideGesture] ? INTFORVAL(RightSideGesture) : 2;
+
+        if (startLocation.x <= viewWidth * areaPercent) {
+            controlType = leftAction; 
+        } else if (startLocation.x >= viewWidth * (1.0 - areaPercent)) {
+            controlType = rightAction;
         } else {
-            gestureSection = GestureSectionBottom;
+            controlType = 0; // Center area
         }
         
-        isValidHorizontalPan = NO;
+        deadzoneStartingTranslation = [panGestureRecognizer translationInView:self.view].y;
+        
+        if (controlType == 1) {
+            initialBrightness = [UIScreen mainScreen].brightness;
+        } else if (controlType == 2) {
+            initialVolume = [[AVAudioSession sharedInstance] outputVolume];
+        } else if (controlType == 3) {
+            initialSpeed = playbackRate;
+        }
+
+        if (IS_ENABLED(GestureHUD)) {
+            int sizeSetting = [[NSUserDefaults standardUserDefaults] objectForKey:@"GestureHUDSize"] ? (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"GestureHUDSize"] : 1;
+            CGFloat fontSize = 14.0 + (sizeSetting * 2.0);
+            CGFloat hudWidth = 74.0 + (sizeSetting * 10.0);
+            CGFloat hudHeight = 30.0 + (sizeSetting * 4.0);
+            
+            self.YouModGestureHUD.frame = CGRectMake(0, 0, hudWidth, hudHeight);
+            self.YouModGestureHUD.layer.cornerRadius = hudHeight / 2.0;
+            self.YouModGestureHUD.font = [UIFont boldSystemFontOfSize:fontSize];
+
+            int posSetting = [[NSUserDefaults standardUserDefaults] objectForKey:@"GestureHUDPosition"] ? (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"GestureHUDPosition"] : 0;
+            CGFloat viewHeight = self.view.bounds.size.height;
+            CGFloat centerY = viewHeight / 6.0;
+            if (posSetting == 1) centerY = viewHeight / 2.0;
+            else if (posSetting == 2) centerY = viewHeight * 5.0 / 6.0;
+
+            [self.view bringSubviewToFront:self.YouModGestureHUD];
+            self.YouModGestureHUD.center = CGPointMake(viewWidth / 2, centerY);
+        }
     }
 
     if (panGestureRecognizer.state == UIGestureRecognizerStateChanged) {
-        CGPoint translation = [panGestureRecognizer translationInView:self.view];
+        if (controlType == 0) return;
         
-        if (!isValidHorizontalPan) {
-            if (fabs(translation.x) > fabs(translation.y)) {
-                CGFloat distanceFromStart = hypot(translation.x, translation.y);
-                if (distanceFromStart < deadzoneRadius) return;
+        CGPoint translation = [panGestureRecognizer translationInView:self.view];
+        CGFloat adjustedTranslation = translation.y - deadzoneStartingTranslation;
+        
+        // Vertical swipe: Value increases as it goes up (translation.y decreases)
+        float delta = (-adjustedTranslation / self.view.bounds.size.height) * sensitivityFactor;
+        
+        NSString *symbolName = nil;
+        NSString *percentString = nil;
 
-                isValidHorizontalPan = YES;
-                deadzoneStartingXTranslation = translation.x;
-                
-                if (gestureSection == GestureSectionTop) {
-                    initialBrightness = [UIScreen mainScreen].brightness;
-                } else {
-                    initialVolume = [[AVAudioSession sharedInstance] outputVolume];
-                }
-            } else {
-                panGestureRecognizer.state = UIGestureRecognizerStateCancelled;
-                return;
-            }
+        if (controlType == 1) {
+            float newBrightness = fmaxf(fminf(initialBrightness + delta, 1.0), 0.0);
+            [[UIScreen mainScreen] setBrightness:newBrightness];
+            symbolName = @"sun.max.fill";
+            percentString = [NSString stringWithFormat:@" %d%%", (int)(newBrightness * 100)];
+        } else if (controlType == 2) {
+            float newVolume = fmaxf(fminf(initialVolume + delta, 1.0), 0.0);
+            volumeViewSlider.value = newVolume;
+            symbolName = @"speaker.wave.2.fill";
+            percentString = [NSString stringWithFormat:@" %d%%", (int)(newVolume * 100)];
+        } else if (controlType == 3) {
+            float speedSensitivity = 8.0; 
+            float speedDelta = (-adjustedTranslation / self.view.bounds.size.height) * speedSensitivity;
+            float newSpeed = fmaxf(fminf(initialSpeed + speedDelta, 10.0), 0.25);
+            [self setPlaybackRate:newSpeed];
+            symbolName = @"speedometer";
+            percentString = [NSString stringWithFormat:@" %.2fx", newSpeed];
         }
 
-        if (isValidHorizontalPan) {
-            adjustedTranslationX = translation.x - deadzoneStartingXTranslation;
-            
-            // Calculate delta based on screen width
-            float delta = (adjustedTranslationX / self.view.bounds.size.width) * sensitivityFactor;
-            
-            if (gestureSection == GestureSectionTop) {
-                float newBrightness = fmaxf(fminf(initialBrightness + delta, 1.0), 0.0);
-                [[UIScreen mainScreen] setBrightness:newBrightness];
-            } else if (gestureSection == GestureSectionBottom) {
-                float newVolume = fmaxf(fminf(initialVolume + delta, 1.0), 0.0);
-                volumeViewSlider.value = newVolume;
-            }
+        if (IS_ENABLED(GestureHUD) && symbolName) {
+            NSTextAttachment *attachment = [[NSTextAttachment alloc] init];
+            UIImageSymbolConfiguration *config = [UIImageSymbolConfiguration configurationWithPointSize:self.YouModGestureHUD.font.pointSize - 1];
+            UIImage *icon = [UIImage systemImageNamed:symbolName withConfiguration:config];
+            attachment.image = [icon imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+            CGFloat iconY = (self.YouModGestureHUD.font.capHeight - attachment.image.size.height) / 2.0;
+            attachment.bounds = CGRectMake(0, iconY, attachment.image.size.width, attachment.image.size.height);
+            NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithAttributedString:[NSAttributedString attributedStringWithAttachment:attachment]];
+            NSAttributedString *textString = [[NSAttributedString alloc] initWithString:percentString attributes:@{NSFontAttributeName: self.YouModGestureHUD.font, NSForegroundColorAttributeName: self.YouModGestureHUD.textColor}];
+            [attributedString appendAttributedString:textString];
+            self.YouModGestureHUD.attributedText = attributedString;
+        }
+        if (IS_ENABLED(GestureHUD)) self.YouModGestureHUD.alpha = 1.0;
+    } else if (panGestureRecognizer.state == UIGestureRecognizerStateEnded || panGestureRecognizer.state == UIGestureRecognizerStateCancelled || panGestureRecognizer.state == UIGestureRecognizerStateFailed) {
+        if (IS_ENABLED(GestureHUD)) {
+            [UIView animateWithDuration:0.3 delay:0.5 options:UIViewAnimationOptionCurveEaseOut animations:^{
+                self.YouModGestureHUD.alpha = 0.0;
+            } completion:nil];
         }
     }
 }
-
+%new
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldBeRequiredToFailByGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
+    // Require other gestures (like YouTube's related videos swipe) to fail when our gesture is active to prevent conflicts.
+    if (gestureRecognizer == self.YouModPanGesture && [otherGestureRecognizer isKindOfClass:[UIPanGestureRecognizer class]]) {
+        return YES;
+    }
+    return NO;
+}
+%new
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
-    if ([gestureRecognizer isKindOfClass:[UIPanGestureRecognizer class]] && [otherGestureRecognizer isKindOfClass:[UIPanGestureRecognizer class]]) {
-        YTMainAppVideoPlayerOverlayViewController *mainVideoPlayerController = (YTMainAppVideoPlayerOverlayViewController *)self.childViewControllers.firstObject;
-        YTPlayerBarController *playerBarController = mainVideoPlayerController.playerBarController;
-        YTInlinePlayerBarContainerView *playerBar = playerBarController.playerBar;
-        
-        // Priority to seeking and scrubbing
-        if (otherGestureRecognizer == playerBar.scrubGestureRecognizer) return NO;
-        
-        YTFineScrubberFilmstripView *fineScrubberFilmstrip = playerBar.fineScrubberFilmstrip;
-        if (!fineScrubberFilmstrip) return YES;
-        
-        YTFineScrubberFilmstripCollectionView *filmstripCollectionView = [fineScrubberFilmstrip valueForKey:@"_filmstripCollectionView"];
-        if (filmstripCollectionView && otherGestureRecognizer == filmstripCollectionView.panGestureRecognizer) return NO;
+    if (gestureRecognizer == self.YouModPanGesture) {
+        return NO; // Prevents simultaneous recognition with YouTube's default swipe when gestures overlap.
     }
     return YES;
 }

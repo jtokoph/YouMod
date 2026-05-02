@@ -102,7 +102,7 @@ static NSString *GetCacheSize() { // YTLite - @dayanch96
 
     // Tweak Version (at the top)
     // Thanks to the original codes from YTweaks by fosterbarnes - https://github.com/fosterbarnes/YTweaks/blob/e921591a89b87256a2b37c4788bd99282f70d9c2/Settings.x
-    YTSettingsSectionItem *tweakVersion = [YTSettingsSectionItemClass itemWithTitle:@"YouMod v1.1.1"
+    YTSettingsSectionItem *tweakVersion = [YTSettingsSectionItemClass itemWithTitle:@"YouMod v1.2.0"
         titleDescription:nil
         accessibilityIdentifier:nil
         detailTextBlock:nil
@@ -257,15 +257,163 @@ static NSString *GetCacheSize() { // YTLite - @dayanch96
             BASIC_SWITCH(LOC(@"HIDE_NEXT_BUTTON"), LOC(@"HIDE_NEXT_BUTTON_DESC"), HideNextButton),
             BASIC_SWITCH(LOC(@"REMOVE_DARK_OVERLAY"), LOC(@"REMOVE_DARK_OVERLAY_DESC"), RemoveDarkOverlay),
             BASIC_SWITCH(LOC(@"HIDE_END_SCREEN"), LOC(@"HIDE_END_SCREEN_DESC"), HideEndScreenCards),
+            BASIC_SWITCH(LOC(@"REMOVE_AMBIANT"), LOC(@"REMOVE_AMBIANT_DESC"), RemoveAmbiant),
             BASIC_SWITCH(LOC(@"HIDE_SUGGESTED_VIDEO"), LOC(@"HIDE_SUGGESTED_VIDEO_DESC"), HideSuggestedVideo),
             BASIC_SWITCH(LOC(@"HIDE_PAID_OVERLAY"), LOC(@"HIDE_PAID_OVERLAY_DESC"), HidePaidPromoOverlay),
             BASIC_SWITCH(LOC(@"HIDE_WATERMARK"), LOC(@"HIDE_WATERMARK_DESC"), HideWaterMark),
             BASIC_SWITCH(LOC(@"GESTURES"), LOC(@"GESTURES_DESC"), GestureControls),
+            [YTSettingsSectionItemClass itemWithTitle:LOC(@"GESTURE_AREA")
+                titleDescription:LOC(@"GESTURE_AREA_DESC")
+                accessibilityIdentifier:nil
+                detailTextBlock:^NSString *() {
+                    switch (INTFORVAL(GestureActivationArea)) {
+                        case 0: return @"10%";
+                        case 2: return @"20%";
+                        case 3: return @"25%";
+                        case 4: return @"30%";
+                        case 5: return @"35%";
+                        case 6: return @"40%";
+                        case 7: return @"45%";
+                        case 8: return @"50%";
+                        case 1:
+                        default: return @"15%";
+                    }
+                }
+                selectBlock:^BOOL (YTSettingsCell *cell, NSUInteger arg1) {
+                    int selectedIndex = 1;
+                    int currentVal = INTFORVAL(GestureActivationArea);
+                    if (currentVal == 0) selectedIndex = 0;
+                    else if (currentVal == 1) selectedIndex = 1;
+                    else if (currentVal == 2) selectedIndex = 2;
+                    else if (currentVal == 3) selectedIndex = 3;
+                    else if (currentVal == 4) selectedIndex = 4;
+                    else if (currentVal == 5) selectedIndex = 5;
+                    else if (currentVal == 6) selectedIndex = 6;
+                    else if (currentVal == 7) selectedIndex = 7;
+                    else if (currentVal == 8) selectedIndex = 8;
+                    
+                    NSArray <YTSettingsSectionItem *> *rows = @[
+                        [YTSettingsSectionItemClass checkmarkItemWithTitle:@"10%" titleDescription:nil selectBlock:^BOOL (YTSettingsCell *cell, NSUInteger arg1) { [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:GestureActivationArea]; [[NSUserDefaults standardUserDefaults] synchronize]; [settingsViewController reloadData]; return YES; }],
+                        [YTSettingsSectionItemClass checkmarkItemWithTitle:@"15%" titleDescription:nil selectBlock:^BOOL (YTSettingsCell *cell, NSUInteger arg1) { [[NSUserDefaults standardUserDefaults] setInteger:1 forKey:GestureActivationArea]; [[NSUserDefaults standardUserDefaults] synchronize]; [settingsViewController reloadData]; return YES; }],
+                        [YTSettingsSectionItemClass checkmarkItemWithTitle:@"20%" titleDescription:nil selectBlock:^BOOL (YTSettingsCell *cell, NSUInteger arg1) { [[NSUserDefaults standardUserDefaults] setInteger:2 forKey:GestureActivationArea]; [[NSUserDefaults standardUserDefaults] synchronize]; [settingsViewController reloadData]; return YES; }],
+                        [YTSettingsSectionItemClass checkmarkItemWithTitle:@"25%" titleDescription:nil selectBlock:^BOOL (YTSettingsCell *cell, NSUInteger arg1) { [[NSUserDefaults standardUserDefaults] setInteger:3 forKey:GestureActivationArea]; [[NSUserDefaults standardUserDefaults] synchronize]; [settingsViewController reloadData]; return YES; }],
+                        [YTSettingsSectionItemClass checkmarkItemWithTitle:@"30%" titleDescription:nil selectBlock:^BOOL (YTSettingsCell *cell, NSUInteger arg1) { [[NSUserDefaults standardUserDefaults] setInteger:4 forKey:GestureActivationArea]; [[NSUserDefaults standardUserDefaults] synchronize]; [settingsViewController reloadData]; return YES; }],
+                        [YTSettingsSectionItemClass checkmarkItemWithTitle:@"35%" titleDescription:nil selectBlock:^BOOL (YTSettingsCell *cell, NSUInteger arg1) { [[NSUserDefaults standardUserDefaults] setInteger:5 forKey:GestureActivationArea]; [[NSUserDefaults standardUserDefaults] synchronize]; [settingsViewController reloadData]; return YES; }],
+                        [YTSettingsSectionItemClass checkmarkItemWithTitle:@"40%" titleDescription:nil selectBlock:^BOOL (YTSettingsCell *cell, NSUInteger arg1) { [[NSUserDefaults standardUserDefaults] setInteger:6 forKey:GestureActivationArea]; [[NSUserDefaults standardUserDefaults] synchronize]; [settingsViewController reloadData]; return YES; }],
+                        [YTSettingsSectionItemClass checkmarkItemWithTitle:@"45%" titleDescription:nil selectBlock:^BOOL (YTSettingsCell *cell, NSUInteger arg1) { [[NSUserDefaults standardUserDefaults] setInteger:7 forKey:GestureActivationArea]; [[NSUserDefaults standardUserDefaults] synchronize]; [settingsViewController reloadData]; return YES; }],
+                        [YTSettingsSectionItemClass checkmarkItemWithTitle:@"50%" titleDescription:nil selectBlock:^BOOL (YTSettingsCell *cell, NSUInteger arg1) { [[NSUserDefaults standardUserDefaults] setInteger:8 forKey:GestureActivationArea]; [[NSUserDefaults standardUserDefaults] synchronize]; [settingsViewController reloadData]; return YES; }]
+                    ];
+                    YTSettingsPickerViewController *picker = [[%c(YTSettingsPickerViewController) alloc] initWithNavTitle:LOC(@"GESTURE_AREA") pickerSectionTitle:nil rows:rows selectedItemIndex:selectedIndex parentResponder:[self parentResponder]];
+                    [settingsViewController pushViewController:picker];
+                    return YES;
+                }
+            ],
+            [YTSettingsSectionItemClass itemWithTitle:LOC(@"LEFT_SIDE_GESTURE")
+                titleDescription:nil
+                accessibilityIdentifier:nil
+                detailTextBlock:^NSString *() {
+                    int val = [[NSUserDefaults standardUserDefaults] objectForKey:LeftSideGesture] ? INTFORVAL(LeftSideGesture) : 1;
+                    if (val == 1) return LOC(@"GESTURE_BRIGHTNESS");
+                    else if (val == 2) return LOC(@"GESTURE_VOLUME");
+                    else if (val == 3) return LOC(@"GESTURE_SPEED");
+                    return LOC(@"GESTURE_NONE");
+                }
+                selectBlock:^BOOL (YTSettingsCell *cell, NSUInteger arg1) {
+                    int currentVal = [[NSUserDefaults standardUserDefaults] objectForKey:LeftSideGesture] ? INTFORVAL(LeftSideGesture) : 1;
+                    NSArray <YTSettingsSectionItem *> *rows = @[
+                        [YTSettingsSectionItemClass checkmarkItemWithTitle:LOC(@"GESTURE_NONE") titleDescription:nil selectBlock:^BOOL (YTSettingsCell *cell, NSUInteger arg1) { [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:LeftSideGesture]; [[NSUserDefaults standardUserDefaults] synchronize]; [settingsViewController reloadData]; return YES; }],
+                        [YTSettingsSectionItemClass checkmarkItemWithTitle:LOC(@"GESTURE_BRIGHTNESS") titleDescription:nil selectBlock:^BOOL (YTSettingsCell *cell, NSUInteger arg1) { [[NSUserDefaults standardUserDefaults] setInteger:1 forKey:LeftSideGesture]; [[NSUserDefaults standardUserDefaults] synchronize]; [settingsViewController reloadData]; return YES; }],
+                        [YTSettingsSectionItemClass checkmarkItemWithTitle:LOC(@"GESTURE_VOLUME") titleDescription:nil selectBlock:^BOOL (YTSettingsCell *cell, NSUInteger arg1) { [[NSUserDefaults standardUserDefaults] setInteger:2 forKey:LeftSideGesture]; [[NSUserDefaults standardUserDefaults] synchronize]; [settingsViewController reloadData]; return YES; }],
+                        [YTSettingsSectionItemClass checkmarkItemWithTitle:LOC(@"GESTURE_SPEED") titleDescription:nil selectBlock:^BOOL (YTSettingsCell *cell, NSUInteger arg1) { [[NSUserDefaults standardUserDefaults] setInteger:3 forKey:LeftSideGesture]; [[NSUserDefaults standardUserDefaults] synchronize]; [settingsViewController reloadData]; return YES; }]
+                    ];
+                    YTSettingsPickerViewController *picker = [[%c(YTSettingsPickerViewController) alloc] initWithNavTitle:LOC(@"LEFT_SIDE_GESTURE") pickerSectionTitle:nil rows:rows selectedItemIndex:currentVal parentResponder:[self parentResponder]];
+                    [settingsViewController pushViewController:picker];
+                    return YES;
+                }
+            ],
+            [YTSettingsSectionItemClass itemWithTitle:LOC(@"RIGHT_SIDE_GESTURE")
+                titleDescription:nil
+                accessibilityIdentifier:nil
+                detailTextBlock:^NSString *() {
+                    int val = [[NSUserDefaults standardUserDefaults] objectForKey:RightSideGesture] ? INTFORVAL(RightSideGesture) : 2;
+                    if (val == 1) return LOC(@"GESTURE_BRIGHTNESS");
+                    else if (val == 2) return LOC(@"GESTURE_VOLUME");
+                    else if (val == 3) return LOC(@"GESTURE_SPEED");
+                    return LOC(@"GESTURE_NONE");
+                }
+                selectBlock:^BOOL (YTSettingsCell *cell, NSUInteger arg1) {
+                    int currentVal = [[NSUserDefaults standardUserDefaults] objectForKey:RightSideGesture] ? INTFORVAL(RightSideGesture) : 2;
+                    NSArray <YTSettingsSectionItem *> *rows = @[
+                        [YTSettingsSectionItemClass checkmarkItemWithTitle:LOC(@"GESTURE_NONE") titleDescription:nil selectBlock:^BOOL (YTSettingsCell *cell, NSUInteger arg1) { [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:RightSideGesture]; [[NSUserDefaults standardUserDefaults] synchronize]; [settingsViewController reloadData]; return YES; }],
+                        [YTSettingsSectionItemClass checkmarkItemWithTitle:LOC(@"GESTURE_BRIGHTNESS") titleDescription:nil selectBlock:^BOOL (YTSettingsCell *cell, NSUInteger arg1) { [[NSUserDefaults standardUserDefaults] setInteger:1 forKey:RightSideGesture]; [[NSUserDefaults standardUserDefaults] synchronize]; [settingsViewController reloadData]; return YES; }],
+                        [YTSettingsSectionItemClass checkmarkItemWithTitle:LOC(@"GESTURE_VOLUME") titleDescription:nil selectBlock:^BOOL (YTSettingsCell *cell, NSUInteger arg1) { [[NSUserDefaults standardUserDefaults] setInteger:2 forKey:RightSideGesture]; [[NSUserDefaults standardUserDefaults] synchronize]; [settingsViewController reloadData]; return YES; }],
+                        [YTSettingsSectionItemClass checkmarkItemWithTitle:LOC(@"GESTURE_SPEED") titleDescription:nil selectBlock:^BOOL (YTSettingsCell *cell, NSUInteger arg1) { [[NSUserDefaults standardUserDefaults] setInteger:3 forKey:LeftSideGesture]; [[NSUserDefaults standardUserDefaults] synchronize]; [settingsViewController reloadData]; return YES; }]
+                    ];
+                    YTSettingsPickerViewController *picker = [[%c(YTSettingsPickerViewController) alloc] initWithNavTitle:LOC(@"RIGHT_SIDE_GESTURE") pickerSectionTitle:nil rows:rows selectedItemIndex:currentVal parentResponder:[self parentResponder]];
+                    [settingsViewController pushViewController:picker];
+                    return YES;
+                }
+            ],
+            BASIC_SWITCH(LOC(@"GESTURE_HUD"), LOC(@"GESTURE_HUD_DESC"), GestureHUD),
+            [YTSettingsSectionItemClass itemWithTitle:LOC(@"GESTURE_HUD_SIZE")
+                titleDescription:LOC(@"GESTURE_HUD_SIZE_DESC")
+                accessibilityIdentifier:nil
+                detailTextBlock:^NSString *() {
+                    int val = [[NSUserDefaults standardUserDefaults] objectForKey:@"GestureHUDSize"] ? (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"GestureHUDSize"] : 1;
+                    switch (val) {
+                        case 0: return LOC(@"SMALL");
+                        case 2: return LOC(@"LARGE");
+                        case 3: return LOC(@"EXTRALARGE");
+                        case 4: return LOC(@"MAX");
+                        case 1:
+                        default: return LOC(@"NORMAL");
+                    }
+                }
+                selectBlock:^BOOL (YTSettingsCell *cell, NSUInteger arg1) {
+                    int currentVal = [[NSUserDefaults standardUserDefaults] objectForKey:@"GestureHUDSize"] ? (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"GestureHUDSize"] : 1;
+                    NSArray <YTSettingsSectionItem *> *rows = @[
+                        [YTSettingsSectionItemClass checkmarkItemWithTitle:LOC(@"SMALL") titleDescription:nil selectBlock:^BOOL (YTSettingsCell *cell, NSUInteger arg1) { [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"GestureHUDSize"]; [[NSUserDefaults standardUserDefaults] synchronize]; [settingsViewController reloadData]; return YES; }],
+                        [YTSettingsSectionItemClass checkmarkItemWithTitle:LOC(@"NORMAL") titleDescription:nil selectBlock:^BOOL (YTSettingsCell *cell, NSUInteger arg1) { [[NSUserDefaults standardUserDefaults] setInteger:1 forKey:@"GestureHUDSize"]; [[NSUserDefaults standardUserDefaults] synchronize]; [settingsViewController reloadData]; return YES; }],
+                        [YTSettingsSectionItemClass checkmarkItemWithTitle:LOC(@"LARGE") titleDescription:nil selectBlock:^BOOL (YTSettingsCell *cell, NSUInteger arg1) { [[NSUserDefaults standardUserDefaults] setInteger:2 forKey:@"GestureHUDSize"]; [[NSUserDefaults standardUserDefaults] synchronize]; [settingsViewController reloadData]; return YES; }],
+                        [YTSettingsSectionItemClass checkmarkItemWithTitle:LOC(@"EXTRALARGE") titleDescription:nil selectBlock:^BOOL (YTSettingsCell *cell, NSUInteger arg1) { [[NSUserDefaults standardUserDefaults] setInteger:3 forKey:@"GestureHUDSize"]; [[NSUserDefaults standardUserDefaults] synchronize]; [settingsViewController reloadData]; return YES; }],
+                        [YTSettingsSectionItemClass checkmarkItemWithTitle:LOC(@"MAX") titleDescription:nil selectBlock:^BOOL (YTSettingsCell *cell, NSUInteger arg1) { [[NSUserDefaults standardUserDefaults] setInteger:4 forKey:@"GestureHUDSize"]; [[NSUserDefaults standardUserDefaults] synchronize]; [settingsViewController reloadData]; return YES; }]
+                    ];
+                    YTSettingsPickerViewController *picker = [[%c(YTSettingsPickerViewController) alloc] initWithNavTitle:LOC(@"GESTURE_HUD_SIZE") pickerSectionTitle:nil rows:rows selectedItemIndex:currentVal parentResponder:[self parentResponder]];
+                    [settingsViewController pushViewController:picker];
+                    return YES;
+                }
+            ],
+            [YTSettingsSectionItemClass itemWithTitle:LOC(@"GESTURE_HUD_POSITION")
+                titleDescription:LOC(@"GESTURE_HUD_POSITION_DESC")
+                accessibilityIdentifier:nil
+                detailTextBlock:^NSString *() {
+                    int val = [[NSUserDefaults standardUserDefaults] objectForKey:@"GestureHUDPosition"] ? (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"GestureHUDPosition"] : 0;
+                    switch (val) {
+                        case 1: return LOC(@"MIDDLE");
+                        case 2: return LOC(@"BOTTOM");
+                        case 0:
+                        default: return LOC(@"TOP");
+                    }
+                }
+                selectBlock:^BOOL (YTSettingsCell *cell, NSUInteger arg1) {
+                    int currentVal = [[NSUserDefaults standardUserDefaults] objectForKey:@"GestureHUDPosition"] ? (int)[[NSUserDefaults standardUserDefaults] integerForKey:@"GestureHUDPosition"] : 0;
+                    NSArray <YTSettingsSectionItem *> *rows = @[
+                        [YTSettingsSectionItemClass checkmarkItemWithTitle:LOC(@"TOP") titleDescription:nil selectBlock:^BOOL (YTSettingsCell *cell, NSUInteger arg1) { [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"GestureHUDPosition"]; [[NSUserDefaults standardUserDefaults] synchronize]; [settingsViewController reloadData]; return YES; }],
+                        [YTSettingsSectionItemClass checkmarkItemWithTitle:LOC(@"MIDDLE") titleDescription:nil selectBlock:^BOOL (YTSettingsCell *cell, NSUInteger arg1) { [[NSUserDefaults standardUserDefaults] setInteger:1 forKey:@"GestureHUDPosition"]; [[NSUserDefaults standardUserDefaults] synchronize]; [settingsViewController reloadData]; return YES; }],
+                        [YTSettingsSectionItemClass checkmarkItemWithTitle:LOC(@"BOTTOM") titleDescription:nil selectBlock:^BOOL (YTSettingsCell *cell, NSUInteger arg1) { [[NSUserDefaults standardUserDefaults] setInteger:2 forKey:@"GestureHUDPosition"]; [[NSUserDefaults standardUserDefaults] synchronize]; [settingsViewController reloadData]; return YES; }]
+                    ];
+                    YTSettingsPickerViewController *picker = [[%c(YTSettingsPickerViewController) alloc] initWithNavTitle:LOC(@"GESTURE_HUD_POSITION") pickerSectionTitle:nil rows:rows selectedItemIndex:currentVal parentResponder:[self parentResponder]];
+                    [settingsViewController pushViewController:picker];
+                    return YES;
+                }
+            ],
             BASIC_SWITCH(LOC(@"DISABLES_DOUBLE_TAP"), LOC(@"DISABLES_DOUBLE_TAP_DESC"), DisablesDoubleTap),
             BASIC_SWITCH(LOC(@"DISABLES_LONG_HOLD"), LOC(@"DISABLES_LONG_HOLD_DESC"), DisablesLongHold),
             BASIC_SWITCH(LOC(@"AUTO_EXIT_FULLSCREEN"), LOC(@"AUTO_EXIT_FULLSCREEN_DESC"), AutoExitFullScreen),
+            BASIC_SWITCH(LOC(@"AUTO_DISABLES_CAPTION"), LOC(@"AUTO_DISABLES_CAPTION_DESC"), DisablesCaptions),
             BASIC_SWITCH(LOC(@"DISABLES_SHOW_REMAINING"), LOC(@"DISABLES_SHOW_REMAINING_DESC"), DisablesShowRemaining),
             BASIC_SWITCH(LOC(@"ALWAYS_SHOW_REMAINING"), LOC(@"ALWAYS_SHOW_REMAINING_DESC"), AlwaysShowRemaining),
+            BASIC_SWITCH(LOC(@"SHOW_REMAINING_EXTRA"), LOC(@"SHOW_REMAINING_EXTRA_DESC"), ShowExtraTimeRemaining),
             BASIC_SWITCH(LOC(@"HIDE_FULLSCREEN_ACTIONS"), LOC(@"HIDE_FULLSCREEN_ACTIONS_DESC"), HideFullAction),
             BASIC_SWITCH(LOC(@"HIDE_FULL_VID_TITLE"), LOC(@"HIDE_FULL_VID_TITLE_DESC"), HideFullvidTitle),
             BASIC_SWITCH(LOC(@"STOP_AUTOPLAY_VIDEO"), LOC(@"STOP_AUTOPLAY_VIDEO_DESC"), StopAutoplayVideo),

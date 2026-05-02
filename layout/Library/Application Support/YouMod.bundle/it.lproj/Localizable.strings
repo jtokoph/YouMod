@@ -3,8 +3,8 @@
 
 "NEW_ISSUES" = "Segnala un problema o richiedi una funzione";
 "NEW_ISSUES_DESC" = "Hai trovato un bug o vuoi una nuova funzione? Clicca qui!";
-"SOURCE_CODES" = "Source codes";
-"SOURCE_CODES_DESC" = "Take a look at the codes!";
+"SOURCE_CODES" = "Codice sorgente";
+"SOURCE_CODES_DESC" = "Dai un'occhiata al codice!";
 
 "PERFER_HEADER" = "Opzioni YouMod";
 "PERFER" = "Opzioni";
@@ -82,6 +82,8 @@
 "REMOVE_DARK_OVERLAY_DESC" = "Rimuove l'overlay scuro dal player.";
 "HIDE_END_SCREEN" = "Nascondi schede finali";
 "HIDE_END_SCREEN_DESC" = "Nasconde le schede finali mostrate prima della fine del video.";
+"REMOVE_AMBIANT" = "Remove Ambient lights";
+"REMOVE_AMBIANT_DESC" = "Removes the glowing ambient lights effects behind the video player.";
 "HIDE_SUGGESTED_VIDEO" = "Nascondi video suggeriti";
 "HIDE_SUGGESTED_VIDEO_DESC" = "Nasconde la griglia dei video suggeriti che appare al termine di un video.";
 "HIDE_PAID_OVERLAY" = "Nascondi 'Include promozioni a pagamento'";
@@ -89,7 +91,29 @@
 "HIDE_WATERMARK" = "Nascondi filigrana";
 "HIDE_WATERMARK_DESC" = "Nasconde la filigrana del canale in basso nel player.";
 "GESTURES" = "Abilita gestures";
-"GESTURES_DESC" = "Abilita le gestures nel player.\nIn alto: Luminosità, In basso: Volume";
+"GESTURES_DESC" = "Swipe up or down on the left/right edges of the video screen to adjust brightness, volume, or playback speed.";
+"GESTURE_AREA" = "Gesture activation area";
+"GESTURE_AREA_DESC" = "Adjust the area on the edges where gestures are active. (Setting to 50% splits the screen in half with no dead zone in the middle.)";
+"LEFT_SIDE_GESTURE" = "Left side swipe gesture";
+"RIGHT_SIDE_GESTURE" = "Right side swipe gesture";
+"GESTURE_BRIGHTNESS" = "Brightness";
+"GESTURE_VOLUME" = "Volume";
+"GESTURE_SPEED" = "Playback speed";
+"GESTURE_NONE" = "None";
+"GESTURE_HUD" = "Show gesture HUD";
+"GESTURE_HUD_DESC" = "Displays the current percentage (%) on the screen when adjusting brightness, volume, or playback speed.";
+"GESTURE_HUD_SIZE" = "Gesture HUD size";
+"GESTURE_HUD_SIZE_DESC" = "Adjust the text and icon size of the gesture HUD.";
+"SMALL" = "Small (-1)";
+"NORMAL" = "Normal (Default)";
+"LARGE" = "Large (+1)";
+"EXTRALARGE" = "Extra large (+2)";
+"MAX" = "Max (+3)";
+"GESTURE_HUD_POSITION" = "Gesture HUD position";
+"GESTURE_HUD_POSITION_DESC" = "Set the vertical position of the gesture HUD (Top, Middle, Bottom).";
+"TOP" = "Top";
+"MIDDLE" = "Middle";
+"BOTTOM" = "Bottom";
 "DISABLES_DOUBLE_TAP" = "Disabilita doppio tocco";
 "DISABLES_DOUBLE_TAP_DESC" = "Disabilita il doppio tocco per cercare nel player.";
 "DISABLES_LONG_HOLD" = "Disabilita pressione prolungata";
@@ -100,6 +124,8 @@
 "DISABLES_SHOW_REMAINING_DESC" = "Disabilita la funzione che mostra quanto tempo manca alla fine del video toccando il timestamp.";
 "ALWAYS_SHOW_REMAINING" = "Mostra sempre il tempo rimanente";
 "ALWAYS_SHOW_REMAINING_DESC" = "Assicura che il tempo rimanente sia sempre visualizzato per impostazione predefinita nel player.";
+"SHOW_REMAINING_EXTRA" = "Show extra remaining time";
+"SHOW_REMAINING_EXTRA_DESC" = "Adds the estimated finish time to the label in the video overlay.";
 "HIDE_FULLSCREEN_ACTIONS" = "Nascondi azioni a schermo intero";
 "HIDE_FULLSCREEN_ACTIONS_DESC" = "Nasconde i pulsanti di azione rapida (Mi piace, Non mi piace, Altri video, ecc.) quando il video è a schermo intero.";
 "HIDE_FULL_VID_TITLE" = "Nascondi titolo video a schermo intero";
@@ -110,6 +136,8 @@
 "HIDE_CONTENT_WARNING_DESC" = "Salta automaticamente l'avviso per contenuti sensibili in alcuni video.";
 "AUTO_FULLSCREEN" = "Schermo intero automatico";
 "AUTO_FULLSCREEN_DESC" = "Entra automaticamente in modalità schermo intero all'avvio della riproduzione.";
+"AUTO_DISABLES_CAPTION" = "Auto disable captions";
+"AUTO_DISABLES_CAPTION_DESC" = "Automatically turns off closed captions (CC) whenever a new video starts playing.";
 "PORTRAIT_FULLSCREEN" = "Modalità schermo intero verticale";
 "PORTRAIT_FULLSCREEN_DESC" = "Abilita il supporto alla modalità schermo intero verticale.";
 "OLD_QUALITY_PICKER" = "Usa vecchio selettore qualità";
