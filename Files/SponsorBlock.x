@@ -70,10 +70,12 @@ UIColor *SBColorFromHex(NSString *hexString) {
         return;
     }
 
-    NSArray *cached = sbSegmentCache[videoID];
-    if (cached) {
-        if (completion) completion(cached);
-        return;
+    @synchronized(sbSegmentCache) {
+        NSArray *cached = sbSegmentCache[videoID];
+        if (cached) {
+            if (completion) completion(cached);
+            return;
+        }
     }
 
     NSArray *categories = sbEnabledCategories();
@@ -112,7 +114,9 @@ UIColor *SBColorFromHex(NSString *hexString) {
         }
 
         dispatch_async(dispatch_get_main_queue(), ^{
-            sbSegmentCache[videoID] = segments;
+            @synchronized(sbSegmentCache) {
+                sbSegmentCache[videoID] = segments;
+            }
             if (completion) completion(segments);
         });
     }];
@@ -153,6 +157,8 @@ UIColor *SBColorFromHex(NSString *hexString) {
             [[NSNotificationCenter defaultCenter] postNotificationName:@"SBSegmentsDidLoad"
                                                                 object:strongSelf
                                                               userInfo:@{@"segments": segments ?: @[]}];
+
+            [strongSelf sbShowHighlightBannerIfNeeded:segments];
         }];
     } @catch (NSException *e) {}
 }
@@ -182,6 +188,8 @@ UIColor *SBColorFromHex(NSString *hexString) {
             [[NSNotificationCenter defaultCenter] postNotificationName:@"SBSegmentsDidLoad"
                                                                 object:strongSelf
                                                               userInfo:@{@"segments": segments ?: @[]}];
+
+            [strongSelf sbShowHighlightBannerIfNeeded:segments];
         }];
     } @catch (NSException *e) {}
 }
@@ -264,20 +272,27 @@ UIColor *SBColorFromHex(NSString *hexString) {
         NSBundle *bundle = [NSBundle bundleWithPath:[[NSBundle mainBundle] pathForResource:@"YouMod" ofType:@"bundle"]];
         NSString *catName = [bundle localizedStringForKey:[NSString stringWithFormat:@"SB_CAT_%@", segment.category] value:segment.category table:nil];
         NSString *message = [NSString stringWithFormat:[bundle localizedStringForKey:@"SB_SKIPPED" value:@"%@ skipped" table:nil], catName];
+        NSString *unskipTitle = [bundle localizedStringForKey:@"SB_UNSKIP" value:@"Unskip" table:nil];
 
         float alertDuration = FLOAT_FOR_KEY(SBUnskipAlertDuration);
         if (alertDuration <= 0) alertDuration = 3.0;
 
-        UIView *parentView = self.playerView;
         __weak typeof(self) weakSelf = self;
-        self.sbNotificationView = [SBSkipNotificationView showInView:parentView
-            message:message
-            buttonTitle:[bundle localizedStringForKey:@"SB_UNSKIP" value:@"Unskip" table:nil]
-            action:^{
-                [weakSelf seekToTime:(CGFloat)segment.startTime];
-                [weakSelf.sbSkippedSegments removeObject:segment.UUID];
-            }
-            duration:alertDuration];
+        // Delay notification so the seek completes before the banner is shown,
+        // preventing the time-change callback from dismissing it immediately.
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            __strong typeof(weakSelf) strongSelf = weakSelf;
+            if (!strongSelf) return;
+            UIView *parentView = strongSelf.playerView;
+            strongSelf.sbNotificationView = [SBSkipNotificationView showInView:parentView
+                message:message
+                buttonTitle:unskipTitle
+                action:^{
+                    __strong typeof(weakSelf) ss = weakSelf;
+                    if (ss) [ss seekToTime:(CGFloat)segment.startTime];
+                }
+                duration:alertDuration];
+        });
     }
 }
 
@@ -298,9 +313,28 @@ UIColor *SBColorFromHex(NSString *hexString) {
         message:message
         buttonTitle:[bundle localizedStringForKey:@"SB_SKIP_NOW" value:@"Skip" table:nil]
         action:^{
-            [weakSelf seekToTime:(CGFloat)segment.endTime];
+            __strong typeof(weakSelf) ss = weakSelf;
+            if (ss) [ss seekToTime:(CGFloat)segment.endTime];
         }
         duration:alertDuration];
+}
+
+%new
+- (void)sbShowHighlightBannerIfNeeded:(NSArray<SBSegment *> *)segments {
+    for (SBSegment *seg in segments) {
+        if ([seg.category isEqualToString:@"poi_highlight"] && [seg configuredAction] == SBSegmentActionSkipTo) {
+            NSBundle *bundle = [NSBundle bundleWithPath:[[NSBundle mainBundle] pathForResource:@"YouMod" ofType:@"bundle"]];
+            NSString *message = [bundle localizedStringForKey:@"SB_JUMP_TO_HIGHLIGHT" value:@"Highlight available. Jump to the point?" table:nil];
+            NSString *skipTitle = [bundle localizedStringForKey:@"SB_SKIP_NOW" value:@"Skip" table:nil];
+            UIView *parentView = self.playerView;
+            self.sbNotificationView = [SBSkipNotificationView showInView:parentView
+                message:message
+                buttonTitle:skipTitle
+                action:^{ [self sbSkipToHighlight]; }
+                duration:8.0];
+            break;
+        }
+    }
 }
 
 %new

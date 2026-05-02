@@ -32,8 +32,15 @@
 #import <MediaPlayer/MediaPlayer.h>
 #import <dlfcn.h>
 
-// For Settings.x
+// For Settings.x and SponsorBlockSettings.x
+#import <YouTubeHeader/YTDefaultSheetController.h>
 #import <PSHeader/Misc.h>
+
+@interface YTDefaultSheetController (YouMod)
++ (instancetype)sheetControllerWithParentResponder:(id)responder;
+- (void)addAction:(YTActionSheetAction *)action;
+- (void)presentFromViewController:(UIViewController *)vc animated:(BOOL)animated completion:(void (^)(void))completion;
+@end
 #import <YouTubeHeader/YTSettingsGroupData.h>
 #import <YouTubeHeader/YTSettingsPickerViewController.h>
 #import <YouTubeHeader/YTSettingsSectionItem.h>
@@ -259,7 +266,6 @@ typedef NS_ENUM(NSUInteger, GestureSection) {
 @interface YTInlinePlayerBarContainerView (YouMod)
 @property UIPanGestureRecognizer *scrubGestureRecognizer;
 @property (nonatomic, strong, readwrite) YTFineScrubberFilmstripView *fineScrubberFilmstrip;
-@property (nonatomic, strong) UIView *sbMarkerContainer;
 - (CGFloat)scrubXForScrubRange:(CGFloat)scrubRange;
 @end
 
@@ -304,6 +310,7 @@ typedef NS_ENUM(NSInteger, SBSegmentAction) {
 @property (nonatomic, assign) BOOL sbEnabledForVideo;
 - (void)sbPerformSkip:(SBSegment *)segment;
 - (void)sbShowAskNotification:(SBSegment *)segment;
+- (void)sbShowHighlightBannerIfNeeded:(NSArray<SBSegment *> *)segments;
 - (void)sbSkipToHighlight;
 @end
 

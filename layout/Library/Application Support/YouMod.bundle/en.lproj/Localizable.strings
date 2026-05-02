@@ -250,8 +250,13 @@
 "SB_CAT_filler" = "Filler";
 "SB_CAT_filler_DESC" = "Tangential content, jokes, or filler that is not directly related to the main topic.";
 
-"SB_SKIPPED" = "%@ skipped";
-"SB_DETECTED" = "%@ detected";
+"SB_SKIPPED" = "%@ segment has been skipped";
+"SB_DETECTED" = "%@ segment detected.\nWould you like to skip the segment?";
 "SB_SKIP_NOW" = "Skip";
 "SB_UNSKIP" = "Unskip";
 "SB_JUMPED_TO_HIGHLIGHT" = "Jumped to highlight";
+"SB_JUMP_TO_HIGHLIGHT" = "Highlight available. Jump to the point?";
+"SB_SEGMENT_COLOR_SUFFIX" = "segment color";
+"SB_SECTION_MAIN" = "Main";
+"SB_SKIP_ALERT_DURATION" = "Skip Alert Duration";
+"SB_UNSKIP_ALERT_DURATION" = "Unskip Alert Duration";
