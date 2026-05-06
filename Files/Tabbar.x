@@ -57,38 +57,29 @@ static NSBundle *YouModBundle() {
     NSUInteger notiIndex = [items indexOfObjectPassingTest:^BOOL(YTIPivotBarSupportedRenderers *renderers, NSUInteger idx, BOOL *stop) {
         return [[[renderers pivotBarItemRenderer] pivotIdentifier] isEqualToString:[%c(YTIBrowseRequest) browseIDForNotificationsInbox]];
     }];
+    // FIXME: Find a way to insert icons
     if (historyIndex == NSNotFound && IS_ENABLED(AddsHistoryTab)) {
-        YTIIcon *historyicon = [%c(YTIIcon) new];
-        historyicon.iconType = 2;
-        YTIPivotBarSupportedRenderers *historyTab = [%c(YTIPivotBarRenderer) pivotSupportedRenderersWithBrowseId:[%c(YTIBrowseRequest) browseIDForHistory] title:LOC(@"HISTORY_TAB") iconType:historyicon];
+        YTIPivotBarSupportedRenderers *historyTab = [%c(YTIPivotBarRenderer) pivotSupportedRenderersWithBrowseId:[%c(YTIBrowseRequest) browseIDForHistory] title:LOC(@"HISTORY_TAB") iconType:2];
         NSUInteger insertIndex = MIN((NSUInteger)1, items.count);
         [items insertObject:historyTab atIndex:insertIndex];
     }
     if (gamingIndex == NSNotFound && IS_ENABLED(AddsGamingTab)) {
-        YTIIcon *gamingicon = [%c(YTIIcon) new];
-        gamingicon.iconType = 627;
-        YTIPivotBarSupportedRenderers *gamingTab = [%c(YTIPivotBarRenderer) pivotSupportedRenderersWithBrowseId:[%c(YTIBrowseRequest) browseIDForGamingDestination] title:LOC(@"GAMING_TAB") iconType:gamingicon];
+        YTIPivotBarSupportedRenderers *gamingTab = [%c(YTIPivotBarRenderer) pivotSupportedRenderersWithBrowseId:[%c(YTIBrowseRequest) browseIDForGamingDestination] title:LOC(@"GAMING_TAB") iconType:627];
         NSUInteger insertIndex = MIN((NSUInteger)1, items.count);
         [items insertObject:gamingTab atIndex:insertIndex];
     }
     if (sportsIndex == NSNotFound && IS_ENABLED(AddsSportsTab)) {
-        YTIIcon *sportsicon = [%c(YTIIcon) new];
-        sportsicon.iconType = 777;
-        YTIPivotBarSupportedRenderers *sportsTab = [%c(YTIPivotBarRenderer) pivotSupportedRenderersWithBrowseId:[%c(YTIBrowseRequest) browseIDForSportsDestination] title:LOC(@"SPORTS_TAB") iconType:sportsicon];
+        YTIPivotBarSupportedRenderers *sportsTab = [%c(YTIPivotBarRenderer) pivotSupportedRenderersWithBrowseId:[%c(YTIBrowseRequest) browseIDForSportsDestination] title:LOC(@"SPORTS_TAB") iconType:777];
         NSUInteger insertIndex = MIN((NSUInteger)1, items.count);
         [items insertObject:sportsTab atIndex:insertIndex];
     }
     if (trendingIndex == NSNotFound && IS_ENABLED(AddsTrendingTab)) {
-        YTIIcon *trendingicon = [%c(YTIIcon) new];
-        trendingicon.iconType = 201;
-        YTIPivotBarSupportedRenderers *trendingTab = [%c(YTIPivotBarRenderer) pivotSupportedRenderersWithBrowseId:[%c(YTIBrowseRequest) browseIDForTrendingTab] title:LOC(@"TRENDING_TAB") iconType:trendingicon];
+        YTIPivotBarSupportedRenderers *trendingTab = [%c(YTIPivotBarRenderer) pivotSupportedRenderersWithBrowseId:[%c(YTIBrowseRequest) browseIDForTrendingTab] title:LOC(@"TRENDING_TAB") iconType:201];
         NSUInteger insertIndex = MIN((NSUInteger)1, items.count);
         [items insertObject:trendingTab atIndex:insertIndex];
     }
     if (notiIndex == NSNotFound && IS_ENABLED(AddsNotiTab)) {
-        YTIIcon *notiicon = [%c(YTIIcon) new];
-        notiicon.iconType = 355;
-        YTIPivotBarSupportedRenderers *notiTab = [%c(YTIPivotBarRenderer) pivotSupportedRenderersWithBrowseId:[%c(YTIBrowseRequest) browseIDForNotificationsInbox] title:LOC(@"NOTI_TAB") iconType:notiicon];
+        YTIPivotBarSupportedRenderers *notiTab = [%c(YTIPivotBarRenderer) pivotSupportedRenderersWithBrowseId:[%c(YTIBrowseRequest) browseIDForNotificationsInbox] title:LOC(@"NOTI_TAB") iconType:355];
         NSUInteger insertIndex = MIN((NSUInteger)1, items.count);
         [items insertObject:notiTab atIndex:insertIndex];
     }
