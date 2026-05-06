@@ -16,6 +16,7 @@ extern YMSettingsItem *YMToggle(NSString *title, NSString *subtitle, NSString *k
 extern YMSettingsItem *YMPicker(NSString *title, NSString *subtitle, NSString *key, NSArray<NSString *> *options, NSInteger defaultValue);
 extern YMSettingsItem *YMAction(NSString *title, NSString *subtitle, void (^action)(UIViewController *vc));
 extern YMSettingsItem *YMHeader(NSString *title);
+extern YMSettingsItem *YMSegment(NSString *title, NSString *key, NSArray<NSNumber *> *icons, NSInteger defaultValue);
 
 @interface YTSettingsSectionItemManager (YouMod)
 - (void)updateYouModSectionWithEntry:(id)entry;
@@ -309,7 +310,7 @@ static NSString *GetCacheSize() { // YTLite - @dayanch96
     // Tab bar
     YTSettingsSectionItem *tabgroup = [YTSettingsSectionItemClass itemWithTitle:LOC(@"TABBAR") accessibilityIdentifier:nil detailTextBlock:nil selectBlock:^BOOL (YTSettingsCell *cell, NSUInteger arg1) {
         YMPushSubSettings(LOC(@"TABBAR"), @[
-            YMPicker(LOC(@"DEFAULT_TAB"), LOC(@"DEFAULT_TAB_DESC"), DefaultTab, (@[LOC(@"HOME_NAME"), @"Shorts", LOC(@"SUBSCRIPT_NAME"), LOC(@"LIB_NAME")]), 0),
+            YMSegment(LOC(@"DEFAULT_TAB"), DefaultTab, (@[@(65), @(769), @(66), @(61)]), 0),
             YMToggle(LOC(@"HIDE_TAB_INDI"), LOC(@"HIDE_TAB_INDI_DESC"), HideTabIndi),
             YMToggle(LOC(@"HIDE_TAB_LABELS"), LOC(@"HIDE_TAB_LABELS_DESC"), HideTabLabels),
             YMToggle(LOC(@"HIDE_HOME_TAB"), LOC(@"HIDE_HOME_TAB_DESC"), HideHomeTab),

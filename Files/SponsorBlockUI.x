@@ -1,6 +1,9 @@
 #import "Headers.h"
 #import <objc/message.h>
 
+extern UIWindow *sbGetKeyWindow(void);
+extern UIView *sbGetNotificationParent(void);
+
 #pragma mark - SBSkipNotificationView Implementation
 
 @implementation SBSkipNotificationView
@@ -411,6 +414,7 @@
     %orig;
 }
 
+
 %new
 - (void)sbSegmentsDidLoad:(NSNotification *)notification {
     @try {
@@ -545,6 +549,12 @@
     CGFloat rightPad = 12.0;
     CGFloat topPad = 52.0;
     btn.frame = CGRectMake(self.bounds.size.width - 40 - rightPad, topPad, 40, 40);
+}
+
+- (void)setOverlayVisible:(BOOL)visible {
+    %orig;
+    UIButton *btn = (UIButton *)[self viewWithTag:9901];
+    if (btn) btn.hidden = !visible;
 }
 
 %new

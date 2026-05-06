@@ -9,7 +9,8 @@ typedef NS_ENUM(NSInteger, YMRowType) {
     YMRowTypeToggle = 0,
     YMRowTypePicker,
     YMRowTypeAction,
-    YMRowTypeHeader
+    YMRowTypeHeader,
+    YMRowTypeSegment
 };
 
 @interface YMSettingsItem : NSObject
@@ -20,9 +21,12 @@ typedef NS_ENUM(NSInteger, YMRowType) {
 @property (nonatomic, strong) NSArray<NSString *> *pickerOptions;
 @property (nonatomic, assign) NSInteger pickerDefault;
 @property (nonatomic, copy) void (^action)(UIViewController *vc);
+@property (nonatomic, strong) NSArray<NSNumber *> *segmentIcons;
 + (instancetype)toggleWithTitle:(NSString *)title subtitle:(NSString *)subtitle key:(NSString *)key;
 + (instancetype)pickerWithTitle:(NSString *)title subtitle:(NSString *)subtitle key:(NSString *)key options:(NSArray<NSString *> *)options defaultValue:(NSInteger)defaultValue;
 + (instancetype)actionWithTitle:(NSString *)title subtitle:(NSString *)subtitle action:(void (^)(UIViewController *vc))action;
++ (instancetype)headerWithTitle:(NSString *)title;
++ (instancetype)segmentWithTitle:(NSString *)title key:(NSString *)key icons:(NSArray<NSNumber *> *)icons defaultValue:(NSInteger)defaultValue;
 @end
 
 @implementation YMSettingsItem
@@ -60,6 +64,16 @@ typedef NS_ENUM(NSInteger, YMRowType) {
     YMSettingsItem *item = [[YMSettingsItem alloc] init];
     item.type = YMRowTypeHeader;
     item.title = title;
+    return item;
+}
+
++ (instancetype)segmentWithTitle:(NSString *)title key:(NSString *)key icons:(NSArray<NSNumber *> *)icons defaultValue:(NSInteger)defaultValue {
+    YMSettingsItem *item = [[YMSettingsItem alloc] init];
+    item.type = YMRowTypeSegment;
+    item.title = title;
+    item.key = key;
+    item.segmentIcons = icons;
+    item.pickerDefault = defaultValue;
     return item;
 }
 
@@ -149,6 +163,8 @@ static const void *kYMSwitchKeyAssoc = &kYMSwitchKeyAssoc;
         return [self actionCellForItem:item tableView:tableView];
     } else if (item.type == YMRowTypeHeader) {
         return [self headerCellForItem:item tableView:tableView];
+    } else if (item.type == YMRowTypeSegment) {
+        return [self segmentCellForItem:item tableView:tableView];
     }
     return [self pickerCellForItem:item tableView:tableView];
 }
@@ -225,6 +241,75 @@ static const void *kYMSwitchKeyAssoc = &kYMSwitchKeyAssoc;
     cell.textLabel.textColor = [self ymSecondaryColor];
     cell.textLabel.font = [UIFont systemFontOfSize:14 weight:UIFontWeightRegular];
     return cell;
+}
+
+#pragma mark - Segment Cell
+
+- (UITableViewCell *)segmentCellForItem:(YMSettingsItem *)item tableView:(UITableView *)tableView {
+    UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
+    cell.backgroundColor = [UIColor clearColor];
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+
+    UILabel *titleLabel = [[UILabel alloc] init];
+    titleLabel.text = item.title;
+    titleLabel.textColor = [self ymTextColor];
+    titleLabel.font = [UIFont systemFontOfSize:16 weight:UIFontWeightMedium];
+    titleLabel.translatesAutoresizingMaskIntoConstraints = NO;
+    [cell.contentView addSubview:titleLabel];
+
+    NSMutableArray *items = [NSMutableArray array];
+    for (NSUInteger i = 0; i < item.segmentIcons.count; i++) {
+        [items addObject:@""];
+    }
+    UISegmentedControl *segment = [[UISegmentedControl alloc] initWithItems:items];
+
+    for (NSInteger i = 0; i < (NSInteger)item.segmentIcons.count; i++) {
+        YTIIcon *ytIcon = [NSClassFromString(@"YTIIcon") new];
+        if (ytIcon) {
+            ((void (*)(id, SEL, int))objc_msgSend)(ytIcon, @selector(setIconType:), [item.segmentIcons[i] intValue]);
+            UIImage *iconImage = nil;
+            if ([ytIcon respondsToSelector:@selector(iconImageWithColor:)]) {
+                iconImage = [ytIcon iconImageWithColor:[UIColor whiteColor]];
+            } else if ([ytIcon respondsToSelector:@selector(iconImageWithSelected:)]) {
+                iconImage = [ytIcon iconImageWithSelected:NO];
+            }
+            if (iconImage) {
+                [segment setImage:iconImage forSegmentAtIndex:i];
+            }
+        }
+    }
+
+    segment.selectedSegmentIndex = [[NSUserDefaults standardUserDefaults] integerForKey:item.key];
+    segment.backgroundColor = [UIColor colorWithRed:0.13 green:0.13 blue:0.13 alpha:1.0];
+    segment.selectedSegmentTintColor = [UIColor colorWithRed:0.25 green:0.25 blue:0.25 alpha:1.0];
+    segment.layer.cornerRadius = 8.0;
+    segment.clipsToBounds = YES;
+
+    objc_setAssociatedObject(segment, kYMSwitchKeyAssoc, item.key, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    [segment addTarget:self action:@selector(segmentChanged:) forControlEvents:UIControlEventValueChanged];
+
+    segment.translatesAutoresizingMaskIntoConstraints = NO;
+    [cell.contentView addSubview:segment];
+
+    [NSLayoutConstraint activateConstraints:@[
+        [titleLabel.leadingAnchor constraintEqualToAnchor:cell.contentView.leadingAnchor constant:16],
+        [titleLabel.topAnchor constraintEqualToAnchor:cell.contentView.topAnchor constant:12],
+
+        [segment.leadingAnchor constraintEqualToAnchor:cell.contentView.leadingAnchor constant:16],
+        [segment.trailingAnchor constraintEqualToAnchor:cell.contentView.trailingAnchor constant:-16],
+        [segment.topAnchor constraintEqualToAnchor:titleLabel.bottomAnchor constant:10],
+        [segment.bottomAnchor constraintEqualToAnchor:cell.contentView.bottomAnchor constant:-12],
+        [segment.heightAnchor constraintEqualToConstant:36]
+    ]];
+
+    return cell;
+}
+
+- (void)segmentChanged:(UISegmentedControl *)sender {
+    NSString *key = objc_getAssociatedObject(sender, kYMSwitchKeyAssoc);
+    if (key) {
+        [[NSUserDefaults standardUserDefaults] setInteger:sender.selectedSegmentIndex forKey:key];
+    }
 }
 
 #pragma mark - Picker Cell
@@ -318,6 +403,10 @@ YMSettingsItem *YMAction(NSString *title, NSString *subtitle, void (^action)(UIV
 
 YMSettingsItem *YMHeader(NSString *title) {
     return [YMSettingsItem headerWithTitle:title];
+}
+
+YMSettingsItem *YMSegment(NSString *title, NSString *key, NSArray<NSNumber *> *icons, NSInteger defaultValue) {
+    return [YMSettingsItem segmentWithTitle:title key:key icons:icons defaultValue:defaultValue];
 }
 
 #pragma mark - Entry Point

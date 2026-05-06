@@ -1,18 +1,70 @@
 #import "Headers.h"
 #import <AudioToolbox/AudioToolbox.h>
 
-static UIWindow *sbGetKeyWindow(void) {
+@interface SBPassthroughView : UIView
+@end
+@implementation SBPassthroughView
+- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
+    UIView *hit = [super hitTest:point withEvent:event];
+    return (hit == self) ? nil : hit;
+}
+@end
+
+@interface SBPassthroughWindow : UIWindow
+@end
+@implementation SBPassthroughWindow
+- (BOOL)_canBecomeKeyWindow { return NO; }
+- (BOOL)_canAffectStatusBarAppearance { return NO; }
+- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
+    UIView *rootView = self.rootViewController.view;
+    if (!rootView) return nil;
+    CGPoint convertedPoint = [rootView convertPoint:point fromView:self];
+    UIView *hitView = [rootView hitTest:convertedPoint withEvent:event];
+    if (!hitView || hitView == rootView) return nil;
+    return hitView;
+}
+@end
+
+static SBPassthroughWindow *sbOverlayWindow = nil;
+
+UIView *sbGetNotificationParent(void) {
+    if (sbOverlayWindow && sbOverlayWindow.windowScene.activationState == UISceneActivationStateUnattached) {
+        sbOverlayWindow = nil;
+    }
+    if (!sbOverlayWindow) {
+        UIWindowScene *activeScene = nil;
+        for (UIWindowScene *scene in [UIApplication sharedApplication].connectedScenes) {
+            if (scene.activationState == UISceneActivationStateForegroundActive) {
+                activeScene = scene;
+                break;
+            }
+        }
+        if (!activeScene) {
+            activeScene = (UIWindowScene *)[[[UIApplication sharedApplication].connectedScenes allObjects] firstObject];
+        }
+        if (!activeScene) return nil;
+
+        sbOverlayWindow = [[SBPassthroughWindow alloc] initWithWindowScene:activeScene];
+        sbOverlayWindow.frame = activeScene.coordinateSpace.bounds;
+        sbOverlayWindow.windowLevel = UIWindowLevelAlert - 1;
+        sbOverlayWindow.backgroundColor = [UIColor clearColor];
+        sbOverlayWindow.hidden = NO;
+
+        UIViewController *rootVC = [[UIViewController alloc] init];
+        rootVC.view = [[SBPassthroughView alloc] initWithFrame:sbOverlayWindow.bounds];
+        rootVC.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        rootVC.view.backgroundColor = [UIColor clearColor];
+        sbOverlayWindow.rootViewController = rootVC;
+    }
+    return sbOverlayWindow.rootViewController.view;
+}
+
+UIWindow *sbGetKeyWindow(void) {
     for (UIWindowScene *scene in [UIApplication sharedApplication].connectedScenes) {
         if (scene.activationState == UISceneActivationStateForegroundActive) {
             for (UIWindow *window in scene.windows) {
                 if (window.isKeyWindow) return window;
             }
-        }
-    }
-    // Fallback: any connected scene's key window
-    for (UIWindowScene *scene in [UIApplication sharedApplication].connectedScenes) {
-        for (UIWindow *window in scene.windows) {
-            if (window.isKeyWindow) return window;
         }
     }
     return nil;
@@ -300,7 +352,7 @@ UIColor *SBColorFromHex(NSString *hexString) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             __strong typeof(weakSelf) strongSelf = weakSelf;
             if (!strongSelf) return;
-            UIView *parentView = sbGetKeyWindow();
+            UIView *parentView = sbGetNotificationParent();
             strongSelf.sbNotificationView = [SBSkipNotificationView showInView:parentView
                 message:message
                 buttonTitle:unskipTitle
@@ -324,7 +376,7 @@ UIColor *SBColorFromHex(NSString *hexString) {
     float alertDuration = FLOAT_FOR_KEY(SBSkipAlertDuration);
     if (alertDuration <= 0) alertDuration = 5.0;
 
-    UIView *parentView = sbGetKeyWindow();
+    UIView *parentView = sbGetNotificationParent();
     __weak typeof(self) weakSelf = self;
     self.sbNotificationView = [SBSkipNotificationView showInView:parentView
         message:message
@@ -343,7 +395,7 @@ UIColor *SBColorFromHex(NSString *hexString) {
             NSBundle *bundle = [NSBundle bundleWithPath:[[NSBundle mainBundle] pathForResource:@"YouMod" ofType:@"bundle"]];
             NSString *message = [bundle localizedStringForKey:@"SB_JUMP_TO_HIGHLIGHT" value:@"Highlight available. Jump to the point?" table:nil];
             NSString *skipTitle = [bundle localizedStringForKey:@"SB_SKIP_NOW" value:@"Skip" table:nil];
-            UIView *parentView = sbGetKeyWindow();
+            UIView *parentView = sbGetNotificationParent();
             self.sbNotificationView = [SBSkipNotificationView showInView:parentView
                 message:message
                 buttonTitle:skipTitle
@@ -363,7 +415,7 @@ UIColor *SBColorFromHex(NSString *hexString) {
             if (IS_ENABLED(SBShowNotifications)) {
                 NSBundle *bundle = [NSBundle bundleWithPath:[[NSBundle mainBundle] pathForResource:@"YouMod" ofType:@"bundle"]];
                 NSString *message = [bundle localizedStringForKey:@"SB_JUMPED_TO_HIGHLIGHT" value:@"Jumped to highlight" table:nil];
-                self.sbNotificationView = [SBSkipNotificationView showInView:sbGetKeyWindow()
+                self.sbNotificationView = [SBSkipNotificationView showInView:sbGetNotificationParent()
                     message:message
                     buttonTitle:nil
                     action:nil
