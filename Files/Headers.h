@@ -328,6 +328,7 @@ typedef NS_ENUM(NSUInteger, GestureSection) {
 
 @interface YTSingleVideoController (YouMod)
 @property (nonatomic, assign, readonly) CGFloat totalMediaTime;
+- (void)setVideoFormatConstraint:(id)arg;
 @end
 
 // SponsorBlock action modes
