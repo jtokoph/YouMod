@@ -24,6 +24,7 @@
 "ERROR_NO_KEYS_IMPORT" = "Không có từ khóa nào khả dụng để nhập";
 "ERROR_NO_KEYS_EXPORT" = "Không có từ khóa nào khả dụng để xuất";
 "OVERRIDE" = "Thao tác này sẽ ghi đè lên các cài đặt hiện tại của bạn. Bạn có muốn tiếp tục không?";
+"DISABLED" = "Disabled";
 
 "CACHE" = "Quản lý bộ nhớ tạm";
 "CLEARCACHE" = "Xóa bộ nhớ tạm";
@@ -78,6 +79,8 @@
 "HIDE_MEMBER_BUTTON_DESC" = "Ẩn nút 'Tham gia' hội viên trong kênh và phần mô tả video.";
 
 "PLAYER" = "Trình phát video";
+"DEFAULT_SPEED" = "Default playback rate";
+"DEFAULT_SPEED_DESC" = "Overrides the default playback speed.";
 "HIDE_AUTOPLAY" = "Ẩn công tắc Tự động phát";
 "HIDE_AUTOPLAY_DESC" = "Ẩn công tắc tự động phát trong trình phát.";
 "HIDE_CAPTIONS_BUTTON" = "Ẩn nút Phụ đề (CC)";

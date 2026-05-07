@@ -225,6 +225,9 @@ static NSString *GetCacheSize() { // YTLite - @dayanch96
     // Player
     YTSettingsSectionItem *playergroup = [YTSettingsSectionItemClass itemWithTitle:LOC(@"PLAYER") accessibilityIdentifier:nil detailTextBlock:nil selectBlock:^BOOL (YTSettingsCell *cell, NSUInteger arg1) {
         YMPushSubSettings(LOC(@"PLAYER"), @[
+            // YMPicker(LOC(@"QUALITY_WIFI"), LOC(@"QUALITY_WIFI_DESC"), @"GestureHUDSize", (@[LOC(@"SMALL"), LOC(@"NORMAL"), LOC(@"LARGE"), LOC(@"EXTRALARGE"), LOC(@"MAX")]), 1),
+            // YMPicker(LOC(@"QUALITY_CELLULAR"), LOC(@"QUALITY_CELLULAR_DESC"), @"GestureHUDSize", (@[LOC(@"SMALL"), LOC(@"NORMAL"), LOC(@"LARGE"), LOC(@"EXTRALARGE"), LOC(@"MAX")]), 1),
+            YMPicker(LOC(@"DEFAULT_SPEED"), LOC(@"DEFAULT_SPEED_DESC"), AutoSpeedIndex, (@[LOC(@"DISABLED"), @"0.25x", @"0.5x", @"0.75x", @"1x", @"1.25x", @"1.5x", @"1.75x", @"2x"]), 0),
             YMToggle(LOC(@"HIDE_AUTOPLAY"), LOC(@"HIDE_AUTOPLAY_DESC"), HideAutoPlayToggle),
             YMToggle(LOC(@"HIDE_CAPTIONS_BUTTON"), LOC(@"HIDE_CAPTIONS_BUTTON_DESC"), HideCaptionsButton),
             YMToggle(LOC(@"HIDE_CAST_BUTTON_PLAYER"), LOC(@"HIDE_CAST_BUTTON_PLAYER_DESC"), HideCastButtonPlayer),

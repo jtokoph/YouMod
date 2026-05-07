@@ -301,6 +301,8 @@ static void YouModAddEndTime(YTPlayerViewController *self, YTSingleVideoControll
     if (IS_ENABLED(AutoFullScreen)) [self performSelector:@selector(YouModAutoFullscreen) withObject:nil afterDelay:0.75];
     if (IS_ENABLED(ShortsToRegular)) [self performSelector:@selector(YouModShortsToRegular) withObject:nil afterDelay:0.75];
     if (IS_ENABLED(DisablesCaptions)) [self performSelector:@selector(YouModTurnOffCaptions) withObject:nil afterDelay:1.0];
+    if (INTFORVAL(AutoSpeedIndex) != 0) [self performSelector:@selector(YouModSetAutoSpeed) withObject:nil afterDelay:0.75];
+    // if (INTFORVAL(WifiQualityIndex) != 0 || INTFORVAL(CellQualityIndex) != 0) [self performSelector:@selector(YouModAutoQuality) withObject:nil afterDelay:1.0];
 }
 
 - (void)prepareToLoadWithPlayerTransition:(id)arg1 expectedLayout:(id)arg2 {
@@ -309,6 +311,8 @@ static void YouModAddEndTime(YTPlayerViewController *self, YTSingleVideoControll
     if (IS_ENABLED(AutoFullScreen)) [self performSelector:@selector(YouModAutoFullscreen) withObject:nil afterDelay:0.75];
     if (IS_ENABLED(ShortsToRegular)) [self performSelector:@selector(YouModShortsToRegular) withObject:nil afterDelay:0.75];
     if (IS_ENABLED(DisablesCaptions)) [self performSelector:@selector(YouModTurnOffCaptions) withObject:nil afterDelay:1.0];
+    if (INTFORVAL(AutoSpeedIndex) != 0) [self performSelector:@selector(YouModSetAutoSpeed) withObject:nil afterDelay:0.75];
+    // if (INTFORVAL(WifiQualityIndex) != 0 || INTFORVAL(CellQualityIndex) != 0) [self performSelector:@selector(YouModAutoQuality) withObject:nil afterDelay:1.0];
 }
 
 %new
@@ -324,7 +328,78 @@ static void YouModAddEndTime(YTPlayerViewController *self, YTSingleVideoControll
     [watchController showFullScreen];
 }
 
+%new
+- (void)YouModSetAutoSpeed {
+    if ([self.activeVideoPlayerOverlay isKindOfClass:NSClassFromString(@"YTMainAppVideoPlayerOverlayViewController")]
+        && [self.view.superview isKindOfClass:NSClassFromString(@"YTWatchView")]) {
+        YTMainAppVideoPlayerOverlayViewController *overlayVC = (YTMainAppVideoPlayerOverlayViewController *)self.activeVideoPlayerOverlay;
+
+        NSArray *speedLabels = @[@0.01, @0.25, @0.5, @0.75, @1.0, @1.25, @1.5, @1.75, @2.0];
+        [overlayVC setPlaybackRate:[speedLabels[INTFORVAL(AutoSpeedIndex)] floatValue]];
+    }
+}
+
 /*
+%new
+- (void)YouModAutoQuality {
+    if (![self.view.superview isKindOfClass:NSClassFromString(@"YTWatchView")]) {
+        return;
+    }
+
+    NetworkStatus status = [[Reachability reachabilityForInternetConnection] currentReachabilityStatus];
+    NSInteger kQualityIndex = status == ReachableViaWiFi ? INTFORVAL(WifiQualityIndex) : INTFORVAL(CellQualityIndex);
+
+    NSString *bestQualityLabel;
+    int highestResolution = 0;
+    for (MLFormat *format in self.activeVideo.selectableVideoFormats) {
+        int reso = format.singleDimensionResolution;
+        if (reso > highestResolution) {
+            highestResolution = reso;
+            bestQualityLabel = format.qualityLabel;
+        }
+    }
+
+    NSArray *qualityLabels = @[@"Default", bestQualityLabel, @"2160p60", @"2160p", @"1440p60", @"1440p", @"1080p60", @"1080p", @"720p60", @"720p", @"480p", @"360p"];
+    NSString *qualityLabel = qualityLabels[kQualityIndex];
+
+    if (![qualityLabel isEqualToString:bestQualityLabel]) {
+        BOOL exactMatch = NO;
+        NSString *closestQualityLabel = qualityLabel;
+
+        for (MLFormat *format in self.activeVideo.selectableVideoFormats) {
+            if ([format.qualityLabel isEqualToString:qualityLabel]) {
+                exactMatch = YES;
+                break;
+            }
+        }
+
+        if (!exactMatch) {
+            NSInteger bestQualityDifference = NSIntegerMax;
+
+            for (MLFormat *format in self.activeVideo.selectableVideoFormats) {
+                NSArray *formatСomponents = [format.qualityLabel componentsSeparatedByString:@"p"];
+                NSArray *targetComponents = [qualityLabel componentsSeparatedByString:@"p"];
+                if (formatСomponents.count == 2) {
+                    NSInteger formatQuality = [formatСomponents.firstObject integerValue];
+                    NSInteger targetQuality = [targetComponents.firstObject integerValue];
+                    NSInteger difference = labs(formatQuality - targetQuality);
+                    if (difference < bestQualityDifference) {
+                        bestQualityDifference = difference;
+                        closestQualityLabel = format.qualityLabel;
+                    }
+                }
+            }
+
+            qualityLabel = closestQualityLabel;
+        }
+    }
+
+    MLQuickMenuVideoQualitySettingFormatConstraint *fc = [[%c(MLQuickMenuVideoQualitySettingFormatConstraint) alloc] init];
+    if ([fc respondsToSelector:@selector(initWithVideoQualitySetting:formatSelectionReason:qualityLabel:)]) {
+        [self.activeVideo setVideoFormatConstraint:[fc initWithVideoQualitySetting:3 formatSelectionReason:2 qualityLabel:qualityLabel]];
+    }
+}
+
 - (void)singleVideo:(YTSingleVideoController *)video currentVideoTimeDidChange:(YTSingleVideoTime *)time {
     %orig;
     YouModAddEndTime(self, video, time);

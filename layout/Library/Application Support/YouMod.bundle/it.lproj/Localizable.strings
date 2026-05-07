@@ -24,6 +24,7 @@
 "ERROR_NO_KEYS_IMPORT" = "Non ci sono chiavi valide da importare in questo file";
 "ERROR_NO_KEYS_EXPORT" = "Non ci sono chiavi valide da esportare in questo file";
 "OVERRIDE" = "Questo sovrascriverà le tue impostazioni attuali. Vuoi continuare?";
+"DISABLED" = "Disabled";
 
 "CACHE" = "Gestione cache";
 "CLEARCACHE" = "Pulisci cache";
@@ -78,6 +79,8 @@
 "HIDE_MEMBER_BUTTON_DESC" = "Nasconde il pulsante 'Abbonati' nei canali e nelle descrizioni dei video.";
 
 "PLAYER" = "Player";
+"DEFAULT_SPEED" = "Default playback rate";
+"DEFAULT_SPEED_DESC" = "Overrides the default playback speed.";
 "HIDE_AUTOPLAY" = "Nascondi interruttore riproduzione automatica";
 "HIDE_AUTOPLAY_DESC" = "Nasconde l'interruttore della riproduzione automatica nel player.";
 "HIDE_CAPTIONS_BUTTON" = "Nascondi pulsante sottotitoli";

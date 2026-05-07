@@ -24,6 +24,7 @@
 "ERROR_NO_KEYS_IMPORT" = "No available keys to import";
 "ERROR_NO_KEYS_EXPORT" = "No available keys to export";
 "OVERRIDE" = "This will override the current settings. Do you want to continue?";
+"DISABLED" = "Disabled";
 
 "CACHE" = "Cache management";
 "CLEARCACHE" = "Clear cache";
@@ -78,6 +79,8 @@
 "HIDE_MEMBER_BUTTON_DESC" = "Hides the 'Join' button in channels and video descriptions.";
 
 "PLAYER" = "Player";
+"DEFAULT_SPEED" = "Default playback rate";
+"DEFAULT_SPEED_DESC" = "Overrides the default playback speed.";
 "HIDE_AUTOPLAY" = "Hide autoplay switch";
 "HIDE_AUTOPLAY_DESC" = "Hide autoplay switch in the video overlay.";
 "HIDE_CAPTIONS_BUTTON" = "Hide captions button";
@@ -229,6 +232,8 @@
 "HIDE_SHORTS_TAB_DESC" = "Hide Shorts tab in the tab bar.";
 "HIDE_CREATE_BUTTON" = "Hide Create button";
 "HIDE_CREATE_BUTTON_DESC" = "Hide Create button in the tab bar.";
+"HIDE_SUBSCRIPT_TAB" = "Hide Subscriptions tab";
+"HIDE_SUBSCRIPT_TAB_DESC" = "Hide Subscriptions tab in the tab bar.";
 "ADDS_HISTORY_TAB" = "Adds History tab";
 "ADDS_HISTORY_TAB_DESC" = "Adds History tab in the tab bar.";
 "ADDS_GAMING_TAB" = "Adds Gaming tab";

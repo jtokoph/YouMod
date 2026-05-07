@@ -24,6 +24,7 @@
 "ERROR_NO_KEYS_IMPORT" = "Aucun réglages à importer";
 "ERROR_NO_KEYS_EXPORT" = "Aucun réglages à exporter";
 "OVERRIDE" = "Cela va remplacer les réglages actuels. Souhaite-tu continuer?";
+"DISABLED" = "Disabled";
 
 "CACHE" = "Cache";
 "CLEARCACHE" = "Vider le cache";
@@ -78,6 +79,8 @@
 "HIDE_MEMBER_BUTTON_DESC" = "Cache le bouton 'Rejoindre' dans les chaînes et les descriptions de vidéos.";
 
 "PLAYER" = "Lecteur";
+"DEFAULT_SPEED" = "Default playback rate";
+"DEFAULT_SPEED_DESC" = "Overrides the default playback speed.";
 "HIDE_AUTOPLAY" = "Cacher le bouton lecture automatique";
 "HIDE_AUTOPLAY_DESC" = "Cache le bouton de lecture automatique dans l'interface vidéo.";
 "HIDE_CAPTIONS_BUTTON" = "Cacher le bouton des sous-titres";

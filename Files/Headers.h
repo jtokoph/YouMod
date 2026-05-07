@@ -80,6 +80,9 @@
 #define HideShoppingButton @"YouModHideShoppingButton"
 #define HideMemberButton @"YouModHideMemberButton"
 // Player
+// #define WifiQualityIndex @"YouModWifiQualityIndex"
+// #define CellQualityIndex @"YouModCellQualityIndex"
+#define AutoSpeedIndex @"YouModAutoSpeedIndex"
 #define HideAutoPlayToggle @"YouModHideAutoPlayToggle"
 #define HideCaptionsButton @"YouModHideCaptionsButton"
 #define HideCastButtonPlayer @"YouModHideCastButtonPlayer"
@@ -248,6 +251,7 @@ typedef NS_ENUM(NSUInteger, GestureSection) {
 - (void)YouModAutoFullscreen;
 - (void)YouModTurnOffCaptions;
 - (void)YouModShortsToRegular;
+- (void)YouModSetAutoSpeed;
 - (void)setActiveCaptionTrack:(id)arg1 source:(long long)arg2;
 - (void)setPlaybackRate:(float)rate;
 @end

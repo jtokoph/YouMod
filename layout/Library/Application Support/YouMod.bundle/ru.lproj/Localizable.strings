@@ -24,6 +24,7 @@
 "ERROR_NO_KEYS_IMPORT" = "Нет доступных ключей для импорта";
 "ERROR_NO_KEYS_EXPORT" = "Нет доступных ключей для экспорта";
 "OVERRIDE" = "Это перезапишет текущие настройки. Продолжить?";
+"DISABLED" = "Disabled";
 
 "CACHE" = "Кэш";
 "CLEARCACHE" = "Очистить кэш";
@@ -78,6 +79,8 @@
 "HIDE_MEMBER_BUTTON_DESC" = "Скрыть кнопку «Стать спонсором» на каналах и в описаниях видео.";
 
 "PLAYER" = "Плеер";
+"DEFAULT_SPEED" = "Default playback rate";
+"DEFAULT_SPEED_DESC" = "Overrides the default playback speed.";
 "HIDE_AUTOPLAY" = "Скрыть переключатель автовоспроизведения";
 "HIDE_AUTOPLAY_DESC" = "Скрыть переключатель автовоспроизведения в интерфейсе видео.";
 "HIDE_CAPTIONS_BUTTON" = "Скрыть кнопку субтитров";

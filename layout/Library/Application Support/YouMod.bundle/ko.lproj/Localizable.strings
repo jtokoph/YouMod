@@ -24,6 +24,7 @@
 "ERROR_NO_KEYS_IMPORT" = "불러올 수 있는 설정값이 없습니다.";
 "ERROR_NO_KEYS_EXPORT" = "내보낼 수 있는 설정값이 없습니다.";
 "OVERRIDE" = "기존 설정에 덮어쓰게 됩니다. 계속하시겠습니까?";
+"DISABLED" = "Disabled";
 
 "CACHE" = "캐시 (임시 데이터)";
 "CLEARCACHE" = "캐시 지우기";
@@ -78,6 +79,8 @@
 "HIDE_MEMBER_BUTTON_DESC" = "채널 홈이나 영상 설명창에서 멤버십 '가입' 버튼을 숨깁니다.";
 
 "PLAYER" = "동영상 플레이어";
+"DEFAULT_SPEED" = "Default playback rate";
+"DEFAULT_SPEED_DESC" = "Overrides the default playback speed.";
 "HIDE_AUTOPLAY" = "자동재생 스위치 숨기기";
 "HIDE_AUTOPLAY_DESC" = "영상 화면 위쪽에 있는 자동재생 켜기/끄기 스위치를 숨깁니다.";
 "HIDE_CAPTIONS_BUTTON" = "자막 버튼 숨기기";
