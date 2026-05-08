@@ -49,6 +49,7 @@ This project uses GPLv3 license. See [LICENSE](https://github.com/Tonwalter888/Y
 - [uYouEnhanced](https://github.com/arichornlover/uYouEnhanced) - arichornlover
 - [YTweaks](https://github.com/fosterbarnes/YTweaks) - fosterbarnes
 - [daisuke1227](https://github.com/daisuke1227) - Implementing download features
+- [grohit1810](https://github.com/grohit1810) - Implementing SponsorBlock and whole new settings logic
 - And [PoomSmart](https://github.com/PoomSmart)'s tweaks
 
 Also thanks to all the contributors in the past!
