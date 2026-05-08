@@ -59,17 +59,6 @@ UIView *sbGetNotificationParent(void) {
     return sbOverlayWindow.rootViewController.view;
 }
 
-UIWindow *sbGetKeyWindow(void) {
-    for (UIWindowScene *scene in [UIApplication sharedApplication].connectedScenes) {
-        if (scene.activationState == UISceneActivationStateForegroundActive) {
-            for (UIWindow *window in scene.windows) {
-                if (window.isKeyWindow) return window;
-            }
-        }
-    }
-    return nil;
-}
-
 static NSMutableDictionary<NSString *, NSArray<SBSegment *> *> *sbSegmentCache;
 
 static NSArray<NSString *> *sbAllCategories() {
@@ -344,7 +333,7 @@ UIColor *SBColorFromHex(NSString *hexString) {
         NSString *unskipTitle = [bundle localizedStringForKey:@"SB_UNSKIP" value:@"Unskip" table:nil];
 
         float alertDuration = FLOAT_FOR_KEY(SBUnskipAlertDuration);
-        if (alertDuration <= 0) alertDuration = 3.0;
+        if (alertDuration < 2.0 || alertDuration > 20.0) alertDuration = 4.0;
 
         __weak typeof(self) weakSelf = self;
         // Delay notification so the seek completes before the banner is shown,
@@ -374,7 +363,7 @@ UIColor *SBColorFromHex(NSString *hexString) {
     NSString *message = [NSString stringWithFormat:[bundle localizedStringForKey:@"SB_DETECTED" value:@"%@ detected" table:nil], catName];
 
     float alertDuration = FLOAT_FOR_KEY(SBSkipAlertDuration);
-    if (alertDuration <= 0) alertDuration = 5.0;
+    if (alertDuration < 2.0 || alertDuration > 20.0) alertDuration = 4.0;
 
     UIView *parentView = sbGetNotificationParent();
     __weak typeof(self) weakSelf = self;
@@ -395,12 +384,16 @@ UIColor *SBColorFromHex(NSString *hexString) {
             NSBundle *bundle = [NSBundle bundleWithPath:[[NSBundle mainBundle] pathForResource:@"YouMod" ofType:@"bundle"]];
             NSString *message = [bundle localizedStringForKey:@"SB_JUMP_TO_HIGHLIGHT" value:@"Highlight available. Jump to the point?" table:nil];
             NSString *skipTitle = [bundle localizedStringForKey:@"SB_SKIP_NOW" value:@"Skip" table:nil];
+
+            float alertDuration = FLOAT_FOR_KEY(SBSkipAlertDuration);
+            if (alertDuration < 2.0 || alertDuration > 20.0) alertDuration = 4.0;
+
             UIView *parentView = sbGetNotificationParent();
             self.sbNotificationView = [SBSkipNotificationView showInView:parentView
                 message:message
                 buttonTitle:skipTitle
                 action:^{ [self sbSkipToHighlight]; }
-                duration:8.0];
+                duration:alertDuration];
             break;
         }
     }
@@ -410,16 +403,26 @@ UIColor *SBColorFromHex(NSString *hexString) {
 - (void)sbSkipToHighlight {
     for (SBSegment *segment in self.sbSegments) {
         if ([segment.category isEqualToString:@"poi_highlight"]) {
+            CGFloat previousTime = [self currentVideoMediaTime];
             [self seekToTime:(CGFloat)segment.startTime];
 
             if (IS_ENABLED(SBShowNotifications)) {
                 NSBundle *bundle = [NSBundle bundleWithPath:[[NSBundle mainBundle] pathForResource:@"YouMod" ofType:@"bundle"]];
                 NSString *message = [bundle localizedStringForKey:@"SB_JUMPED_TO_HIGHLIGHT" value:@"Jumped to highlight" table:nil];
+                NSString *unskipTitle = [bundle localizedStringForKey:@"SB_UNSKIP" value:@"Unskip" table:nil];
+
+                float alertDuration = FLOAT_FOR_KEY(SBUnskipAlertDuration);
+                if (alertDuration < 2.0 || alertDuration > 20.0) alertDuration = 4.0;
+
+                __weak typeof(self) weakSelf = self;
                 self.sbNotificationView = [SBSkipNotificationView showInView:sbGetNotificationParent()
                     message:message
-                    buttonTitle:nil
-                    action:nil
-                    duration:2.0];
+                    buttonTitle:unskipTitle
+                    action:^{
+                        __strong typeof(weakSelf) ss = weakSelf;
+                        if (ss) [ss seekToTime:previousTime];
+                    }
+                    duration:alertDuration];
             }
             break;
         }

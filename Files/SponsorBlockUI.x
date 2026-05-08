@@ -1,9 +1,6 @@
 #import "Headers.h"
 #import <objc/message.h>
 
-extern UIWindow *sbGetKeyWindow(void);
-extern UIView *sbGetNotificationParent(void);
-
 #pragma mark - SBSkipNotificationView Implementation
 
 @implementation SBSkipNotificationView
@@ -56,7 +53,7 @@ extern UIView *sbGetNotificationParent(void);
 
     NSString *iconName = @"forward.end.fill";
     if (buttonTitle && ([buttonTitle.lowercaseString containsString:@"unskip"] || [buttonTitle.lowercaseString containsString:@"back"])) {
-        iconName = @"backward.end.fill";
+        iconName = @"backward.fill";
     }
 
     UIImageSymbolConfiguration *config = [UIImageSymbolConfiguration configurationWithPointSize:14 weight:UIImageSymbolWeightMedium];

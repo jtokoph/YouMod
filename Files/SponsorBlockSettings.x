@@ -150,6 +150,28 @@ static const void *kSBColorIndexPathKey = &kSBColorIndexPathKey;
     ((void (*)(struct objc_super *, SEL, BOOL))objc_msgSendSuper)(&superStruct, @selector(viewWillAppear:), animated);
 }
 
+- (void)viewDidLayoutSubviews {
+    Class ytStyled = objc_getClass("YTStyledViewController");
+    struct objc_super superStruct = { self, ytStyled ?: [UIViewController class] };
+    ((void (*)(struct objc_super *, SEL))objc_msgSendSuper)(&superStruct, @selector(viewDidLayoutSubviews));
+
+    if (self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+        @try {
+            id backButton = [self valueForKey:@"_backButton"];
+            if ([backButton respondsToSelector:@selector(setTintColor:)]) {
+                [backButton performSelector:@selector(setTintColor:) withObject:[UIColor whiteColor]];
+            }
+        } @catch (NSException *e) {}
+    }
+}
+
+- (UIColor *)navBarForegroundColor {
+    if (self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+        return [UIColor whiteColor];
+    }
+    return nil;
+}
+
 - (UIColor *)sbTextColor {
     return (self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark)
         ? [UIColor whiteColor] : [UIColor labelColor];
@@ -323,7 +345,8 @@ static const void *kSBColorIndexPathKey = &kSBColorIndexPathKey;
     int rounded = (int)roundf(sender.value);
     sender.value = rounded;
     [[NSUserDefaults standardUserDefaults] setFloat:(float)rounded forKey:key];
-
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    
     UILabel *valueLabel = (UILabel *)[sender.superview viewWithTag:100 + sender.tag];
     valueLabel.text = [NSString stringWithFormat:@"%d secs", rounded];
 }

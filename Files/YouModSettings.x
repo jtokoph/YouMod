@@ -136,6 +136,28 @@ static const void *kYMSwitchKeyAssoc = &kYMSwitchKeyAssoc;
     ((void (*)(struct objc_super *, SEL, BOOL))objc_msgSendSuper)(&superStruct, @selector(viewWillAppear:), animated);
 }
 
+- (void)viewDidLayoutSubviews {
+    Class ytStyled = objc_getClass("YTStyledViewController");
+    struct objc_super superStruct = { self, ytStyled ?: [UIViewController class] };
+    ((void (*)(struct objc_super *, SEL))objc_msgSendSuper)(&superStruct, @selector(viewDidLayoutSubviews));
+
+    if (self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+        @try {
+            id backButton = [self valueForKey:@"_backButton"];
+            if ([backButton respondsToSelector:@selector(setTintColor:)]) {
+                [backButton performSelector:@selector(setTintColor:) withObject:[UIColor whiteColor]];
+            }
+        } @catch (NSException *e) {}
+    }
+}
+
+- (UIColor *)navBarForegroundColor {
+    if (self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+        return [UIColor whiteColor];
+    }
+    return nil;
+}
+
 - (UIColor *)ymTextColor {
     return (self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark)
         ? [UIColor whiteColor] : [UIColor labelColor];
