@@ -48,24 +48,29 @@
     [view addSubview:label];
 
     // Icon button (right side)
-    UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
-    button.translatesAutoresizingMaskIntoConstraints = NO;
+    BOOL showButton = (buttonTitle != nil || action != nil);
+    UIButton *button = nil;
 
-    NSString *iconName = @"forward.end.fill";
-    if (buttonTitle && ([buttonTitle.lowercaseString containsString:@"unskip"] || [buttonTitle.lowercaseString containsString:@"back"])) {
-        iconName = @"backward.fill";
+    if (showButton) {
+        button = [UIButton buttonWithType:UIButtonTypeCustom];
+        button.translatesAutoresizingMaskIntoConstraints = NO;
+
+        NSString *iconName = @"forward.end.fill";
+        if (buttonTitle && ([buttonTitle.lowercaseString containsString:@"unskip"] || [buttonTitle.lowercaseString containsString:@"back"])) {
+            iconName = @"backward.fill";
+        }
+
+        UIImageSymbolConfiguration *config = [UIImageSymbolConfiguration configurationWithPointSize:14 weight:UIImageSymbolWeightMedium];
+        UIImage *icon = [UIImage systemImageNamed:iconName withConfiguration:config];
+        [button setImage:icon forState:UIControlStateNormal];
+        button.tintColor = [UIColor whiteColor];
+        button.backgroundColor = [UIColor colorWithWhite:1.0 alpha:0.15];
+        button.layer.cornerRadius = 16.0;
+        button.clipsToBounds = YES;
+        [button addTarget:view action:@selector(actionButtonTapped) forControlEvents:UIControlEventTouchUpInside];
+        view.actionButton = button;
+        [view addSubview:button];
     }
-
-    UIImageSymbolConfiguration *config = [UIImageSymbolConfiguration configurationWithPointSize:14 weight:UIImageSymbolWeightMedium];
-    UIImage *icon = [UIImage systemImageNamed:iconName withConfiguration:config];
-    [button setImage:icon forState:UIControlStateNormal];
-    button.tintColor = [UIColor whiteColor];
-    button.backgroundColor = [UIColor colorWithWhite:1.0 alpha:0.15];
-    button.layer.cornerRadius = 16.0;
-    button.clipsToBounds = YES;
-    [button addTarget:view action:@selector(actionButtonTapped) forControlEvents:UIControlEventTouchUpInside];
-    view.actionButton = button;
-    [view addSubview:button];
 
     [parentView addSubview:view];
 
@@ -79,16 +84,24 @@
     ]];
 
     // Internal layout
-    [NSLayoutConstraint activateConstraints:@[
-        [label.leadingAnchor constraintEqualToAnchor:view.leadingAnchor constant:16.0],
-        [label.centerYAnchor constraintEqualToAnchor:view.centerYAnchor],
-        [label.trailingAnchor constraintEqualToAnchor:button.leadingAnchor constant:-10.0],
+    if (showButton) {
+        [NSLayoutConstraint activateConstraints:@[
+            [label.leadingAnchor constraintEqualToAnchor:view.leadingAnchor constant:16.0],
+            [label.centerYAnchor constraintEqualToAnchor:view.centerYAnchor],
+            [label.trailingAnchor constraintEqualToAnchor:button.leadingAnchor constant:-10.0],
 
-        [button.trailingAnchor constraintEqualToAnchor:view.trailingAnchor constant:-8.0],
-        [button.centerYAnchor constraintEqualToAnchor:view.centerYAnchor],
-        [button.widthAnchor constraintEqualToConstant:32.0],
-        [button.heightAnchor constraintEqualToConstant:32.0]
-    ]];
+            [button.trailingAnchor constraintEqualToAnchor:view.trailingAnchor constant:-8.0],
+            [button.centerYAnchor constraintEqualToAnchor:view.centerYAnchor],
+            [button.widthAnchor constraintEqualToConstant:32.0],
+            [button.heightAnchor constraintEqualToConstant:32.0]
+        ]];
+    } else {
+        [NSLayoutConstraint activateConstraints:@[
+            [label.leadingAnchor constraintEqualToAnchor:view.leadingAnchor constant:16.0],
+            [label.centerYAnchor constraintEqualToAnchor:view.centerYAnchor],
+            [label.trailingAnchor constraintEqualToAnchor:view.trailingAnchor constant:-40.0],
+        ]];
+    }
 
     // Pan gesture for interactive dismissal
     UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc] initWithTarget:view action:@selector(handlePan:)];
@@ -238,6 +251,38 @@
     } completion:^(BOOL finished) {
         [self removeFromSuperview];
     }];
+}
+
++ (instancetype)showSuccessInView:(UIView *)parentView message:(NSString *)message duration:(NSTimeInterval)duration {
+    SBSkipNotificationView *view = [self showInView:parentView message:message buttonTitle:nil action:nil duration:duration];
+    if (view) {
+        UIImageSymbolConfiguration *config = [UIImageSymbolConfiguration configurationWithPointSize:16 weight:UIImageSymbolWeightMedium];
+        UIImageView *iconView = [[UIImageView alloc] initWithImage:[UIImage systemImageNamed:@"checkmark.circle.fill" withConfiguration:config]];
+        iconView.tintColor = [UIColor systemGreenColor];
+        iconView.translatesAutoresizingMaskIntoConstraints = NO;
+        [view addSubview:iconView];
+        [NSLayoutConstraint activateConstraints:@[
+            [iconView.trailingAnchor constraintEqualToAnchor:view.trailingAnchor constant:-12.0],
+            [iconView.centerYAnchor constraintEqualToAnchor:view.centerYAnchor],
+        ]];
+    }
+    return view;
+}
+
++ (instancetype)showErrorInView:(UIView *)parentView message:(NSString *)message duration:(NSTimeInterval)duration {
+    SBSkipNotificationView *view = [self showInView:parentView message:message buttonTitle:nil action:nil duration:duration];
+    if (view) {
+        UIImageSymbolConfiguration *config = [UIImageSymbolConfiguration configurationWithPointSize:16 weight:UIImageSymbolWeightMedium];
+        UIImageView *iconView = [[UIImageView alloc] initWithImage:[UIImage systemImageNamed:@"xmark.circle.fill" withConfiguration:config]];
+        iconView.tintColor = [UIColor systemRedColor];
+        iconView.translatesAutoresizingMaskIntoConstraints = NO;
+        [view addSubview:iconView];
+        [NSLayoutConstraint activateConstraints:@[
+            [iconView.trailingAnchor constraintEqualToAnchor:view.trailingAnchor constant:-12.0],
+            [iconView.centerYAnchor constraintEqualToAnchor:view.centerYAnchor],
+        ]];
+    }
+    return view;
 }
 
 @end

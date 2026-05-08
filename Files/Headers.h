@@ -368,10 +368,14 @@ typedef NS_ENUM(NSInteger, SBSegmentAction) {
 @property (nonatomic, assign) NSTimeInterval remainingDuration;
 @property (nonatomic, assign) BOOL isPaused;
 + (instancetype)showInView:(UIView *)parentView message:(NSString *)message buttonTitle:(NSString *)buttonTitle action:(void (^)(void))action duration:(NSTimeInterval)duration;
++ (instancetype)showSuccessInView:(UIView *)parentView message:(NSString *)message duration:(NSTimeInterval)duration;
++ (instancetype)showErrorInView:(UIView *)parentView message:(NSString *)message duration:(NSTimeInterval)duration;
 - (void)dismiss;
 - (void)pauseProgress;
 - (void)resumeProgress;
 @end
+
+extern UIView *sbGetNotificationParent(void);
 
 @interface YTPlayerViewController (SponsorBlock)
 @property (nonatomic, strong) NSString *sbLastVideoID;

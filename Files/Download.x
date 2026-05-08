@@ -582,21 +582,36 @@ static UIViewController *YouModTopViewController(UIViewController *root) {
 }
 
 static void YouModSendToast(NSString *message, id responder) {
-    Class toastClass = NSClassFromString(@"YTToastResponderEvent");
-    id event = [toastClass eventWithMessage:message firstResponder:responder ?: YouModTopViewController(nil)];
-    if ([event respondsToSelector:@selector(send)]) {
-        [event send];
+    UIView *parent = sbGetNotificationParent();
+    if (parent) {
+        [SBSkipNotificationView showInView:parent message:message buttonTitle:nil action:nil duration:3.0];
         return;
     }
+    Class toastClass = NSClassFromString(@"YTToastResponderEvent");
+    id event = [toastClass eventWithMessage:message firstResponder:responder ?: YouModTopViewController(nil)];
+    if ([event respondsToSelector:@selector(send)]) [event send];
+}
 
-    UIViewController *presenter = YouModTopViewController([responder isKindOfClass:UIViewController.class] ? responder : nil);
-    if (!presenter) return;
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil message:message preferredStyle:UIAlertControllerStyleAlert];
-    [presenter presentViewController:alert animated:YES completion:^{
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [alert dismissViewControllerAnimated:YES completion:nil];
-        });
-    }];
+static void YouModSendSuccess(NSString *message) {
+    UIView *parent = sbGetNotificationParent();
+    if (parent) {
+        [SBSkipNotificationView showSuccessInView:parent message:message duration:3.0];
+        return;
+    }
+    Class toastClass = NSClassFromString(@"YTToastResponderEvent");
+    id event = [toastClass eventWithMessage:message firstResponder:YouModTopViewController(nil)];
+    if ([event respondsToSelector:@selector(send)]) [event send];
+}
+
+static void YouModSendError(NSString *message) {
+    UIView *parent = sbGetNotificationParent();
+    if (parent) {
+        [SBSkipNotificationView showErrorInView:parent message:message duration:4.0];
+        return;
+    }
+    Class toastClass = NSClassFromString(@"YTToastResponderEvent");
+    id event = [toastClass eventWithMessage:message firstResponder:YouModTopViewController(nil)];
+    if ([event respondsToSelector:@selector(send)]) [event send];
 }
 
 static NSString *YouModByteCount(unsigned long long bytes) {
@@ -713,7 +728,7 @@ static void YouModCopyDownloadDiagnostics(UIViewController *presenter) {
         return;
     }
     UIPasteboard.generalPasteboard.string = diagnostic;
-    YouModSendToast(@"Copied download diagnostics", presenter);
+    YouModSendSuccess(@"Copied download diagnostics");
 }
 
 static NSURL *YouModUniqueFileURL(NSString *fileName, NSString *extension) {
@@ -1765,7 +1780,7 @@ static void YouModPresentMenu(NSString *title, NSArray <YouModMenuItem *> *items
     NSURL *videoURL = [NSURL URLWithString:videoFormat.urlString];
     NSURL *audioURL = [NSURL URLWithString:audioFormat.urlString];
     if (!videoURL || !audioURL) {
-        YouModSendToast(@"No stream URL found", presenter);
+        YouModSendError(@"No stream URL found");
         return;
     }
 
@@ -1803,7 +1818,7 @@ static void YouModPresentMenu(NSString *title, NSArray <YouModMenuItem *> *items
 - (void)startDirectSingleVideoDownloadWithFormat:(YouModMediaFormat *)format fileName:(NSString *)fileName videoID:(NSString *)videoID presenter:(UIViewController *)presenter {
     NSURL *videoURL = [NSURL URLWithString:format.urlString];
     if (!videoURL) {
-        YouModSendToast(@"No stream URL found", presenter);
+        YouModSendError(@"No stream URL found");
         return;
     }
 
@@ -1852,7 +1867,7 @@ static void YouModPresentMenu(NSString *title, NSArray <YouModMenuItem *> *items
 - (void)startDirectAudioDownloadWithAudioFormat:(YouModMediaFormat *)audioFormat fileName:(NSString *)fileName videoID:(NSString *)videoID outputFormat:(YouModAudioOutputFormat *)outputFormat presenter:(UIViewController *)presenter {
     NSURL *audioURL = [NSURL URLWithString:audioFormat.urlString];
     if (!audioURL) {
-        YouModSendToast(@"No audio URL found", presenter);
+        YouModSendError(@"No audio URL found");
         return;
     }
     outputFormat = outputFormat ?: YouModDefaultAudioOutputFormat();
@@ -2083,15 +2098,15 @@ static void YouModPresentMenu(NSString *title, NSArray <YouModMenuItem *> *items
         [self cleanupTemporaryFiles];
         YouModSaveVideoToPhotos(fileURL, presenter, ^(BOOL success, NSError *error) {
             if (success) {
-                YouModSendToast(@"Saved to Photos", presenter);
+                YouModSendSuccess(@"Saved to Photos");
             } else {
-                YouModSendToast(error.localizedDescription ?: @"Cannot save to Photos", presenter);
+                YouModSendError(error.localizedDescription ?: @"Cannot save to Photos");
                 YouModShareFile(fileURL, presenter);
             }
         });
     } else {
         [self cleanupTemporaryFiles];
-        YouModSendToast(isVideo ? @"Download completed" : @"Audio saved", presenter);
+        YouModSendSuccess(isVideo ? @"Download completed" : @"Audio saved");
         if (!isVideo || (isVideo && !canSaveToPhotos)) YouModShareFile(fileURL, presenter);
     }
 }
@@ -2102,7 +2117,7 @@ static void YouModPresentMenu(NSString *title, NSArray <YouModMenuItem *> *items
     self.progressAlert = nil;
     self.progressView = nil;
     [self cleanupTemporaryFiles];
-    YouModSendToast(error.localizedDescription ?: @"Download failed", self.presenter);
+    YouModSendError(error.localizedDescription ?: @"Download failed");
 }
 
 - (void)URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask didWriteData:(int64_t)bytesWritten totalBytesWritten:(int64_t)totalBytesWritten totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite {
@@ -2133,7 +2148,7 @@ static void YouModPresentMenu(NSString *title, NSArray <YouModMenuItem *> *items
 static void YouModDownloadThumbnail(NSString *videoID, UIViewController *presenter) {
     NSURL *thumbnailURL = YouModThumbnailURLForVideoID(videoID);
     if (!thumbnailURL) {
-        YouModSendToast(@"No thumbnail found", presenter);
+        YouModSendError(@"No thumbnail found");
         return;
     }
 
@@ -2142,19 +2157,19 @@ static void YouModDownloadThumbnail(NSString *videoID, UIViewController *present
         UIImage *image = data ? [UIImage imageWithData:data] : nil;
         dispatch_async(dispatch_get_main_queue(), ^{
             if (!image || error) {
-                YouModSendToast(error.localizedDescription ?: @"Thumbnail failed", presenter);
+                YouModSendError(error.localizedDescription ?: @"Thumbnail failed");
                 return;
             }
             YouModRequestPhotoAccess(^(BOOL granted) {
                 if (!granted) {
-                    YouModSendToast(@"Photos access denied", presenter);
+                    YouModSendError(@"Photos access denied");
                     return;
                 }
                 [[PHPhotoLibrary sharedPhotoLibrary] performChanges:^{
                     [PHAssetChangeRequest creationRequestForAssetFromImage:image];
                 } completionHandler:^(BOOL success, NSError *saveError) {
                     dispatch_async(dispatch_get_main_queue(), ^{
-                        YouModSendToast(success ? @"Saved to Photos" : (saveError.localizedDescription ?: @"Save failed"), presenter);
+                        if (success) YouModSendSuccess(@"Saved to Photos"); else YouModSendError(saveError.localizedDescription ?: @"Save failed");
                     });
                 }];
             });
@@ -2167,7 +2182,7 @@ static void YouModCopyVideoInfo(YTPlayerViewController *player, UIViewController
     NSString *title = YouModTitleForPlayer(player);
     NSString *url = videoID.length ? [NSString stringWithFormat:@"https://youtu.be/%@", videoID] : @"";
     UIPasteboard.generalPasteboard.string = url.length ? [NSString stringWithFormat:@"%@\n%@", title, url] : title;
-    YouModSendToast(@"Copied video information", presenter);
+    YouModSendSuccess(@"Copied video information");
 }
 
 static void YouModShowVideoQualitySheet(YTPlayerViewController *player, UIViewController *presenter, UIView *sender) {
