@@ -376,7 +376,9 @@ static const void *kSBColorIndexPathKey = &kSBColorIndexPathKey;
     cell.textLabel.textColor = [self sbTextColor];
     cell.textLabel.font = [UIFont systemFontOfSize:16 weight:UIFontWeightMedium];
 
+    BOOL isHighlight = [category isEqualToString:@"poi_highlight"];
     NSString *actionKey = SB_ACTION_KEY(category);
+
     UIButton *menuButton = [UIButton buttonWithType:UIButtonTypeSystem];
     NSInteger currentAction = [[NSUserDefaults standardUserDefaults] integerForKey:actionKey];
     [menuButton setTitle:SBActionName(currentAction) forState:UIControlStateNormal];
@@ -387,10 +389,17 @@ static const void *kSBColorIndexPathKey = &kSBColorIndexPathKey;
     menuButton.tintColor = [self sbSecondaryTextColor];
 
     NSMutableArray *menuActions = [NSMutableArray array];
-    NSArray *actionDefs = @[@[@(SBSegmentActionDisable), @"SB_ACTION_DISABLE"],
-                            @[@(SBSegmentActionAutoSkip), @"SB_ACTION_AUTO_SKIP"],
-                            @[@(SBSegmentActionAsk), @"SB_ACTION_ASK"],
-                            @[@(SBSegmentActionDisplay), @"SB_ACTION_DISPLAY"]];
+    NSArray *actionDefs;
+    if (isHighlight) {
+        actionDefs = @[@[@(SBSegmentActionDisable), @"SB_ACTION_DISABLE"],
+                       @[@(SBSegmentActionSkipTo), @"SB_ACTION_SKIP_TO"],
+                       @[@(SBSegmentActionDisplay), @"SB_ACTION_DISPLAY"]];
+    } else {
+        actionDefs = @[@[@(SBSegmentActionDisable), @"SB_ACTION_DISABLE"],
+                       @[@(SBSegmentActionAutoSkip), @"SB_ACTION_AUTO_SKIP"],
+                       @[@(SBSegmentActionAsk), @"SB_ACTION_ASK"],
+                       @[@(SBSegmentActionDisplay), @"SB_ACTION_DISPLAY"]];
+    }
 
     NSBundle *bundle = SBSettingsBundle();
     for (NSArray *def in actionDefs) {
