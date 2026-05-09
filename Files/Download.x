@@ -828,8 +828,8 @@ static NSArray <YouModAudioOutputFormat *> *YouModAudioOutputFormats(void) {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         formats = @[
-            YouModAudioOutputFormatMake(@"m4a", @"M4A", @"", @"m4a", @[@"-map", @"0:a:0", @"-vn", @"-c:a", @"aac", @"-b:a", @"192k", @"-movflags", @"+faststart"], YES, YES),
-            YouModAudioOutputFormatMake(@"aac", @"AAC", @"", @"aac", @[@"-map", @"0:a:0", @"-vn", @"-c:a", @"aac", @"-b:a", @"192k", @"-f", @"adts"], YES, YES),
+            YouModAudioOutputFormatMake(@"m4a", @"M4A", @"", @"m4a", YES, YES),
+            YouModAudioOutputFormatMake(@"aac", @"AAC", @"", @"aac", YES, YES),
         ];
     });
     return formats;
