@@ -699,6 +699,7 @@ static NSURL *YouModDownloadsDirectoryURL(void) {
     return downloadsURL;
 }
 
+/*
 static NSString *YouModLastDownloadDiagnostic;
 
 static NSURL *YouModDiagnosticLogURL(void) {
@@ -747,6 +748,7 @@ static void YouModCopyDownloadDiagnostics(UIViewController *presenter) {
     UIPasteboard.generalPasteboard.string = diagnostic;
     YouModSendSuccess(@"Copied download diagnostics");
 }
+*/
 
 static NSURL *YouModUniqueFileURL(NSString *fileName, NSString *extension) {
     NSString *safeName = YouModSanitizedFileName(fileName);
