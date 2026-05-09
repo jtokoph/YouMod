@@ -224,14 +224,14 @@ typedef NS_ENUM(NSUInteger, GestureSection) {
 @property (nonatomic, strong) YTQTMButton *searchButton;
 @end
 
+@interface YTInlinePlayerScrubUserEducationView : UIView
+@end
+
 @interface YTMainAppVideoPlayerOverlayView (YouMod)
 @property (nonatomic, assign, readonly) YTInlinePlayerScrubUserEducationView *scrubUserEducationView;
 @property (nonatomic, weak, readwrite) YTMainAppVideoPlayerOverlayViewController *delegate;
 @property (nonatomic, strong) YTQTMButton *playbackRouteButton;
 - (void)YouModHoldToSpeed:(UILongPressGestureRecognizer *)gesture;
-@end
-
-@interface YTInlinePlayerScrubUserEducationView : UIView
 @end
 
 @interface YTNavigationBarTitleView : UIView

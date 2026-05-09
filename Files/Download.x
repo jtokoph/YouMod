@@ -2210,7 +2210,9 @@ static void YouModShowVideoQualitySheet(YTPlayerViewController *player, UIViewCo
 
     NSMutableArray *items = [NSMutableArray array];
     for (YouModMediaFormat *format in videoFormats) {
-        NSString *rowTitle = format.qualityLabel.length ? format.qualityLabel : LOC(@"VIDEO");
+        NSString *label = format.qualityLabel;
+        if ([label containsString:@"HDR"] || [label containsString:@"1440p"] || [label containsString:@"2160p"]) continue;
+        NSString *rowTitle = label.length ? label : LOC(@"VIDEO");
         NSString *subtitle = YouModFormatSubtitle(format);
         [items addObject:[YouModMenuItem itemWithTitle:rowTitle subtitle:subtitle icon:YouModIconImage(658) handler:^{
             [[YouModDownloadCoordinator sharedCoordinator] startVideoDownloadWithVideoFormat:format audioFormat:audioFormat fileName:title videoID:videoID presenter:presenter];
