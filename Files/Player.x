@@ -312,21 +312,15 @@ static CGFloat YouModSpeedForHoldIndex(NSInteger index) {
     return [values[index] floatValue];
 }
 
-static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMainAppVideoPlayerOverlayViewController *delegate, YTInlinePlayerScrubUserEducationView *educationView) {
+static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMainAppVideoPlayerOverlayViewController *delegate) {
     NSInteger speedIndex = INTFORVAL(HoldToSpeedIndex);
     CGFloat speed = YouModSpeedForHoldIndex(speedIndex);
     float YouModRateBeforeHoldToSpeed = [delegate currentPlaybackRate];
 
-    UILabel *label = [educationView valueForKey:@"_userEducationLabel"];
-    educationView.labelType = 1;
-    label.text = [NSString stringWithFormat:@"%.2gx", speed];
-
     if (gesture.state == UIGestureRecognizerStateBegan) {
         [delegate setPlaybackRate:speed];
-        [educationView setVisible:YES];
     } else if (gesture.state == UIGestureRecognizerStateEnded || gesture.state == UIGestureRecognizerStateCancelled || gesture.state == UIGestureRecognizerStateFailed) {
         [delegate setPlaybackRate:YouModRateBeforeHoldToSpeed];
-        [educationView setVisible:NO];
     }
 }
 
@@ -343,7 +337,7 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
 
 %new
 - (void)YouModHoldToSpeed:(UILongPressGestureRecognizer *)gesture {
-    YouModManageHoldToSpeed(gesture, self.delegate, self.scrubUserEducationView);
+    YouModManageHoldToSpeed(gesture, self.delegate);
 }
 %end
 
