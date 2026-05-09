@@ -2,7 +2,7 @@
 
 extern void YouModDownloadSetCurrentPlayer(YTPlayerViewController *player);
 
-float playbackRate = 1.0;
+static float playbackRate = 1.0;
 
 /*
 static void YouModAddEndTime(YTPlayerViewController *self, YTSingleVideoController *video, YTSingleVideoTime *time) {
@@ -303,6 +303,8 @@ static void YouModAddEndTime(YTPlayerViewController *self, YTSingleVideoControll
 %end
 %end
 
+static CGFloat YouModRateBeforeHoldToSpeed = 1.0;
+
 static NSArray *YouModHoldSpeedValues(void) {
     return @[@0.0, @0.25, @0.5, @0.75, @1.0, @1.25, @1.5, @1.75, @2.0, @3.0, @4.0, @5.0];
 }
@@ -315,11 +317,11 @@ static CGFloat YouModSpeedForHoldIndex(NSInteger index) {
 static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMainAppVideoPlayerOverlayViewController *delegate) {
     NSInteger speedIndex = INTFORVAL(HoldToSpeedIndex);
     CGFloat speed = YouModSpeedForHoldIndex(speedIndex);
-    float YouModRateBeforeHoldToSpeed = [delegate currentPlaybackRate];
 
     if (gesture.state == UIGestureRecognizerStateBegan) {
+        YouModRateBeforeHoldToSpeed = [delegate currentPlaybackRate];
         [delegate setPlaybackRate:speed];
-    } else if (gesture.state == UIGestureRecognizerStateEnded || gesture.state == UIGestureRecognizerStateCancelled || gesture.state == UIGestureRecognizerStateFailed) {
+    } else {
         [delegate setPlaybackRate:YouModRateBeforeHoldToSpeed];
     }
 }
@@ -334,7 +336,6 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
         %orig;
     }
 }
-
 %new
 - (void)YouModHoldToSpeed:(UILongPressGestureRecognizer *)gesture {
     YouModManageHoldToSpeed(gesture, self.delegate);
