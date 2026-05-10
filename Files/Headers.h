@@ -51,6 +51,7 @@
 #import <YouTubeHeader/MLHLSMasterPlaylist.h>
 #import <YouTubeHeader/MLHLSStreamSelector.h>
 #import <YouTubeHeader/YTIHamplayerConfig.h>
+#import <YouTubeHeader/YTAssetLoader.h>
 #import <MediaPlayer/MediaPlayer.h>
 #import <dlfcn.h>
 
