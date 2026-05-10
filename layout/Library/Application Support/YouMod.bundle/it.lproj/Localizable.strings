@@ -6,6 +6,9 @@
 "SOURCE_CODES" = "Codice sorgente";
 "SOURCE_CODES_DESC" = "Dai un'occhiata al codice!";
 
+"FIX_PLAYBACK_ISSUES" = "Fix playback issues";
+"FIX_PLAYBACK_ISSUES_DESC" = "Fix video playback issues for some users. Turning this on will disable VP9 and AV1. Plus the video quality is limited to 1080p and HDR is removed.\nKnown issues: The player might act weird with this option on.";
+
 "PERFER_HEADER" = "Opzioni YouMod";
 "PERFER" = "Opzioni";
 "IMPORT" = "Importa impostazioni";

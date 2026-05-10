@@ -6,6 +6,9 @@
 "SOURCE_CODES" = "소스 코드";
 "SOURCE_CODES_DESC" = "앱의 소스 코드를 확인해 보세요!";
 
+"FIX_PLAYBACK_ISSUES" = "Fix playback issues";
+"FIX_PLAYBACK_ISSUES_DESC" = "Fix video playback issues for some users. Turning this on will disable VP9 and AV1. Plus the video quality is limited to 1080p and HDR is removed.\nKnown issues: The player might act weird with this option on.";
+
 "PERFER_HEADER" = "YouMod 환경설정";
 "PERFER" = "환경설정";
 "IMPORT" = "설정 불러오기";

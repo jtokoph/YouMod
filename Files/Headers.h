@@ -42,6 +42,15 @@
 #import <YouTubeHeader/YTCommonColorPalette.h>
 #import <YouTubeHeader/YTIPivotBarSupportedRenderers.h>
 #import <YouTubeHeader/YTIBrowseRequest.h>
+#import <YouTubeHeader/MLAVPlayer.h>
+#import <YouTubeHeader/MLDefaultPlayerViewFactory.h>
+#import <YouTubeHeader/MLPlayerPool.h>
+#import <YouTubeHeader/MLPlayerPoolImpl.h>
+#import <YouTubeHeader/MLVideoDecoderFactory.h>
+#import <YouTubeHeader/YTHotConfig.h>
+#import <YouTubeHeader/MLHLSMasterPlaylist.h>
+#import <YouTubeHeader/MLHLSStreamSelector.h>
+#import <YouTubeHeader/YTIHamplayerConfig.h>
 #import <MediaPlayer/MediaPlayer.h>
 #import <dlfcn.h>
 
@@ -59,6 +68,7 @@
 
 #define IS_ENABLED(k) [[NSUserDefaults standardUserDefaults] boolForKey:k]
 #define INTFORVAL(v) [[NSUserDefaults standardUserDefaults] integerForKey:v]
+#define FixPlaybackIssues @"YouModFixPlaybackIssues"
 // Downloading
 #define DownloadManager @"YouModDownloadManager"
 #define DownloadSaveToPhotos @"YouModDownloadSaveToPhotos"
@@ -341,6 +351,9 @@ typedef NS_ENUM(NSUInteger, GestureSection) {
 @interface YTSingleVideoController (YouMod)
 @property (nonatomic, assign, readonly) CGFloat totalMediaTime;
 - (void)setVideoFormatConstraint:(id)arg;
+@end
+
+@interface YTGLMediaPlayerViewFactory : NSObject
 @end
 
 /*

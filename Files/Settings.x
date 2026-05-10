@@ -141,6 +141,28 @@ static NSString *GetCacheSize() { // YTLite - @dayanch96
     ];
     [sectionItems addObject:sourceCodes];
 
+    // ?
+    YTSettingsSectionItem *blank = [YTSettingsSectionItemClass itemWithTitle:nil
+        titleDescription:nil
+        accessibilityIdentifier:nil
+        detailTextBlock:nil
+        selectBlock:^BOOL (YTSettingsCell *cell, NSUInteger arg1) {
+            return NO;
+        }];
+    [sectionItems addObject:blank];
+
+    // Fix playback issues
+    YTSettingsSectionItem *fixPlaybackissues = [YTSettingsSectionItemClass switchItemWithTitle:LOC(@"FIX_PLAYBACK_ISSUES")
+        titleDescription:LOC(@"FIX_PLAYBACK_ISSUES_DESC")
+        accessibilityIdentifier:nil
+        switchOn:IS_ENABLED(FixPlaybackIssues)
+        switchBlock:^BOOL (YTSettingsCell *cell, BOOL enabled) {
+            [[NSUserDefaults standardUserDefaults] setBool:enabled forKey:FixPlaybackIssues];
+            return YES;
+        }
+        settingItemId:0];
+    [sectionItems addObject:fixPlaybackissues];
+
     // TODO: Center YT logo (not yet implemented)
     // [sectionItems addObject: YMToggle(LOC(@"CENTER_YT_LOGO"), LOC(@"CENTER_YT_LOGO_DESC"), CenterYTLogo)];
 
