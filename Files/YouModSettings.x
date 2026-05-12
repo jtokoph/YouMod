@@ -10,7 +10,8 @@ typedef NS_ENUM(NSInteger, YMRowType) {
     YMRowTypePicker,
     YMRowTypeAction,
     YMRowTypeHeader,
-    YMRowTypeSegment
+    YMRowTypeSegment,
+    YMRowTypeTextSegment
 };
 
 @interface YMSettingsItem : NSObject
@@ -22,11 +23,13 @@ typedef NS_ENUM(NSInteger, YMRowType) {
 @property (nonatomic, assign) NSInteger pickerDefault;
 @property (nonatomic, copy) void (^action)(UIViewController *vc);
 @property (nonatomic, strong) NSArray<NSNumber *> *segmentIcons;
+@property (nonatomic, strong) NSArray<NSString *> *segmentLabels;
 + (instancetype)toggleWithTitle:(NSString *)title subtitle:(NSString *)subtitle key:(NSString *)key;
 + (instancetype)pickerWithTitle:(NSString *)title subtitle:(NSString *)subtitle key:(NSString *)key options:(NSArray<NSString *> *)options defaultValue:(NSInteger)defaultValue;
 + (instancetype)actionWithTitle:(NSString *)title subtitle:(NSString *)subtitle action:(void (^)(UIViewController *vc))action;
 + (instancetype)headerWithTitle:(NSString *)title;
 + (instancetype)segmentWithTitle:(NSString *)title key:(NSString *)key icons:(NSArray<NSNumber *> *)icons defaultValue:(NSInteger)defaultValue;
++ (instancetype)textSegmentWithTitle:(NSString *)title key:(NSString *)key labels:(NSArray<NSString *> *)labels defaultValue:(NSInteger)defaultValue;
 @end
 
 @implementation YMSettingsItem
@@ -73,6 +76,16 @@ typedef NS_ENUM(NSInteger, YMRowType) {
     item.title = title;
     item.key = key;
     item.segmentIcons = icons;
+    item.pickerDefault = defaultValue;
+    return item;
+}
+
++ (instancetype)textSegmentWithTitle:(NSString *)title key:(NSString *)key labels:(NSArray<NSString *> *)labels defaultValue:(NSInteger)defaultValue {
+    YMSettingsItem *item = [[YMSettingsItem alloc] init];
+    item.type = YMRowTypeTextSegment;
+    item.title = title;
+    item.key = key;
+    item.segmentLabels = labels;
     item.pickerDefault = defaultValue;
     return item;
 }
@@ -187,6 +200,8 @@ static const void *kYMSwitchKeyAssoc = &kYMSwitchKeyAssoc;
         return [self headerCellForItem:item tableView:tableView];
     } else if (item.type == YMRowTypeSegment) {
         return [self segmentCellForItem:item tableView:tableView];
+    } else if (item.type == YMRowTypeTextSegment) {
+        return [self textSegmentCellForItem:item tableView:tableView];
     }
     return [self pickerCellForItem:item tableView:tableView];
 }
@@ -301,7 +316,9 @@ static const void *kYMSwitchKeyAssoc = &kYMSwitchKeyAssoc;
         }
     }
 
-    segment.selectedSegmentIndex = [[NSUserDefaults standardUserDefaults] integerForKey:item.key];
+    id storedSegVal = [[NSUserDefaults standardUserDefaults] objectForKey:item.key];
+    NSInteger segIdx = storedSegVal ? [storedSegVal integerValue] : item.pickerDefault;
+    segment.selectedSegmentIndex = MAX(0, MIN(segIdx, segment.numberOfSegments - 1));
     segment.backgroundColor = [UIColor colorWithRed:0.13 green:0.13 blue:0.13 alpha:1.0];
     segment.selectedSegmentTintColor = [UIColor colorWithRed:0.25 green:0.25 blue:0.25 alpha:1.0];
     segment.layer.cornerRadius = 8.0;
@@ -334,6 +351,54 @@ static const void *kYMSwitchKeyAssoc = &kYMSwitchKeyAssoc;
     }
 }
 
+#pragma mark - Text Segment Cell
+
+- (UITableViewCell *)textSegmentCellForItem:(YMSettingsItem *)item tableView:(UITableView *)tableView {
+    UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
+    cell.backgroundColor = [UIColor clearColor];
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+
+    UILabel *titleLabel = [[UILabel alloc] init];
+    titleLabel.text = item.title;
+    titleLabel.textColor = [self ymTextColor];
+    titleLabel.font = [UIFont systemFontOfSize:16 weight:UIFontWeightMedium];
+    titleLabel.translatesAutoresizingMaskIntoConstraints = NO;
+    [cell.contentView addSubview:titleLabel];
+
+    UISegmentedControl *segment = [[UISegmentedControl alloc] initWithItems:item.segmentLabels];
+
+    id storedVal = [[NSUserDefaults standardUserDefaults] objectForKey:item.key];
+    NSInteger txtSegIdx = storedVal ? [storedVal integerValue] : item.pickerDefault;
+    segment.selectedSegmentIndex = MAX(0, MIN(txtSegIdx, segment.numberOfSegments - 1));
+    segment.backgroundColor = [UIColor colorWithRed:0.13 green:0.13 blue:0.13 alpha:1.0];
+    segment.selectedSegmentTintColor = [UIColor colorWithRed:0.25 green:0.25 blue:0.25 alpha:1.0];
+    segment.layer.cornerRadius = 8.0;
+    segment.clipsToBounds = YES;
+
+    NSDictionary *textAttrs = @{NSForegroundColorAttributeName: [UIColor whiteColor], NSFontAttributeName: [UIFont systemFontOfSize:13 weight:UIFontWeightMedium]};
+    [segment setTitleTextAttributes:textAttrs forState:UIControlStateNormal];
+    [segment setTitleTextAttributes:textAttrs forState:UIControlStateSelected];
+
+    objc_setAssociatedObject(segment, kYMSwitchKeyAssoc, item.key, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    [segment addTarget:self action:@selector(segmentChanged:) forControlEvents:UIControlEventValueChanged];
+
+    segment.translatesAutoresizingMaskIntoConstraints = NO;
+    [cell.contentView addSubview:segment];
+
+    [NSLayoutConstraint activateConstraints:@[
+        [titleLabel.leadingAnchor constraintEqualToAnchor:cell.contentView.leadingAnchor constant:16],
+        [titleLabel.topAnchor constraintEqualToAnchor:cell.contentView.topAnchor constant:12],
+
+        [segment.leadingAnchor constraintEqualToAnchor:cell.contentView.leadingAnchor constant:16],
+        [segment.trailingAnchor constraintEqualToAnchor:cell.contentView.trailingAnchor constant:-16],
+        [segment.topAnchor constraintEqualToAnchor:titleLabel.bottomAnchor constant:10],
+        [segment.bottomAnchor constraintEqualToAnchor:cell.contentView.bottomAnchor constant:-12],
+        [segment.heightAnchor constraintEqualToConstant:36]
+    ]];
+
+    return cell;
+}
+
 #pragma mark - Picker Cell
 
 - (UITableViewCell *)pickerCellForItem:(YMSettingsItem *)item tableView:(UITableView *)tableView {
@@ -351,9 +416,10 @@ static const void *kYMSwitchKeyAssoc = &kYMSwitchKeyAssoc;
         cell.detailTextLabel.numberOfLines = 0;
     }
 
-    NSInteger currentValue = [[NSUserDefaults standardUserDefaults] integerForKey:item.key];
     NSInteger safeDefault = (item.pickerDefault >= 0 && item.pickerDefault < (NSInteger)item.pickerOptions.count)
         ? item.pickerDefault : 0;
+    id storedValue = [[NSUserDefaults standardUserDefaults] objectForKey:item.key];
+    NSInteger currentValue = storedValue ? [storedValue integerValue] : safeDefault;
     NSString *currentTitle = (currentValue >= 0 && currentValue < (NSInteger)item.pickerOptions.count)
         ? item.pickerOptions[currentValue]
         : item.pickerOptions[safeDefault];
@@ -429,6 +495,10 @@ YMSettingsItem *YMHeader(NSString *title) {
 
 YMSettingsItem *YMSegment(NSString *title, NSString *key, NSArray<NSNumber *> *icons, NSInteger defaultValue) {
     return [YMSettingsItem segmentWithTitle:title key:key icons:icons defaultValue:defaultValue];
+}
+
+YMSettingsItem *YMTextSegment(NSString *title, NSString *key, NSArray<NSString *> *labels, NSInteger defaultValue) {
+    return [YMSettingsItem textSegmentWithTitle:title key:key labels:labels defaultValue:defaultValue];
 }
 
 #pragma mark - Entry Point

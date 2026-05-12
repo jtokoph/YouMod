@@ -10,7 +10,9 @@
 
     for (UIView *sub in [parentView.subviews copy]) {
         if ([sub isKindOfClass:[SBSkipNotificationView class]]) {
-            [(SBSkipNotificationView *)sub dismiss];
+            SBSkipNotificationView *existing = (SBSkipNotificationView *)sub;
+            if (existing.isHighlightPill) return nil;
+            [existing dismiss];
         }
     }
 

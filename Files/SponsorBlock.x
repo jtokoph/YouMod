@@ -389,11 +389,15 @@ UIColor *SBColorFromHex(NSString *hexString) {
             if (alertDuration < 2.0 || alertDuration > 20.0) alertDuration = 4.0;
 
             UIView *parentView = sbGetNotificationParent();
-            self.sbNotificationView = [SBSkipNotificationView showInView:parentView
+            SBSkipNotificationView *pill = [SBSkipNotificationView showInView:parentView
                 message:message
                 buttonTitle:skipTitle
                 action:^{ [self sbSkipToHighlight]; }
                 duration:alertDuration];
+            if (pill) {
+                pill.isHighlightPill = YES;
+                self.sbNotificationView = pill;
+            }
             break;
         }
     }
@@ -401,6 +405,8 @@ UIColor *SBColorFromHex(NSString *hexString) {
 
 %new
 - (void)sbSkipToHighlight {
+    self.sbNotificationView.isHighlightPill = NO;
+
     for (SBSegment *segment in self.sbSegments) {
         if ([segment.category isEqualToString:@"poi_highlight"]) {
             CGFloat previousTime = [self currentVideoMediaTime];
@@ -415,7 +421,7 @@ UIColor *SBColorFromHex(NSString *hexString) {
                 if (alertDuration < 2.0 || alertDuration > 20.0) alertDuration = 4.0;
 
                 __weak typeof(self) weakSelf = self;
-                self.sbNotificationView = [SBSkipNotificationView showInView:sbGetNotificationParent()
+                SBSkipNotificationView *pill = [SBSkipNotificationView showInView:sbGetNotificationParent()
                     message:message
                     buttonTitle:unskipTitle
                     action:^{
@@ -423,6 +429,10 @@ UIColor *SBColorFromHex(NSString *hexString) {
                         if (ss) [ss seekToTime:previousTime];
                     }
                     duration:alertDuration];
+                if (pill) {
+                    pill.isHighlightPill = YES;
+                    self.sbNotificationView = pill;
+                }
             }
             break;
         }

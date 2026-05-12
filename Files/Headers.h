@@ -396,6 +396,7 @@ typedef NS_ENUM(NSInteger, SBSegmentAction) {
 @property (nonatomic, assign) NSTimeInterval totalDuration;
 @property (nonatomic, assign) NSTimeInterval remainingDuration;
 @property (nonatomic, assign) BOOL isPaused;
+@property (nonatomic, assign) BOOL isHighlightPill;
 + (instancetype)showInView:(UIView *)parentView message:(NSString *)message buttonTitle:(NSString *)buttonTitle action:(void (^)(void))action duration:(NSTimeInterval)duration;
 + (instancetype)showSuccessInView:(UIView *)parentView message:(NSString *)message duration:(NSTimeInterval)duration;
 + (instancetype)showErrorInView:(UIView *)parentView message:(NSString *)message duration:(NSTimeInterval)duration;

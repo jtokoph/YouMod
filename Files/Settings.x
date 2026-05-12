@@ -17,6 +17,7 @@ extern YMSettingsItem *YMPicker(NSString *title, NSString *subtitle, NSString *k
 extern YMSettingsItem *YMAction(NSString *title, NSString *subtitle, void (^action)(UIViewController *vc));
 extern YMSettingsItem *YMHeader(NSString *title);
 extern YMSettingsItem *YMSegment(NSString *title, NSString *key, NSArray<NSNumber *> *icons, NSInteger defaultValue);
+extern YMSettingsItem *YMTextSegment(NSString *title, NSString *key, NSArray<NSString *> *labels, NSInteger defaultValue);
 
 @interface YTSettingsSectionItemManager (YouMod)
 - (void)updateYouModSectionWithEntry:(id)entry;
@@ -410,12 +411,23 @@ static NSString *GetCacheSize() { // YTLite - @dayanch96
             }),
             YMHeader(LOC(@"CACHE")),
             YMAction(LOC(@"CLEARCACHE"), GetCacheSize(), ^(UIViewController *vc) {
+                __weak UIViewController *weakVC = vc;
                 dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
                     NSString *cachePath = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES).firstObject;
                     [[NSFileManager defaultManager] removeItemAtPath:cachePath error:nil];
                     dispatch_async(dispatch_get_main_queue(), ^{
-                        Class toastClass = NSClassFromString(@"YTToastResponderEvent");
-                        [[toastClass eventWithMessage:LOC(@"DONE") firstResponder:vc] send];
+                        __strong UIViewController *strongVC = weakVC;
+                        if (!strongVC) return;
+                        if ([strongVC respondsToSelector:@selector(items)] && [strongVC respondsToSelector:@selector(tableView)]) {
+                            NSArray *items = [(id)strongVC items];
+                            for (id item in items) {
+                                if ([[item title] isEqualToString:LOC(@"CLEARCACHE")]) {
+                                    [item setSubtitle:@"Zero KB"];
+                                    break;
+                                }
+                            }
+                            [[(id)strongVC tableView] reloadData];
+                        }
                     });
                 });
             }),
