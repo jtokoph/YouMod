@@ -357,22 +357,22 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
     %orig;
     YouModDownloadSetCurrentPlayer(self);
-    if (IS_ENABLED(AutoFullScreen)) [self performSelector:@selector(YouModAutoFullscreen) withObject:nil afterDelay:0.5];
-    if (IS_ENABLED(ShortsToRegular)) [self performSelector:@selector(YouModShortsToRegular) withObject:nil afterDelay:0.3]; //  withObject:nil afterDelay:0.2
+    if (IS_ENABLED(AutoFullScreen)) [self performSelector:@selector(YouModAutoFullscreen) withObject:nil afterDelay:0.75];
+    if (IS_ENABLED(ShortsToRegular)) [self performSelector:@selector(YouModShortsToRegular) withObject:nil afterDelay:0.75];
     if (IS_ENABLED(DisablesCaptions)) [self performSelector:@selector(YouModTurnOffCaptions) withObject:nil afterDelay:1.0];
-    if (INTFORVAL(AutoSpeedIndex) != 0) [self performSelector:@selector(YouModSetAutoSpeed) withObject:nil afterDelay:0.3];
-    if (INTFORVAL(WifiQualityIndex) != 0 || INTFORVAL(CellQualityIndex) != 0) [self performSelector:@selector(YouModAutoQuality) withObject:nil afterDelay:0.3];
+    if (INTFORVAL(AutoSpeedIndex) != 0) [self performSelector:@selector(YouModSetAutoSpeed) withObject:nil afterDelay:0.75];
+    if (INTFORVAL(WifiQualityIndex) != 0 || INTFORVAL(CellQualityIndex) != 0) [self performSelector:@selector(YouModAutoQuality) withObject:nil afterDelay:1.0];
 }
 
 - (void)prepareToLoadWithPlayerTransition:(id)arg1 expectedLayout:(id)arg2 {
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
     %orig;
     YouModDownloadSetCurrentPlayer(self);
-    if (IS_ENABLED(AutoFullScreen)) [self performSelector:@selector(YouModAutoFullscreen) withObject:nil afterDelay:0.5];
-    if (IS_ENABLED(ShortsToRegular)) [self performSelector:@selector(YouModShortsToRegular) withObject:nil afterDelay:0.3]; //  withObject:nil afterDelay:0.2
+    if (IS_ENABLED(AutoFullScreen)) [self performSelector:@selector(YouModAutoFullscreen) withObject:nil afterDelay:0.75];
+    if (IS_ENABLED(ShortsToRegular)) [self performSelector:@selector(YouModShortsToRegular) withObject:nil afterDelay:0.75];
     if (IS_ENABLED(DisablesCaptions)) [self performSelector:@selector(YouModTurnOffCaptions) withObject:nil afterDelay:1.0];
-    if (INTFORVAL(AutoSpeedIndex) != 0) [self performSelector:@selector(YouModSetAutoSpeed) withObject:nil afterDelay:0.3];
-    if (INTFORVAL(WifiQualityIndex) != 0 || INTFORVAL(CellQualityIndex) != 0) [self performSelector:@selector(YouModAutoQuality) withObject:nil afterDelay:0.3];
+    if (INTFORVAL(AutoSpeedIndex) != 0) [self performSelector:@selector(YouModSetAutoSpeed) withObject:nil afterDelay:0.75];
+    if (INTFORVAL(WifiQualityIndex) != 0 || INTFORVAL(CellQualityIndex) != 0) [self performSelector:@selector(YouModAutoQuality) withObject:nil afterDelay:1.0];
 }
 
 - (void)dealloc {
