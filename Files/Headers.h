@@ -361,7 +361,7 @@ typedef NS_ENUM(NSUInteger, GestureSection) {
 @interface YTReelPlayerViewController (YouMod)
 - (void)reelContentViewRequestsAdvanceToNextVideo:(id)arg;
 - (void)reelContentViewRequestsPlayPauseToggle:(id)arg;
-// - (void)pause;
+- (id)videoId;
 @end
 
 // SponsorBlock action modes
