@@ -143,8 +143,8 @@
 "HIDE_CAST_BUTTON_PLAYER_DESC" = "영상 화면에 있는 TV 모양 캐스트 버튼을 숨깁니다.";
 "HIDE_NEXT_AND_PREV_BUTTON" = "Hide previous and next buttons";
 "HIDE_NEXT_AND_PREV_BUTTON_DESC" = "Hide previous and next buttons in the video overlay.";
-"REPLACE_PREVNEXT_BUTTONS" = "Replace Previous/Next buttons";
-"REPLACE_PREVNEXT_BUTTONS_DESC" = "Replaces the Previous and Next video buttons in the player with Rewind and Fast Forward buttons.";
+"REPLACE_PREVNEXT_BUTTONS" = "이전/다음 버튼 교체하기";
+"REPLACE_PREVNEXT_BUTTONS_DESC" = "플레이어의 이전 영상, 다음 영상 버튼을 뒤로 감기, 빨리 감기 버튼으로 바꿉니다.";
 "REMOVE_DARK_OVERLAY" = "어두운 음영 효과 제거";
 "REMOVE_DARK_OVERLAY_DESC" = "영상을 터치하거나 일시정지할 때 화면이 어두워지는 효과를 없앱니다.";
 "HIDE_END_SCREEN" = "종료 화면 추천 카드 숨기기";
@@ -194,8 +194,8 @@
 "ALWAYS_SHOW_REMAINING_DESC" = "영상의 현재 재생 시간 대신, 끝날 때까지 남은 시간을 기본으로 띄워둡니다.";
 "COPY_TIMESTAMP_ON_PAUSE" = "Copy timestamped links";
 "COPY_TIMESTAMP_ON_PAUSE_DESC" = "Allows to copy timestamped link to the clipboard by pressing pause button.";
-"SHOW_REMAINING_EXTRA" = "Show extra remaining time";
-"SHOW_REMAINING_EXTRA_DESC" = "Adds the estimated finish time to the label in the video overlay.";
+"SHOW_REMAINING_EXTRA" = "예상 종료 시간 표시";
+"SHOW_REMAINING_EXTRA_DESC" = "영상 남은 시간에 이 영상이 언제 끝나는지 예상 종료 시간도 함께 보여줍니다.";
 "HIDE_FULLSCREEN_ACTIONS" = "전체화면 빠른 동작 버튼 숨기기";
 "HIDE_FULLSCREEN_ACTIONS_DESC" = "전체화면 모드일 때 화면 아래쪽에 뜨는 좋아요, 싫어요, 댓글 등의 버튼들을 숨깁니다.";
 "HIDE_FULL_VID_TITLE" = "전체화면 영상 제목 숨기기";
