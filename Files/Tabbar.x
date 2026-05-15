@@ -33,63 +33,111 @@ static NSBundle *YouModBundle() {
 }
 %end
 
+static NSString *ymPivotIDForTabID(NSString *tabID) {
+    if ([tabID isEqualToString:@"home"]) return @"FEwhat_to_watch";
+    if ([tabID isEqualToString:@"shorts"]) return @"FEshorts";
+    if ([tabID isEqualToString:@"create"]) return @"FEuploads";
+    if ([tabID isEqualToString:@"subscriptions"]) return @"FEsubscriptions";
+    if ([tabID isEqualToString:@"library"]) return @"FElibrary";
+    if ([tabID isEqualToString:@"history"]) return [%c(YTIBrowseRequest) browseIDForHistory];
+    if ([tabID isEqualToString:@"gaming"]) return [%c(YTIBrowseRequest) browseIDForGamingDestination];
+    if ([tabID isEqualToString:@"sports"]) return [%c(YTIBrowseRequest) browseIDForSportsDestination];
+    if ([tabID isEqualToString:@"notifications"]) return [%c(YTIBrowseRequest) browseIDForNotificationsInbox];
+    return nil;
+}
+
+static NSInteger ymIconTypeForTabID(NSString *tabID) {
+    if ([tabID isEqualToString:@"history"]) return 1;
+    if ([tabID isEqualToString:@"gaming"]) return 2;
+    if ([tabID isEqualToString:@"sports"]) return 3;
+    if ([tabID isEqualToString:@"notifications"]) return 4;
+    return 0;
+}
+
+static NSString *ymTitleForTabID(NSString *tabID) {
+    if ([tabID isEqualToString:@"history"]) return LOC(@"HISTORY_TAB");
+    if ([tabID isEqualToString:@"gaming"]) return LOC(@"GAMING_TAB");
+    if ([tabID isEqualToString:@"sports"]) return LOC(@"SPORTS_TAB");
+    if ([tabID isEqualToString:@"notifications"]) return LOC(@"NOTI_TAB");
+    return nil;
+}
+
 %hook YTPivotBarView
 - (void)setRenderer:(YTIPivotBarRenderer *)renderer {
-    NSMutableArray <YTIPivotBarSupportedRenderers *> *items = [renderer itemsArray];
-    NSMutableIndexSet *indicesToRemove = [NSMutableIndexSet indexSet];
-    // Loop through every item in the bar
-    for (NSUInteger i = 0; i < items.count; i++) {
-        YTIPivotBarSupportedRenderers *item = items[i];
-        NSString *pID = [[item pivotBarItemRenderer] pivotIdentifier];
-        NSString *pID2 = [[item pivotBarIconOnlyItemRenderer] pivotIdentifier];
-        if ([pID isEqualToString:@"FEwhat_to_watch"] && IS_ENABLED(HideHomeTab)) {
-             [indicesToRemove addIndex:i];
+    NSArray *savedOrder = [[NSUserDefaults standardUserDefaults] arrayForKey:@"YouModTabOrder"];
+
+    if (savedOrder.count > 0) {
+        NSMutableArray <YTIPivotBarSupportedRenderers *> *items = [renderer itemsArray];
+
+        // Build lookup: pivotIdentifier -> renderer item
+        NSMutableDictionary<NSString *, YTIPivotBarSupportedRenderers *> *lookup = [NSMutableDictionary dictionary];
+        for (YTIPivotBarSupportedRenderers *item in items) {
+            NSString *pID = [[item pivotBarItemRenderer] pivotIdentifier];
+            NSString *pID2 = [[item pivotBarIconOnlyItemRenderer] pivotIdentifier];
+            if (pID) lookup[pID] = item;
+            if (pID2) lookup[pID2] = item;
         }
-        if ([pID isEqualToString:@"FEshorts"] && IS_ENABLED(HideShortsTab)) {
-            [indicesToRemove addIndex:i];
+
+        // Build ordered array from saved data
+        NSMutableArray *ordered = [NSMutableArray array];
+        for (NSDictionary *entry in savedOrder) {
+            NSString *tabID = entry[@"id"];
+            BOOL enabled = [entry[@"enabled"] boolValue];
+            if (!enabled) continue;
+
+            NSString *pivotID = ymPivotIDForTabID(tabID);
+            if (!pivotID) continue;
+
+            YTIPivotBarSupportedRenderers *existing = lookup[pivotID];
+            if (existing) {
+                [ordered addObject:existing];
+            } else {
+                // Custom tab not in YouTube's default items — create it
+                NSInteger iconType = ymIconTypeForTabID(tabID);
+                NSString *title = ymTitleForTabID(tabID);
+                if (iconType > 0 && title) {
+                    YTIPivotBarSupportedRenderers *newTab = [%c(YTIPivotBarRenderer) pivotSupportedRenderersWithBrowseId:pivotID title:title iconType:iconType];
+                    if (newTab) [ordered addObject:newTab];
+                }
+            }
         }
-        if ([pID2 isEqualToString:@"FEuploads"] && IS_ENABLED(HideCreateButton)) {
-            [indicesToRemove addIndex:i];
+
+        // Replace items with ordered set
+        [items removeAllObjects];
+        [items addObjectsFromArray:ordered];
+    } else {
+        // Legacy fallback: use old toggle-based logic
+        NSMutableArray <YTIPivotBarSupportedRenderers *> *items = [renderer itemsArray];
+        NSMutableIndexSet *indicesToRemove = [NSMutableIndexSet indexSet];
+        for (NSUInteger i = 0; i < items.count; i++) {
+            YTIPivotBarSupportedRenderers *item = items[i];
+            NSString *pID = [[item pivotBarItemRenderer] pivotIdentifier];
+            NSString *pID2 = [[item pivotBarIconOnlyItemRenderer] pivotIdentifier];
+            if ([pID isEqualToString:@"FEwhat_to_watch"] && IS_ENABLED(HideHomeTab)) [indicesToRemove addIndex:i];
+            if ([pID isEqualToString:@"FEshorts"] && IS_ENABLED(HideShortsTab)) [indicesToRemove addIndex:i];
+            if ([pID2 isEqualToString:@"FEuploads"] && IS_ENABLED(HideCreateButton)) [indicesToRemove addIndex:i];
+            if ([pID isEqualToString:@"FEsubscriptions"] && IS_ENABLED(HideSubscriptTab)) [indicesToRemove addIndex:i];
         }
-        if ([pID isEqualToString:@"FEsubscriptions"] && IS_ENABLED(HideSubscriptTab)) {
-            [indicesToRemove addIndex:i];
+        [items removeObjectsAtIndexes:indicesToRemove];
+
+        if (IS_ENABLED(AddsHistoryTab)) {
+            YTIPivotBarSupportedRenderers *tab = [%c(YTIPivotBarRenderer) pivotSupportedRenderersWithBrowseId:[%c(YTIBrowseRequest) browseIDForHistory] title:LOC(@"HISTORY_TAB") iconType:1];
+            [items insertObject:tab atIndex:MIN((NSUInteger)1, items.count)];
+        }
+        if (IS_ENABLED(AddsGamingTab)) {
+            YTIPivotBarSupportedRenderers *tab = [%c(YTIPivotBarRenderer) pivotSupportedRenderersWithBrowseId:[%c(YTIBrowseRequest) browseIDForGamingDestination] title:LOC(@"GAMING_TAB") iconType:2];
+            [items insertObject:tab atIndex:MIN((NSUInteger)1, items.count)];
+        }
+        if (IS_ENABLED(AddsSportsTab)) {
+            YTIPivotBarSupportedRenderers *tab = [%c(YTIPivotBarRenderer) pivotSupportedRenderersWithBrowseId:[%c(YTIBrowseRequest) browseIDForSportsDestination] title:LOC(@"SPORTS_TAB") iconType:3];
+            [items insertObject:tab atIndex:MIN((NSUInteger)1, items.count)];
+        }
+        if (IS_ENABLED(AddsNotiTab)) {
+            YTIPivotBarSupportedRenderers *tab = [%c(YTIPivotBarRenderer) pivotSupportedRenderersWithBrowseId:[%c(YTIBrowseRequest) browseIDForNotificationsInbox] title:LOC(@"NOTI_TAB") iconType:4];
+            [items insertObject:tab atIndex:MIN((NSUInteger)1, items.count)];
         }
     }
-    // Remove them all at once so the layout doesn't break
-    [items removeObjectsAtIndexes:indicesToRemove];
-    // Add tabs - Will find some ways to re-arrange them
-    NSUInteger historyIndex = [items indexOfObjectPassingTest:^BOOL(YTIPivotBarSupportedRenderers *renderers, NSUInteger idx, BOOL *stop) {
-        return [[[renderers pivotBarItemRenderer] pivotIdentifier] isEqualToString:[%c(YTIBrowseRequest) browseIDForHistory]];
-    }];
-    NSUInteger gamingIndex = [items indexOfObjectPassingTest:^BOOL(YTIPivotBarSupportedRenderers *renderers, NSUInteger idx, BOOL *stop) {
-        return [[[renderers pivotBarItemRenderer] pivotIdentifier] isEqualToString:[%c(YTIBrowseRequest) browseIDForGamingDestination]];
-    }];
-    NSUInteger sportsIndex = [items indexOfObjectPassingTest:^BOOL(YTIPivotBarSupportedRenderers *renderers, NSUInteger idx, BOOL *stop) {
-        return [[[renderers pivotBarItemRenderer] pivotIdentifier] isEqualToString:[%c(YTIBrowseRequest) browseIDForSportsDestination]];
-    }];
-    NSUInteger notiIndex = [items indexOfObjectPassingTest:^BOOL(YTIPivotBarSupportedRenderers *renderers, NSUInteger idx, BOOL *stop) {
-        return [[[renderers pivotBarItemRenderer] pivotIdentifier] isEqualToString:[%c(YTIBrowseRequest) browseIDForNotificationsInbox]];
-    }];
-    if (historyIndex == NSNotFound && IS_ENABLED(AddsHistoryTab)) {
-        YTIPivotBarSupportedRenderers *historyTab = [%c(YTIPivotBarRenderer) pivotSupportedRenderersWithBrowseId:[%c(YTIBrowseRequest) browseIDForHistory] title:LOC(@"HISTORY_TAB") iconType:1];
-        NSUInteger insertIndex = MIN((NSUInteger)1, items.count);
-        [items insertObject:historyTab atIndex:insertIndex];
-    }
-    if (gamingIndex == NSNotFound && IS_ENABLED(AddsGamingTab)) {
-        YTIPivotBarSupportedRenderers *gamingTab = [%c(YTIPivotBarRenderer) pivotSupportedRenderersWithBrowseId:[%c(YTIBrowseRequest) browseIDForGamingDestination] title:LOC(@"GAMING_TAB") iconType:2];
-        NSUInteger insertIndex = MIN((NSUInteger)1, items.count);
-        [items insertObject:gamingTab atIndex:insertIndex];
-    }
-    if (sportsIndex == NSNotFound && IS_ENABLED(AddsSportsTab)) {
-        YTIPivotBarSupportedRenderers *sportsTab = [%c(YTIPivotBarRenderer) pivotSupportedRenderersWithBrowseId:[%c(YTIBrowseRequest) browseIDForSportsDestination] title:LOC(@"SPORTS_TAB") iconType:3];
-        NSUInteger insertIndex = MIN((NSUInteger)1, items.count);
-        [items insertObject:sportsTab atIndex:insertIndex];
-    }
-    if (notiIndex == NSNotFound && IS_ENABLED(AddsNotiTab)) {
-        YTIPivotBarSupportedRenderers *notiTab = [%c(YTIPivotBarRenderer) pivotSupportedRenderersWithBrowseId:[%c(YTIBrowseRequest) browseIDForNotificationsInbox] title:LOC(@"NOTI_TAB") iconType:4];
-        NSUInteger insertIndex = MIN((NSUInteger)1, items.count);
-        [items insertObject:notiTab atIndex:insertIndex];
-    }
+
     %orig(renderer);
 }
 %end
@@ -118,7 +166,9 @@ BOOL isTabSelected = NO;
     %orig;
     if (!isTabSelected) {
         NSArray *pivotIdentifiers = @[@"FEwhat_to_watch", @"FEshorts", @"FEsubscriptions", @"FElibrary"];
-        [self selectItemWithPivotIdentifier:pivotIdentifiers[INTFORVAL(DefaultTab)]]; // Set int here
+        NSInteger tabIndex = INTFORVAL(DefaultTab);
+        if (tabIndex < 0 || tabIndex >= (NSInteger)pivotIdentifiers.count) tabIndex = 0;
+        [self selectItemWithPivotIdentifier:pivotIdentifiers[tabIndex]];
         isTabSelected = YES;
     }
 }

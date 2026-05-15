@@ -501,6 +501,307 @@ YMSettingsItem *YMTextSegment(NSString *title, NSString *key, NSArray<NSString *
     return [YMSettingsItem textSegmentWithTitle:title key:key labels:labels defaultValue:defaultValue];
 }
 
+#pragma mark - YMTabOrderViewController
+
+static NSString * const kYMTabIDs[] = {
+    @"home", @"shorts", @"create", @"subscriptions", @"library",
+    @"history", @"gaming", @"sports", @"notifications"
+};
+static const NSInteger kYMTabCount = 9;
+static const NSInteger kYMTabMaxEnabled = 6;
+
+@interface YMTabOrderViewController : UIViewController <UITableViewDelegate, UITableViewDataSource>
+- (UITableView *)tableView;
+- (void)setTableView:(UITableView *)tv;
+- (NSMutableArray<NSMutableDictionary *> *)tabData;
+- (void)setTabData:(NSMutableArray<NSMutableDictionary *> *)data;
+- (NSArray *)initialSnapshot;
+- (void)setInitialSnapshot:(NSArray *)snap;
+@end
+
+static const void *kYMTabTableViewKey = &kYMTabTableViewKey;
+static const void *kYMTabDataKey = &kYMTabDataKey;
+static const void *kYMTabSnapshotKey = &kYMTabSnapshotKey;
+
+@implementation YMTabOrderViewController
+
+- (UITableView *)tableView { return objc_getAssociatedObject(self, kYMTabTableViewKey); }
+- (void)setTableView:(UITableView *)tv { objc_setAssociatedObject(self, kYMTabTableViewKey, tv, OBJC_ASSOCIATION_RETAIN_NONATOMIC); }
+- (NSMutableArray<NSMutableDictionary *> *)tabData { return objc_getAssociatedObject(self, kYMTabDataKey); }
+- (void)setTabData:(NSMutableArray<NSMutableDictionary *> *)data { objc_setAssociatedObject(self, kYMTabDataKey, data, OBJC_ASSOCIATION_RETAIN_NONATOMIC); }
+- (NSArray *)initialSnapshot { return objc_getAssociatedObject(self, kYMTabSnapshotKey); }
+- (void)setInitialSnapshot:(NSArray *)snap { objc_setAssociatedObject(self, kYMTabSnapshotKey, snap, OBJC_ASSOCIATION_RETAIN_NONATOMIC); }
+
+- (NSString *)localizedNameForTabID:(NSString *)tabID {
+    NSBundle *bundle = [NSBundle bundleWithPath:[[NSBundle mainBundle] pathForResource:@"YouMod" ofType:@"bundle"]];
+    if ([tabID isEqualToString:@"home"]) return @"Home";
+    if ([tabID isEqualToString:@"shorts"]) return @"Shorts";
+    if ([tabID isEqualToString:@"create"]) return @"Create";
+    if ([tabID isEqualToString:@"subscriptions"]) return @"Subscriptions";
+    if ([tabID isEqualToString:@"library"]) return @"Library";
+    if ([tabID isEqualToString:@"history"]) return [bundle localizedStringForKey:@"HISTORY_TAB" value:@"History" table:nil];
+    if ([tabID isEqualToString:@"gaming"]) return [bundle localizedStringForKey:@"GAMING_TAB" value:@"Gaming" table:nil];
+    if ([tabID isEqualToString:@"sports"]) return [bundle localizedStringForKey:@"SPORTS_TAB" value:@"Sports" table:nil];
+    if ([tabID isEqualToString:@"notifications"]) return [bundle localizedStringForKey:@"NOTI_TAB" value:@"Notifications" table:nil];
+    return tabID;
+}
+
+- (void)viewDidLoad {
+    Class ytStyled = objc_getClass("YTStyledViewController");
+    struct objc_super superStruct = { self, ytStyled ?: [UIViewController class] };
+    ((void (*)(struct objc_super *, SEL))objc_msgSendSuper)(&superStruct, @selector(viewDidLoad));
+
+    self.title = @"Manage Tabs";
+    [self loadTabData];
+    [self takeSnapshot];
+
+    self.tableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStyleGrouped];
+    self.tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    self.tableView.delegate = self;
+    self.tableView.dataSource = self;
+    self.tableView.editing = YES;
+    self.tableView.allowsSelectionDuringEditing = NO;
+    self.tableView.estimatedRowHeight = 56;
+    self.tableView.rowHeight = UITableViewAutomaticDimension;
+
+    if (self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+        self.tableView.backgroundColor = [UIColor blackColor];
+    } else {
+        self.tableView.backgroundColor = [UIColor systemBackgroundColor];
+    }
+
+    [self.view addSubview:self.tableView];
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    Class ytStyled = objc_getClass("YTStyledViewController");
+    struct objc_super superStruct = { self, ytStyled ?: [UIViewController class] };
+    ((void (*)(struct objc_super *, SEL, BOOL))objc_msgSendSuper)(&superStruct, @selector(viewWillAppear:), animated);
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    Class ytStyled = objc_getClass("YTStyledViewController");
+    struct objc_super superStruct = { self, ytStyled ?: [UIViewController class] };
+    ((void (*)(struct objc_super *, SEL, BOOL))objc_msgSendSuper)(&superStruct, @selector(viewWillDisappear:), animated);
+
+    if ([self hasRealChanges]) {
+        Class alertClass = NSClassFromString(@"YTAlertView");
+        if (alertClass) {
+            YTAlertView *alert = [alertClass confirmationDialogWithAction:^{
+                [[UIApplication sharedApplication] performSelector:@selector(suspend)];
+                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                    exit(0);
+                });
+            } actionTitle:@"Restart Now"];
+            alert.title = @"Restart Required";
+            alert.subtitle = @"Tab bar changes require a restart to take effect.";
+            [alert show];
+        }
+    }
+}
+
+- (void)viewDidLayoutSubviews {
+    Class ytStyled = objc_getClass("YTStyledViewController");
+    struct objc_super superStruct = { self, ytStyled ?: [UIViewController class] };
+    ((void (*)(struct objc_super *, SEL))objc_msgSendSuper)(&superStruct, @selector(viewDidLayoutSubviews));
+
+    if (self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+        @try {
+            id backButton = [self valueForKey:@"_backButton"];
+            if ([backButton respondsToSelector:@selector(setTintColor:)]) {
+                [backButton performSelector:@selector(setTintColor:) withObject:[UIColor whiteColor]];
+            }
+        } @catch (NSException *e) {}
+    }
+}
+
+- (void)loadTabData {
+    NSArray *savedOrder = [[NSUserDefaults standardUserDefaults] arrayForKey:TabOrder];
+    NSMutableArray *data = [NSMutableArray array];
+
+    if (savedOrder.count > 0) {
+        for (NSDictionary *entry in savedOrder) {
+            NSString *tabID = entry[@"id"];
+            BOOL enabled = [entry[@"enabled"] boolValue];
+            if (tabID) {
+                [data addObject:[@{@"id": tabID, @"enabled": @(enabled)} mutableCopy]];
+            }
+        }
+        // Add any new tabs not in saved data
+        for (NSInteger i = 0; i < kYMTabCount; i++) {
+            NSString *tabID = kYMTabIDs[i];
+            BOOL found = NO;
+            for (NSDictionary *d in data) {
+                if ([d[@"id"] isEqualToString:tabID]) { found = YES; break; }
+            }
+            if (!found) {
+                [data addObject:[@{@"id": tabID, @"enabled": @NO} mutableCopy]];
+            }
+        }
+    } else {
+        // Default: Home, Shorts, Create, Subscriptions, Library enabled
+        for (NSInteger i = 0; i < kYMTabCount; i++) {
+            BOOL defaultEnabled = (i < 5);
+            [data addObject:[@{@"id": kYMTabIDs[i], @"enabled": @(defaultEnabled)} mutableCopy]];
+        }
+    }
+
+    self.tabData = data;
+}
+
+- (void)saveTabData {
+    NSMutableArray *toSave = [NSMutableArray array];
+    for (NSMutableDictionary *entry in self.tabData) {
+        [toSave addObject:@{@"id": entry[@"id"], @"enabled": entry[@"enabled"]}];
+    }
+    [[NSUserDefaults standardUserDefaults] setObject:toSave forKey:TabOrder];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+- (void)takeSnapshot {
+    NSMutableArray *snap = [NSMutableArray array];
+    for (NSDictionary *entry in self.tabData) {
+        [snap addObject:@{@"id": entry[@"id"], @"enabled": entry[@"enabled"]}];
+    }
+    self.initialSnapshot = [snap copy];
+}
+
+- (BOOL)hasRealChanges {
+    if (!self.initialSnapshot) return NO;
+    NSArray *current = self.tabData;
+    if (current.count != self.initialSnapshot.count) return YES;
+    for (NSUInteger i = 0; i < current.count; i++) {
+        NSDictionary *a = self.initialSnapshot[i];
+        NSDictionary *b = current[i];
+        if (![a[@"id"] isEqualToString:b[@"id"]]) return YES;
+        if (![a[@"enabled"] isEqual:b[@"enabled"]]) return YES;
+    }
+    return NO;
+}
+
+- (NSInteger)enabledCount {
+    NSInteger count = 0;
+    for (NSDictionary *entry in self.tabData) {
+        if ([entry[@"enabled"] boolValue]) count++;
+    }
+    return count;
+}
+
+#pragma mark - UITableViewDataSource
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView { return 1; }
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return self.tabData.count;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    static NSString *cellID = @"YMTabCell";
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellID];
+    UISwitch *sw;
+
+    if (!cell) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID];
+        cell.backgroundColor = [UIColor clearColor];
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+
+        sw = [[UISwitch alloc] init];
+        sw.onTintColor = [UIColor colorWithRed:0.6 green:0.2 blue:0.9 alpha:1.0];
+        [sw addTarget:self action:@selector(tabToggleChanged:) forControlEvents:UIControlEventValueChanged];
+        sw.translatesAutoresizingMaskIntoConstraints = NO;
+        sw.tag = 999;
+        [cell.contentView addSubview:sw];
+
+        [NSLayoutConstraint activateConstraints:@[
+            [sw.centerYAnchor constraintEqualToAnchor:cell.contentView.centerYAnchor],
+            [sw.trailingAnchor constraintEqualToAnchor:cell.contentView.trailingAnchor constant:-16]
+        ]];
+    } else {
+        sw = [cell.contentView viewWithTag:999];
+    }
+
+    NSMutableDictionary *entry = self.tabData[indexPath.row];
+    NSString *tabID = entry[@"id"];
+    BOOL enabled = [entry[@"enabled"] boolValue];
+
+    cell.textLabel.text = [self localizedNameForTabID:tabID];
+    cell.textLabel.textColor = (self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark)
+        ? [UIColor whiteColor] : [UIColor labelColor];
+    cell.textLabel.font = [UIFont systemFontOfSize:16 weight:UIFontWeightMedium];
+
+    sw.on = enabled;
+    objc_setAssociatedObject(sw, kYMSwitchKeyAssoc, tabID, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+
+    return cell;
+}
+
+- (void)tabToggleChanged:(UISwitch *)sender {
+    NSString *tabID = objc_getAssociatedObject(sender, kYMSwitchKeyAssoc);
+    if (!tabID) return;
+
+    NSMutableDictionary *entry = nil;
+    for (NSMutableDictionary *d in self.tabData) {
+        if ([d[@"id"] isEqualToString:tabID]) { entry = d; break; }
+    }
+    if (!entry) return;
+
+    BOOL wantsEnabled = sender.on;
+
+    if (wantsEnabled && [self enabledCount] >= kYMTabMaxEnabled) {
+        sender.on = NO;
+        Class alertClass = NSClassFromString(@"YTAlertView");
+        if (alertClass) {
+            YTAlertView *alert = [alertClass infoDialog];
+            alert.title = @"Tab Limit";
+            alert.subtitle = [NSString stringWithFormat:@"Maximum %ld tabs allowed.", (long)kYMTabMaxEnabled];
+            [alert show];
+        }
+        return;
+    }
+
+    entry[@"enabled"] = @(wantsEnabled);
+    [self saveTabData];
+}
+
+#pragma mark - Reordering
+
+- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath { return YES; }
+
+- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)from toIndexPath:(NSIndexPath *)to {
+    NSMutableDictionary *item = self.tabData[from.row];
+    [self.tabData removeObjectAtIndex:from.row];
+    [self.tabData insertObject:item atIndex:to.row];
+    [self saveTabData];
+}
+
+- (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return UITableViewCellEditingStyleNone;
+}
+
+- (BOOL)tableView:(UITableView *)tableView shouldIndentWhileEditingRowAtIndexPath:(NSIndexPath *)indexPath {
+    return NO;
+}
+
+#pragma mark - Section Header/Footer
+
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
+    return @"Drag to reorder. Toggle to show/hide.";
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section { return 0; }
+- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section { return [[UIView alloc] init]; }
+
+@end
+
+void YMPushTabOrder(id settingsVC, id parentResponder) {
+    Class styledClass = objc_getClass("YMTabOrderViewControllerStyled");
+    if (!styledClass) styledClass = [YMTabOrderViewController class];
+
+    YMTabOrderViewController *vc = (YMTabOrderViewController *)((id (*)(id, SEL, id))objc_msgSend)([styledClass alloc], @selector(initWithParentResponder:), parentResponder);
+    if (!vc) vc = [[styledClass alloc] init];
+    [settingsVC pushViewController:vc];
+}
+
 #pragma mark - Entry Point
 
 void YMPushSubSettings(NSString *title, NSArray<YMSettingsItem *> *items, id settingsVC, id parentResponder) {
@@ -516,29 +817,33 @@ void YMPushSubSettings(NSString *title, NSArray<YMSettingsItem *> *items, id set
 
 #pragma mark - Runtime Class Registration
 
-%ctor {
-    Class ytStyled = %c(YTStyledViewController);
-    if (ytStyled) {
-        Class ymStyled = objc_allocateClassPair(ytStyled, "YMSubSettingsViewControllerStyled", 0);
-        if (ymStyled) {
-            unsigned int count = 0;
-            Method *methods = class_copyMethodList([YMSubSettingsViewController class], &count);
-            for (unsigned int i = 0; i < count; i++) {
-                class_addMethod(ymStyled, method_getName(methods[i]), method_getImplementation(methods[i]), method_getTypeEncoding(methods[i]));
-            }
-            free(methods);
+static void ymRegisterStyledSubclass(Class sourceClass, const char *name) {
+    Class ytStyled = objc_getClass("YTStyledViewController");
+    if (!ytStyled) return;
+    Class newClass = objc_allocateClassPair(ytStyled, name, 0);
+    if (!newClass) return;
 
-            unsigned int propCount = 0;
-            objc_property_t *props = class_copyPropertyList([YMSubSettingsViewController class], &propCount);
-            for (unsigned int i = 0; i < propCount; i++) {
-                unsigned int attrCount = 0;
-                objc_property_attribute_t *attrs = property_copyAttributeList(props[i], &attrCount);
-                class_addProperty(ymStyled, property_getName(props[i]), attrs, attrCount);
-                free(attrs);
-            }
-            free(props);
-
-            objc_registerClassPair(ymStyled);
-        }
+    unsigned int count = 0;
+    Method *methods = class_copyMethodList(sourceClass, &count);
+    for (unsigned int i = 0; i < count; i++) {
+        class_addMethod(newClass, method_getName(methods[i]), method_getImplementation(methods[i]), method_getTypeEncoding(methods[i]));
     }
+    free(methods);
+
+    unsigned int propCount = 0;
+    objc_property_t *props = class_copyPropertyList(sourceClass, &propCount);
+    for (unsigned int i = 0; i < propCount; i++) {
+        unsigned int attrCount = 0;
+        objc_property_attribute_t *attrs = property_copyAttributeList(props[i], &attrCount);
+        class_addProperty(newClass, property_getName(props[i]), attrs, attrCount);
+        free(attrs);
+    }
+    free(props);
+
+    objc_registerClassPair(newClass);
+}
+
+%ctor {
+    ymRegisterStyledSubclass([YMSubSettingsViewController class], "YMSubSettingsViewControllerStyled");
+    ymRegisterStyledSubclass([YMTabOrderViewController class], "YMTabOrderViewControllerStyled");
 }

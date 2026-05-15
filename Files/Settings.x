@@ -18,6 +18,7 @@ extern YMSettingsItem *YMAction(NSString *title, NSString *subtitle, void (^acti
 extern YMSettingsItem *YMHeader(NSString *title);
 extern YMSettingsItem *YMSegment(NSString *title, NSString *key, NSArray<NSNumber *> *icons, NSInteger defaultValue);
 extern YMSettingsItem *YMTextSegment(NSString *title, NSString *key, NSArray<NSString *> *labels, NSInteger defaultValue);
+extern void YMPushTabOrder(id settingsVC, id parentResponder);
 
 @interface YTSettingsSectionItemManager (YouMod)
 - (void)updateYouModSectionWithEntry:(id)entry;
@@ -343,14 +344,10 @@ static NSString *GetCacheSize() { // YTLite - @dayanch96
             YMTextSegment(LOC(@"FORSTED_TAB_BAR"), UseFrostedTabBar, (@[LOC(@"DEFAULT"),LOC(@"ENABLED"), LOC(@"DISABLED")]), 0),
             YMToggle(LOC(@"HIDE_TAB_INDI"), LOC(@"HIDE_TAB_INDI_DESC"), HideTabIndi),
             YMToggle(LOC(@"HIDE_TAB_LABELS"), LOC(@"HIDE_TAB_LABELS_DESC"), HideTabLabels),
-            YMToggle(LOC(@"HIDE_HOME_TAB"), LOC(@"HIDE_HOME_TAB_DESC"), HideHomeTab),
-            YMToggle(LOC(@"HIDE_SHORTS_TAB"), LOC(@"HIDE_SHORTS_TAB_DESC"), HideShortsTab),
-            YMToggle(LOC(@"HIDE_CREATE_BUTTON"), LOC(@"HIDE_CREATE_BUTTON_DESC"), HideCreateButton),
-            YMToggle(LOC(@"HIDE_SUBSCRIPT_TAB"), LOC(@"HIDE_SUBSCRIPT_TAB_DESC"), HideSubscriptTab),
-            YMToggle(LOC(@"ADDS_HISTORY_TAB"), LOC(@"ADDS_HISTORY_TAB_DESC"), AddsHistoryTab),
-            YMToggle(LOC(@"ADDS_GAMING_TAB"), LOC(@"ADDS_GAMING_TAB_DESC"), AddsGamingTab),
-            YMToggle(LOC(@"ADDS_SPORTS_TAB"), LOC(@"ADDS_SPORTS_TAB_DESC"), AddsSportsTab),
-            YMToggle(LOC(@"ADDS_NOTI_TAB"), LOC(@"ADDS_NOTI_TAB_DESC"), AddsNotiTab),
+            YMAction(@"Manage Tabs", @"Reorder and toggle tabs", ^(UIViewController *vc) {
+                (void)vc;
+                YMPushTabOrder(settingsViewController, [self parentResponder]);
+            }),
         ], settingsViewController, [self parentResponder]);
         return YES;
     }];

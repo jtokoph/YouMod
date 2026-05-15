@@ -166,6 +166,7 @@
 #define ShortsActionIndex @"YouModMakeAShortsAction"
 // Tab bar
 #define DefaultTab @"YouModDefaultStartupTab"
+#define TabOrder @"YouModTabOrder"
 #define HideTabIndi @"YouModHideTabIndicators"
 #define HideTabLabels @"YouModHideTabLabels"
 #define UseFrostedTabBar @"YouModUseFrostedTabBar"
