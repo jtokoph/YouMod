@@ -166,6 +166,7 @@ typedef void (^YouModRangeDownloadProgress)(unsigned long long completedBytes);
 @property (nonatomic, strong) YouModRangeDownloader *rangeDownloader;
 @property (nonatomic, strong) UIAlertController *progressAlert;
 @property (nonatomic, strong) UIProgressView *progressView;
+@property (nonatomic, strong) YMDownloadProgressView *progressPill;
 @property (nonatomic, weak) UIViewController *presenter;
 @property (nonatomic, copy) YouModFileDownloadCompletion fileCompletion;
 @property (nonatomic, strong) NSURL *destinationURL;
@@ -1272,27 +1273,43 @@ static void YouModPresentMenu(NSString *title, NSArray <YouModMenuItem *> *items
     self.presenter = presenter;
     self.baseProgressTitle = title;
     self.downloadStartTime = [NSDate timeIntervalSinceReferenceDate];
-    self.progressAlert = [UIAlertController alertControllerWithTitle:[NSString stringWithFormat:@"%@ - 0%%", title] message:@"\n" preferredStyle:UIAlertControllerStyleAlert];
-    self.progressView = [[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleDefault];
-    self.progressView.progress = 0.0;
-    self.progressView.translatesAutoresizingMaskIntoConstraints = NO;
-    [self.progressAlert.view addSubview:self.progressView];
-    [NSLayoutConstraint activateConstraints:@[
-        [self.progressView.leadingAnchor constraintEqualToAnchor:self.progressAlert.view.leadingAnchor constant:24.0],
-        [self.progressView.trailingAnchor constraintEqualToAnchor:self.progressAlert.view.trailingAnchor constant:-24.0],
-        [self.progressView.bottomAnchor constraintEqualToAnchor:self.progressAlert.view.bottomAnchor constant:-56.0],
-    ]];
-    __weak typeof(self) weakSelf = self;
-    [self.progressAlert addAction:[UIAlertAction actionWithTitle:LOC(@"CANCEL") style:UIAlertActionStyleCancel handler:^(__unused UIAlertAction *action) {
-        [weakSelf cancelWithMessage:LOC(@"DOWNLOAD_CANCELLED")];
-    }]];
-    [presenter presentViewController:self.progressAlert animated:YES completion:nil];
+
+    UIView *pillParent = sbGetNotificationParent();
+    if (pillParent) {
+        __weak typeof(self) weakSelf = self;
+        self.progressPill = [YMDownloadProgressView showInView:pillParent
+            message:[NSString stringWithFormat:@"%@ - 0%%", title]
+            cancelAction:^{
+                [weakSelf cancelWithMessage:LOC(@"DOWNLOAD_CANCELLED")];
+            }];
+    } else {
+        self.progressAlert = [UIAlertController alertControllerWithTitle:[NSString stringWithFormat:@"%@ - 0%%", title] message:@"\n" preferredStyle:UIAlertControllerStyleAlert];
+        self.progressView = [[UIProgressView alloc] initWithProgressViewStyle:UIProgressViewStyleDefault];
+        self.progressView.progress = 0.0;
+        self.progressView.translatesAutoresizingMaskIntoConstraints = NO;
+        [self.progressAlert.view addSubview:self.progressView];
+        [NSLayoutConstraint activateConstraints:@[
+            [self.progressView.leadingAnchor constraintEqualToAnchor:self.progressAlert.view.leadingAnchor constant:24.0],
+            [self.progressView.trailingAnchor constraintEqualToAnchor:self.progressAlert.view.trailingAnchor constant:-24.0],
+            [self.progressView.bottomAnchor constraintEqualToAnchor:self.progressAlert.view.bottomAnchor constant:-56.0],
+        ]];
+        __weak typeof(self) weakSelf = self;
+        [self.progressAlert addAction:[UIAlertAction actionWithTitle:LOC(@"CANCEL") style:UIAlertActionStyleCancel handler:^(__unused UIAlertAction *action) {
+            [weakSelf cancelWithMessage:LOC(@"DOWNLOAD_CANCELLED")];
+        }]];
+        [presenter presentViewController:self.progressAlert animated:YES completion:nil];
+    }
 }
 
 - (void)updateProgressTitle:(NSString *)title progress:(float)progress {
-    self.progressAlert.title = [NSString stringWithFormat:@"%@ - %ld%%", title, (long)lrintf(progress * 100.0f)];
-    self.progressAlert.message = @"\n";
-    [self.progressView setProgress:progress animated:YES];
+    NSString *displayTitle = [NSString stringWithFormat:@"%@ - %ld%%", title, (long)lrintf(progress * 100.0f)];
+    if (self.progressPill) {
+        [self.progressPill updateProgress:progress title:displayTitle subtitle:nil];
+    } else {
+        self.progressAlert.title = displayTitle;
+        self.progressAlert.message = @"\n";
+        [self.progressView setProgress:progress animated:YES];
+    }
 }
 
 - (void)cancelWithMessage:(NSString *)message {
@@ -1305,6 +1322,7 @@ static void YouModPresentMenu(NSString *title, NSArray <YouModMenuItem *> *items
     self.fileCompletion = nil;
     self.active = NO;
     self.cancelled = YES;
+    if (self.progressPill) { [self.progressPill dismiss]; self.progressPill = nil; }
     [self cleanupTemporaryFiles];
     if (message.length) YouModSendToast(message, self.presenter);
 }
@@ -1401,7 +1419,7 @@ static void YouModPresentMenu(NSString *title, NSArray <YouModMenuItem *> *items
     unsigned long long total = self.totalBytes ?: expectedBytes;
     float progress = total ? (float)(self.completedBytes + currentBytes) / (float)total : 0.0f;
     progress = fminf(fmaxf(progress, 0.0f), 0.985f);
-    
+
     NSTimeInterval now = [NSDate timeIntervalSinceReferenceDate];
     NSTimeInterval elapsed = now - self.downloadStartTime;
     double speedMBps = 0;
@@ -1409,14 +1427,22 @@ static void YouModPresentMenu(NSString *title, NSArray <YouModMenuItem *> *items
         speedMBps = ((double)(self.completedBytes + currentBytes) / 1048576.0) / elapsed;
     }
     double totalMB = (double)total / 1048576.0;
-    
-    self.progressAlert.title = [NSString stringWithFormat:@"%@ - %ld%%", self.baseProgressTitle ?: @"Downloading", (long)lrintf(progress * 100.0f)];
+
+    NSString *title = [NSString stringWithFormat:@"%@ - %ld%%", self.baseProgressTitle ?: @"Downloading", (long)lrintf(progress * 100.0f)];
+    NSString *subtitle;
     if (total > 0) {
-        self.progressAlert.message = [NSString stringWithFormat:@"%.1f MB/s - %.1f MB\n", speedMBps, totalMB];
+        subtitle = [NSString stringWithFormat:@"%.1f MB/s · %.1f MB", speedMBps, totalMB];
     } else {
-        self.progressAlert.message = [NSString stringWithFormat:@"%.1f MB/s\n", speedMBps];
+        subtitle = [NSString stringWithFormat:@"%.1f MB/s", speedMBps];
     }
-    [self.progressView setProgress:progress animated:YES];
+
+    if (self.progressPill) {
+        [self.progressPill updateProgress:progress title:title subtitle:subtitle];
+    } else {
+        self.progressAlert.title = title;
+        self.progressAlert.message = [NSString stringWithFormat:@"%@\n", subtitle];
+        [self.progressView setProgress:progress animated:YES];
+    }
 }
 
 - (void)adjustCurrentExpectedBytesIfNeeded:(unsigned long long)newExpectedBytes {
@@ -1691,6 +1717,7 @@ static void YouModPresentMenu(NSString *title, NSArray <YouModMenuItem *> *items
 - (void)completeWithFileURL:(NSURL *)fileURL isVideo:(BOOL)isVideo presenter:(UIViewController *)presenter {
     self.active = NO;
     [self updateProgressTitle:LOC(@"DOWNLOAD_COMPLETED") progress:1.0f];
+    if (self.progressPill) { [self.progressPill dismiss]; self.progressPill = nil; }
     [self.progressAlert dismissViewControllerAnimated:YES completion:nil];
     self.progressAlert = nil;
     self.progressView = nil;
@@ -1715,6 +1742,7 @@ static void YouModPresentMenu(NSString *title, NSArray <YouModMenuItem *> *items
 
 - (void)failWithError:(NSError *)error {
     self.active = NO;
+    if (self.progressPill) { [self.progressPill dismiss]; self.progressPill = nil; }
     [self.progressAlert dismissViewControllerAnimated:YES completion:nil];
     self.progressAlert = nil;
     self.progressView = nil;

@@ -407,6 +407,17 @@ typedef NS_ENUM(NSInteger, SBSegmentAction) {
 
 extern UIView *sbGetNotificationParent(void);
 
+@interface YMDownloadProgressView : UIView
+@property (nonatomic, strong) UILabel *titleLabel;
+@property (nonatomic, strong) UILabel *subtitleLabel;
+@property (nonatomic, strong) UIProgressView *progressBar;
+@property (nonatomic, strong) UIButton *cancelButton;
+@property (nonatomic, copy) void (^onCancel)(void);
++ (instancetype)showInView:(UIView *)parentView message:(NSString *)message cancelAction:(void (^)(void))cancelAction;
+- (void)updateProgress:(float)progress title:(NSString *)title subtitle:(NSString *)subtitle;
+- (void)dismiss;
+@end
+
 @interface YTPlayerViewController (SponsorBlock)
 @property (nonatomic, strong) NSString *sbLastVideoID;
 @property (nonatomic, strong) NSArray<SBSegment *> *sbSegments;
