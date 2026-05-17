@@ -826,7 +826,6 @@ static NSArray <YouModAudioOutputFormat *> *YouModAudioOutputFormats(void) {
     dispatch_once(&onceToken, ^{
         formats = @[
             YouModAudioOutputFormatMake(@"m4a", @"M4A", @"", @"m4a", YES, YES),
-            YouModAudioOutputFormatMake(@"aac", @"AAC", @"", @"aac", YES, YES),
         ];
     });
     return formats;
@@ -852,10 +851,6 @@ static NSString *YouModAudioOutputFileExtension(YouModAudioOutputFormat *outputF
     if (passthrough && ([identifier isEqualToString:@"m4a"] || [identifier isEqualToString:@"aac"]) && ([mime containsString:@"mp4"] || [mime containsString:@"m4a"]))
         return @"m4a";
     return outputFormat.fileExtension ?: YouModFileExtensionForFormat(sourceFormat, @"m4a");
-}
-
-static NSString *YouModAudioOutputSubtitle(YouModAudioOutputFormat *outputFormat) {
-    return [NSString stringWithFormat:@"%@", outputFormat.subtitle];
 }
 
 static NSString *YouModFormatSubtitle(YouModMediaFormat *format) {

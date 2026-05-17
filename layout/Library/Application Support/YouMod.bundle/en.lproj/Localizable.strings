@@ -59,10 +59,8 @@
 "NO_STREAM_URL" = "No stream URL found";
 "CAPTIONS_FAILED" = "Failed to download captions";
 "NO_CAPTIONS" = "No captions available for this video";
-"AUDIO_FORMAT" = "Audio format";
 "NO_AUDIO_STREAM_FOUND" = "No audio streams found";
 "DOWNLOAD" = "Download";
-"AUDIO" = "Audio";
 "NO_VID_AUDIO_STREAM_FOUND" = "No video/audio streams found";
 "COPIED_VID_INFO" = "Copied video information";
 "SAVED_TO_PHOTOS" = "Saved to Photos";
