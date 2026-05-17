@@ -270,12 +270,6 @@ typedef NS_ENUM(NSUInteger, GestureSection) {
 @property (nonatomic, retain) UIPanGestureRecognizer *YouModPanGesture;
 @property (nonatomic, retain) UILabel *YouModGestureHUD;
 @property (nonatomic, weak, readwrite) UIViewController *parentViewController;
-@property (nonatomic, strong) NSString *sbLastVideoID;
-@property (nonatomic, strong) NSArray<SBSegment *> *sbSegments;
-@property (nonatomic, strong) NSMutableSet<NSString *> *sbSkippedSegments;
-@property (nonatomic, strong) SBSkipNotificationView *sbNotificationView;
-@property (nonatomic, strong) UIButton *sbOverlayButton;
-@property (nonatomic, assign) BOOL sbEnabledForVideo;
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer;
 - (void)YouModAutoFullscreen;
 - (void)YouModTurnOffCaptions;
@@ -286,10 +280,6 @@ typedef NS_ENUM(NSUInteger, GestureSection) {
 - (void)setPlaybackRate:(float)rate;
 - (void)play;
 - (void)pause;
-- (void)sbPerformSkip:(SBSegment *)segment;
-- (void)sbShowAskNotification:(SBSegment *)segment;
-- (void)sbShowHighlightBannerIfNeeded:(NSArray<SBSegment *> *)segments;
-- (void)sbSkipToHighlight;
 @end
 
 @interface SSOConfiguration : NSObject
@@ -428,7 +418,23 @@ extern UIView *sbGetNotificationParent(void);
 - (void)dismiss;
 @end
 
+@interface YTPlayerViewController (SponsorBlock)
+@property (nonatomic, strong) NSString *sbLastVideoID;
+@property (nonatomic, strong) NSArray<SBSegment *> *sbSegments;
+@property (nonatomic, strong) NSMutableSet<NSString *> *sbSkippedSegments;
+@property (nonatomic, strong) SBSkipNotificationView *sbNotificationView;
+@property (nonatomic, strong) UIButton *sbOverlayButton;
+@property (nonatomic, assign) BOOL sbEnabledForVideo;
+- (void)sbPerformSkip:(SBSegment *)segment;
+- (void)sbShowAskNotification:(SBSegment *)segment;
+- (void)sbShowHighlightBannerIfNeeded:(NSArray<SBSegment *> *)segments;
+- (void)sbSkipToHighlight;
+@end
+
 @interface YTSegmentableInlinePlayerBarView : UIView
+@end
+
+@interface YTSegmentableInlinePlayerBarView (SponsorBlock)
 @property (nonatomic, strong) NSArray<UIView *> *sbMarkerViews;
 - (void)sbRenderSegments:(NSArray<SBSegment *> *)segments;
 - (void)sbClearSegments;
