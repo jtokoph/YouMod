@@ -171,10 +171,18 @@ static NSMutableArray <YTIItemSectionRenderer *> *filteredArray(NSArray <YTIItem
 %hook YTInnerTubeCollectionViewController
 - (void)displaySectionsWithReloadingSectionControllerByRenderer:(id)renderer {
     NSMutableArray *sectionRenderers = [self valueForKey:@"_sectionRenderers"];
+    NSLog(@"[YouMod] displaySectionsWithReloadingSectionControllerByRenderer elements: %@", sectionRenderers);
+    for (id element in sectionRenderers) {
+        NSLog(@"[YouMod] Element Class: %@", NSStringFromClass([element class]));
+    }
     [self setValue:filteredArray(sectionRenderers) forKey:@"_sectionRenderers"];
     %orig;
 }
 - (void)addSectionsFromArray:(NSArray <YTIItemSectionRenderer *> *)array {
+    NSLog(@"[YouMod] addSectionsFromArray elements: %@", array);
+    for (id element in array) {
+        NSLog(@"[YouMod] Section Element Class: %@", NSStringFromClass([element class]));
+    }
     %orig(filteredArray(array));
 }
 %end
