@@ -1,7 +1,7 @@
 #import "Headers.h"
 #import <AudioToolbox/AudioToolbox.h>
 
-BOOL useBackwardIconForButton = NO;
+BOOL useBackwardIconForButton;
 
 @interface SBPassthroughView : UIView
 @end
