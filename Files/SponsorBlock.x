@@ -199,8 +199,7 @@ UIColor *SBColorFromHex(NSString *hexString) {
 - (void)setContentVideoID:(NSString *)videoID {
     %orig;
     @try {
-        if (!IS_ENABLED(SBEnabled)) return;
-        if (!videoID || videoID.length == 0) return;
+        if (!IS_ENABLED(SBEnabled) || self.isInlinePlaybackActive || !videoID || videoID.length == 0) return;
         if ([self.sbLastVideoID isEqualToString:videoID] && self.sbSegments.count > 0) return;
         self.sbLastVideoID = videoID;
 
@@ -226,8 +225,7 @@ UIColor *SBColorFromHex(NSString *hexString) {
 - (void)playbackController:(id)playbackController didActivateVideo:(id)video withPlaybackData:(id)playbackData {
     %orig;
     @try {
-        if (!IS_ENABLED(SBEnabled)) return;
-        if (self.isPlayingAd) return;
+        if (!IS_ENABLED(SBEnabled) || self.isInlinePlaybackActive || self.isPlayingAd) return;
 
         self.sbEnabledForVideo = YES;
         self.sbSkippedSegments = [NSMutableSet set];
@@ -257,8 +255,7 @@ UIColor *SBColorFromHex(NSString *hexString) {
 - (void)singleVideo:(id)video currentVideoTimeDidChange:(id)time {
     %orig;
     @try {
-        if (!IS_ENABLED(SBEnabled) || !self.sbEnabledForVideo) return;
-        if (self.isPlayingAd) return;
+        if (!IS_ENABLED(SBEnabled) || !self.sbEnabledForVideo || self.isInlinePlaybackActive || self.isPlayingAd) return;
 
         CGFloat currentTime = [self currentVideoMediaTime];
         float minDuration = FLOAT_FOR_KEY(SBMinDuration);
@@ -290,8 +287,7 @@ UIColor *SBColorFromHex(NSString *hexString) {
 - (void)potentiallyMutatedSingleVideo:(id)video currentVideoTimeDidChange:(id)time {
     %orig;
     @try {
-        if (!IS_ENABLED(SBEnabled) || !self.sbEnabledForVideo) return;
-        if (self.isPlayingAd) return;
+        if (!IS_ENABLED(SBEnabled) || !self.sbEnabledForVideo || self.isInlinePlaybackActive || self.isPlayingAd) return;
 
         CGFloat currentTime = [self currentVideoMediaTime];
         float minDuration = FLOAT_FOR_KEY(SBMinDuration);
