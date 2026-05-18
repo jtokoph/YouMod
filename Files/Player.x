@@ -353,7 +353,7 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
 %end
 
 %hook YTPlayerViewController
-- (void)playbackController:(id)arg1 didActivateVideo:(id)arg2 withPlaybackData:(id)arg3 {
+- (void)playbackController:(id)arg1 willActivateVideo:(id)arg2 {
     %orig;
     YouModDownloadSetCurrentPlayer(self);
     if (IS_ENABLED(AutoFullScreen)) [self performSelector:@selector(YouModAutoFullscreen)];
