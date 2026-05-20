@@ -3,6 +3,7 @@
 extern void YouModDownloadSetCurrentPlayer(YTPlayerViewController *player);
 
 static float playbackRate = 1.0;
+static BOOL isAutoSelected = NO;
 
 /*
 static void YouModAddEndTime(YTPlayerViewController *self, YTSingleVideoController *video, YTSingleVideoTime *time) {
@@ -356,12 +357,17 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
 - (id)activeVideo {
     id value = %orig;
     if (value) {
-        YouModDownloadSetCurrentPlayer(self);
-        if (IS_ENABLED(AutoFullScreen)) [self performSelector:@selector(YouModAutoFullscreen) withObject:nil afterDelay:0.75];
-        if (IS_ENABLED(ShortsToRegular)) [self performSelector:@selector(YouModShortsToRegular) withObject:nil afterDelay:0.75];
-        if (IS_ENABLED(DisablesCaptions)) [self performSelector:@selector(YouModTurnOffCaptions) withObject:nil afterDelay:1.0];
-        if (INTFORVAL(AutoSpeedIndex) != 0) [self performSelector:@selector(YouModSetAutoSpeed) withObject:nil afterDelay:0.75];
-        if (INTFORVAL(WifiQualityIndex) != 0 || INTFORVAL(CellQualityIndex) != 0) [self performSelector:@selector(YouModAutoQuality) withObject:nil afterDelay:1.0];
+        if (!isAutoSelected) {
+            YouModDownloadSetCurrentPlayer(self);
+            if (IS_ENABLED(AutoFullScreen)) [self performSelector:@selector(YouModAutoFullscreen) withObject:nil afterDelay:0.75];
+            if (IS_ENABLED(ShortsToRegular)) [self performSelector:@selector(YouModShortsToRegular) withObject:nil afterDelay:0.75];
+            if (IS_ENABLED(DisablesCaptions)) [self performSelector:@selector(YouModTurnOffCaptions) withObject:nil afterDelay:1.0];
+            if (INTFORVAL(AutoSpeedIndex) != 0) [self performSelector:@selector(YouModSetAutoSpeed) withObject:nil afterDelay:0.75];
+            if (INTFORVAL(WifiQualityIndex) != 0 || INTFORVAL(CellQualityIndex) != 0) [self performSelector:@selector(YouModAutoQuality) withObject:nil afterDelay:1.0];
+            isAutoSelected = YES;
+        }
+    } else {
+        isAutoSelected = NO;
     }
     return value;
 }
