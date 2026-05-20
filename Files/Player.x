@@ -18,7 +18,7 @@ static void YouModAddEndTime(YTPlayerViewController *self, YTSingleVideoControll
     if (hours > 0) {
         remainingTimeText = [NSString stringWithFormat:@"%d:%02d:%02d", hours, minutes, seconds];
     } else {
-        remainingTimeText = [NSString stringWithFormat:@"%02d:%02d", minutes, seconds];
+        remainingTimeText = [NSString stringWithFormat:@"%d:%02d", minutes, seconds];
     }
     
     /*
