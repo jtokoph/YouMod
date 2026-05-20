@@ -629,6 +629,41 @@ static const void *kYMTabSnapshotKey = &kYMTabSnapshotKey;
     return tabID;
 }
 
+- (UIImage *)iconForTabID:(NSString *)tabID {
+    static YTAssetLoader *cachedLoader = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        cachedLoader = [[NSClassFromString(@"YTAssetLoader") alloc] initWithBundle:YMSettingsBundle()];
+    });
+
+    if ([tabID isEqualToString:@"create"]) {
+        UIImageSymbolConfiguration *config = [UIImageSymbolConfiguration configurationWithPointSize:18 weight:UIImageSymbolWeightMedium];
+        return [[UIImage systemImageNamed:@"plus" withConfiguration:config] imageWithTintColor:[UIColor whiteColor] renderingMode:UIImageRenderingModeAlwaysOriginal];
+    }
+
+    NSDictionary *ytIconTypes = @{@"home": @(65), @"shorts": @(769), @"subscriptions": @(66), @"library": @(61)};
+    NSDictionary *bundleIcons = @{@"history": @"icons/history", @"gaming": @"icons/gaming", @"sports": @"icons/sports", @"notifications": @"icons/noti", @"news": @"icons/news"};
+
+    NSNumber *iconType = ytIconTypes[tabID];
+    if (iconType) {
+        YTIIcon *icon = [NSClassFromString(@"YTIIcon") new];
+        if (icon) {
+            ((void (*)(id, SEL, int))objc_msgSend)(icon, @selector(setIconType:), [iconType intValue]);
+            if ([icon respondsToSelector:@selector(iconImageWithColor:)]) {
+                return [[icon iconImageWithColor:[UIColor whiteColor]] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+            }
+        }
+    }
+
+    NSString *bundleName = bundleIcons[tabID];
+    if (bundleName && cachedLoader) {
+        UIImage *img = [cachedLoader imageNamed:bundleName];
+        if (img) return [img imageWithTintColor:[UIColor whiteColor] renderingMode:UIImageRenderingModeAlwaysOriginal];
+    }
+
+    return nil;
+}
+
 - (void)viewDidLoad {
     Class ytStyled = objc_getClass("YTStyledViewController");
     struct objc_super superStruct = { self, ytStyled ?: [UIViewController class] };
@@ -811,6 +846,10 @@ static const void *kYMTabSnapshotKey = &kYMTabSnapshotKey;
     cell.textLabel.textColor = (self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark)
         ? [UIColor whiteColor] : [UIColor labelColor];
     cell.textLabel.font = [UIFont systemFontOfSize:16 weight:UIFontWeightMedium];
+
+    UIImage *tabIcon = [self iconForTabID:tabID];
+    cell.imageView.image = tabIcon;
+    cell.imageView.tintColor = tabIcon ? [UIColor whiteColor] : nil;
 
     sw.on = enabled;
     objc_setAssociatedObject(sw, kYMSwitchKeyAssoc, tabID, OBJC_ASSOCIATION_RETAIN_NONATOMIC);

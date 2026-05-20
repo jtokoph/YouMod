@@ -270,6 +270,8 @@ typedef NS_ENUM(NSUInteger, GestureSection) {
 @property (nonatomic, retain) UIPanGestureRecognizer *YouModPanGesture;
 @property (nonatomic, retain) UILabel *YouModGestureHUD;
 @property (nonatomic, weak, readwrite) UIViewController *parentViewController;
+@property (nonatomic, assign, readonly) BOOL isInlinePlaybackActive;
+@property (nonatomic, assign, readonly) BOOL isPlayingAd;
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer;
 - (void)YouModAutoFullscreen;
 - (void)YouModTurnOffCaptions;

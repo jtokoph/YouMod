@@ -377,7 +377,7 @@ static NSBundle *SBUIBundle() {
         [progressBar.heightAnchor constraintEqualToConstant:6],
 
         [cancelButton.trailingAnchor constraintEqualToAnchor:view.trailingAnchor constant:-14],
-        [cancelButton.topAnchor constraintEqualToAnchor:view.topAnchor constant:12],
+        [cancelButton.centerYAnchor constraintEqualToAnchor:titleLabel.centerYAnchor],
         [cancelButton.widthAnchor constraintEqualToConstant:32],
         [cancelButton.heightAnchor constraintEqualToConstant:32],
     ]];
