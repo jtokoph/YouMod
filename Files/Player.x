@@ -353,20 +353,21 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
 }
 %end
 
-%hook YTPlayerViewController
-- (id)activeVideo {
-    id value = %orig;
-    if (value && vidID != self.currentVideoID) {
-        YouModDownloadSetCurrentPlayer(self);
-        if (IS_ENABLED(AutoFullScreen)) [self performSelector:@selector(YouModAutoFullscreen)];
-        if (IS_ENABLED(ShortsToRegular)) [self performSelector:@selector(YouModShortsToRegular)];
-        if (IS_ENABLED(DisablesCaptions)) [self performSelector:@selector(YouModTurnOffCaptions)];
-        if (INTFORVAL(AutoSpeedIndex) != 0) [self performSelector:@selector(YouModSetAutoSpeed)];
-        if (INTFORVAL(WifiQualityIndex) != 0 || INTFORVAL(CellQualityIndex) != 0) [self performSelector:@selector(YouModAutoQuality)];
-        vidID = self.currentVideoID;
-    }
-    return value;
+%hook YTSingleVideoController
+- (void)setDelegate:(id)arg {
+    %orig;
+    YTPlayerView *playerview = [self valueForKey:@"_playerView"];
+    YTPlayerViewController *playerviewController = [playerview valueForKey:@"_playerViewDelegate"];
+    YouModDownloadSetCurrentPlayer(playerviewController);
+    if (IS_ENABLED(AutoFullScreen)) [playerviewController performSelector:@selector(YouModAutoFullscreen)];
+    if (IS_ENABLED(ShortsToRegular)) [playerviewController performSelector:@selector(YouModShortsToRegular)];
+    if (IS_ENABLED(DisablesCaptions)) [playerviewController performSelector:@selector(YouModTurnOffCaptions)];
+    if (INTFORVAL(AutoSpeedIndex) != 0) [playerviewController performSelector:@selector(YouModSetAutoSpeed)];
+    if (INTFORVAL(WifiQualityIndex) != 0 || INTFORVAL(CellQualityIndex) != 0) [playerviewController performSelector:@selector(YouModAutoQuality)];
 }
+%end
+
+%hook YTPlayerViewController
 
 %new
 - (void)YouModTurnOffCaptions {
