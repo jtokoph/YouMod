@@ -4,6 +4,8 @@ extern void YouModDownloadSetCurrentPlayer(YTPlayerViewController *player);
 
 static float playbackRate = 1.0;
 
+static BOOL isAutoSelected = NO;
+
 static void YouModAddEndTime(YTPlayerViewController *self, YTSingleVideoController *video, YTSingleVideoTime *time) {
     // if (!IS_ENABLED(ShowExtraTimeRemaining)) return;
 
@@ -375,23 +377,25 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
 }
 %end
 
-/*
-%hook YTSingleVideoController
-- (void)setDelegate:(id)arg {
-    %orig;
-    YTPlayerView *playerview = [self valueForKey:@"_playerView"];
-    YTPlayerViewController *playerviewController = [playerview valueForKey:@"_playerViewDelegate"];
-    YouModDownloadSetCurrentPlayer(playerviewController);
-    if (IS_ENABLED(AutoFullScreen)) [playerviewController performSelector:@selector(YouModAutoFullscreen)];
-    if (IS_ENABLED(ShortsToRegular)) [playerviewController performSelector:@selector(YouModShortsToRegular)];
-    if (IS_ENABLED(DisablesCaptions)) [playerviewController performSelector:@selector(YouModTurnOffCaptions)];
-    if (INTFORVAL(AutoSpeedIndex) != 0) [playerviewController performSelector:@selector(YouModSetAutoSpeed)];
-    if (INTFORVAL(WifiQualityIndex) != 0 || INTFORVAL(CellQualityIndex) != 0) [playerviewController performSelector:@selector(YouModAutoQuality)];
-}
-%end
-*/
-
 %hook YTPlayerViewController
+
+- (id)activeVideo {
+    id value = %orig;
+    if (value) {
+        if (!isAutoSelected) {
+            YouModDownloadSetCurrentPlayer(self);
+            if (IS_ENABLED(AutoFullScreen)) [self performSelector:@selector(YouModAutoFullscreen)];
+            if (IS_ENABLED(ShortsToRegular)) [self performSelector:@selector(YouModShortsToRegular)];
+            if (IS_ENABLED(DisablesCaptions)) [self performSelector:@selector(YouModTurnOffCaptions)];
+            if (INTFORVAL(AutoSpeedIndex) != 0) [self performSelector:@selector(YouModSetAutoSpeed)];
+            if (INTFORVAL(WifiQualityIndex) != 0 || INTFORVAL(CellQualityIndex) != 0) [self performSelector:@selector(YouModAutoQuality)];
+            isAutoSelected = YES;
+        }
+    } else {
+        isAutoSelected = NO;
+    }
+    return value;
+}
 
 %new
 - (void)YouModTurnOffCaptions {

@@ -1,6 +1,6 @@
 #import "Headers.h"
 
-// YTUnShorts (https://github.com/PoomSmart/YTUnShorts)
+// Modified from YTUnShorts (https://github.com/PoomSmart/YTUnShorts)
 static NSMutableArray <YTIItemSectionRenderer *> *filteredArray(NSArray <YTIItemSectionRenderer *> *array) {
     NSMutableArray <YTIItemSectionRenderer *> *newArray = [array mutableCopy];
     NSIndexSet *removeIndexes = [newArray indexesOfObjectsPassingTest:^BOOL(YTIItemSectionRenderer *sectionRenderer, NSUInteger idx, BOOL *stop) {
@@ -19,7 +19,9 @@ static NSMutableArray <YTIItemSectionRenderer *> *filteredArray(NSArray <YTIItem
         }
         if ([sectionRenderer isKindOfClass:%c(YTIItemSectionRenderer)]) {
             NSString *description = [sectionRenderer description];
-            if ([description containsString:@"shorts_shelf.eml"])
+            if ([description containsString:@"shorts_shelf.eml"] && ![description containsString:@"subscriptions"])
+                return YES;
+            if ([description containsString:@"horizontal_shelf.eml"])
                 return YES;
         }
         return NO;
