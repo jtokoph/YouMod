@@ -202,9 +202,9 @@ static void YouModAddEndTime(YTPlayerViewController *self, YTSingleVideoControll
 
 - (void)onSelectableVideoFormats:(NSArray <MLFormat *> *)formats {
     %orig;
-    MLAVPlayer *avplayer = self.playerItemDelegate;
-    YTPlayerView *playerview = avplayer.renderingView;
-    YTPlayerViewController *playerviewController = playerview.playerViewDelegate;
+    MLAVPlayer *avplayer = (MLAVPlayer *)self.playerItemDelegate;
+    YTPlayerView *playerview = (YTPlayerView *)avplayer.renderingView;
+    YTPlayerViewController *playerviewController = (YTPlayerViewController *)playerview.playerViewDelegate;
     if (INTFORVAL(WifiQualityIndex) != 0 || INTFORVAL(CellQualityIndex) != 0) [playerviewController performSelector:@selector(YouModAutoQuality)];
 }
 
@@ -214,8 +214,8 @@ static void YouModAddEndTime(YTPlayerViewController *self, YTSingleVideoControll
 
 - (void)streamSelectorHasSelectableVideoFormats:(NSArray <MLFormat *> *)formats {
     %orig;
-    YTPlayerView *playerview = self.renderingView;
-    YTPlayerViewController *playerviewController = playerview.playerViewDelegate;
+    YTPlayerView *playerview = (YTPlayerView *)self.renderingView;
+    YTPlayerViewController *playerviewController = (YTPlayerViewController *)playerview.playerViewDelegate;
     if (INTFORVAL(WifiQualityIndex) != 0 || INTFORVAL(CellQualityIndex) != 0) [playerviewController performSelector:@selector(YouModAutoQuality)];
 }
 
