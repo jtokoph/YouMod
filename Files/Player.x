@@ -198,6 +198,7 @@ static void YouModAddEndTime(YTPlayerViewController *self, YTSingleVideoControll
 }
 %end
 
+/*
 %hook MLHAMPlayerItem
 
 - (void)onSelectableVideoFormats:(NSArray <MLFormat *> *)formats {
@@ -221,7 +222,6 @@ static void YouModAddEndTime(YTPlayerViewController *self, YTSingleVideoControll
 
 %end
 
-/*
 %hook MLAVAssetPlayer
 
 // The changed value is not reliable but this method gets called whenever AirPlay session is started or stopped
