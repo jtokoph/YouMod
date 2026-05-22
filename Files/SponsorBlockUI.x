@@ -3,17 +3,6 @@
 
 extern BOOL useBackwardIconForButton;
 
-static NSBundle *SBUIBundle() {
-    static NSBundle *bundle = nil;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        NSString *path = [[NSBundle mainBundle] pathForResource:@"YouMod" ofType:@"bundle"];
-        if (path) bundle = [NSBundle bundleWithPath:path];
-    });
-    return bundle;
-}
-#define SBLOC(x) [SBUIBundle() localizedStringForKey:x value:nil table:nil]
-
 #pragma mark - SBSkipNotificationView Implementation
 
 @implementation SBSkipNotificationView
