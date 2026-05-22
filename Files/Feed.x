@@ -12,16 +12,18 @@ static NSMutableArray <YTIItemSectionRenderer *> *filteredArray(NSArray <YTIItem
                 YTIElementRenderer *elementRenderer = horizontalListSupportedRenderers.elementRenderer;
                 NSString *description = [elementRenderer description];
                 BOOL hasShorts = [description containsString:@"shorts_video_cell"];
-                if (hasShorts) *stop2 = YES;
+                if (hasShorts && IS_ENABLED(HideShortsShelf)) *stop2 = YES;
                 return hasShorts;
             }];
             return removeItemsArrayIndexes.count > 0;
         }
         if ([sectionRenderer isKindOfClass:%c(YTIItemSectionRenderer)]) {
             NSString *description = [sectionRenderer description];
-            if ([description containsString:@"shorts_shelf.eml"] && ![description containsString:@"subscriptions"])
+            if (IS_ENABLED(HideShortsShelf) && [description containsString:@"shorts_shelf.eml"])
+                if (IS_ENABLED(KeepShortsSubscript) && [description containsString:@"subscriptions"])
+                    return NO;
                 return YES;
-            if ([description containsString:@"horizontal_shelf.eml"] && ![description containsString:@"FEnews_destination"] && ![description containsString:@"FEhistory"] && ![description containsString:@"FEplaylist_aggregation"])
+            if (IS_ENABLED(HideHoriShelf) && [description containsString:@"horizontal_shelf.eml"] && ![description containsString:@"FEnews_destination"] && ![description containsString:@"FEhistory"] && ![description containsString:@"FEplaylist_aggregation"])
                 return YES;
         }
         return NO;
@@ -30,20 +32,15 @@ static NSMutableArray <YTIItemSectionRenderer *> *filteredArray(NSArray <YTIItem
     return newArray;
 }
 
-%group Shorts
 %hook YTInnerTubeCollectionViewController
-
 - (void)displaySectionsWithReloadingSectionControllerByRenderer:(id)renderer {
     NSMutableArray *sectionRenderers = [self valueForKey:@"_sectionRenderers"];
     [self setValue:filteredArray(sectionRenderers) forKey:@"_sectionRenderers"];
     %orig;
 }
-
 - (void)addSectionsFromArray:(NSArray <YTIItemSectionRenderer *> *)array {
     %orig(filteredArray(array));
 }
-
-%end
 %end
 
 // Hide Subbar
@@ -79,10 +76,3 @@ static NSMutableArray <YTIItemSectionRenderer *> *filteredArray(NSArray <YTIItem
 %hook YTPersonalizedSuggestionsCacheProvider
 - (id)activeCache { return IS_ENABLED(HideSearchHis) ? nil : %orig; }
 %end
-
-%ctor {
-    %init;
-    if (IS_ENABLED(HideShortsShelf)) {
-        %init(Shorts);
-    }
-}

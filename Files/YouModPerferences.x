@@ -143,6 +143,11 @@ static NSBundle *YouModBundle() {
         [defaults setBool:YES forKey:BackgroundPlayback];
         [defaults setBool:YES forKey:DownloadManager];
         [defaults setBool:YES forKey:DownloadSaveToPhotos];
+        [defaults setBool:YES forKey:DisableHints];
+        [defaults setInteger:1 forKey:GestureActivationArea];
+        [defaults setInteger:1 forKey:LeftSideGesture];
+        [defaults setInteger:2 forKey:RightSideGesture];
+        [defaults setInteger:1 forKey:GestureHUDSize];
         [defaults synchronize];
         [[UIApplication sharedApplication] performSelector:@selector(suspend)];
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{

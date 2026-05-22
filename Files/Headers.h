@@ -54,6 +54,8 @@
 #import <YouTubeHeader/YTAssetLoader.h>
 #import <MediaPlayer/MediaPlayer.h>
 #import <YouTubeHeader/ASCollectionView.h>
+#import <YouTubeHeader/MLHAMPlayerItem.h>
+#import <YouTubeHeader/YTColor.h>
 #import <dlfcn.h>
 
 // For Settings.x and SponsorBlockSettings.x
@@ -89,9 +91,11 @@
 #define HideCastButtonNav @"YouModHideCastButtonNavigationBar"
 // Feed
 #define HideSubbar @"YouModHideSubbar"
+#define HideHoriShelf @"YouModHideHoriShelf"
 #define HideGenMusicShelf @"YouModHideGenMusicShelf"
 #define HideFeedPost @"YouModHideFeedPost"
 #define HideShortsShelf @"YouModHideShortsShelf"
+#define KeepShortsSubscript @"YouModKeepShortsSubscript"
 #define HideSearchHis @"YouModHideSearchHistoryAndSuggestions"
 #define HideSubButton @"YouModHideSubscribeButton"
 #define HideShoppingButton @"YouModHideShoppingButton"
@@ -171,17 +175,11 @@
 #define HideTabIndi @"YouModHideTabIndicators"
 #define HideTabLabels @"YouModHideTabLabels"
 #define UseFrostedTabBar @"YouModUseFrostedTabBar"
-#define HideHomeTab @"YouModHideHomeTab"
-#define HideShortsTab @"YouModHideShortsTab"
-#define HideCreateButton @"YouModHideCreateButton"
-#define HideSubscriptTab @"YouModHideSubscriptionsTab"
-#define AddsGamingTab @"YouModAddsGamingTab"
-#define AddsHistoryTab @"YouModAddsHistoryTab"
-#define AddsSportsTab @"YouModAddsSportsTab"
-#define AddsNotiTab @"YouModAddsNotificationsTab"
 // Miscellaneous
 #define BackgroundPlayback @"YouModEnablesBackgroundPlayback"
+#define DisablesPiP @"YouModDisablesPiP"
 #define DisablesShortsPiP @"YouModTrytoDisablesShortsPiP"
+#define DisableHints @"YouModDisableHints"
 #define BlockUpgradeDialogs @"YouModBlockUpgradeDialogs"
 #define HideAreYouThereDialog @"YouModHideAreYouThereDialog"
 #define FixesSlowMiniPlayer @"YouModFixesSlowMiniPlayer"
@@ -356,10 +354,22 @@ typedef NS_ENUM(NSUInteger, GestureSection) {
 
 @interface YTSingleVideoController (YouMod)
 @property (nonatomic, assign, readonly) CGFloat totalMediaTime;
+@property (nonatomic, readonly, strong) YTSingleVideoTime *localTime;
 - (void)setVideoFormatConstraint:(id)arg;
 @end
 
+@protocol MLPlayerItemDelegate <NSObject>
+@end
+
+@interface MLHAMPlayerItem (YouMod)
+@property (nonatomic, weak, readwrite) id <MLPlayerItemDelegate> playerItemDelegate;
+@end
+
 @interface YTGLMediaPlayerViewFactory : NSObject
+@end
+
+@interface YTColor (YouMod)
++ (instancetype)black0;
 @end
 
 @interface YTReelPlayerViewController (YouMod)

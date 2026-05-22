@@ -26,6 +26,15 @@ Class YTILikeResponseClass, YTIDislikeResponseClass, YTIRemoveLikeResponseClass;
 - (BOOL)isPlayableInBackground { return IS_ENABLED(BackgroundPlayback) ? YES : %orig; }
 %end
 
+// Disables PiP
+%hook YTIPlayabilityStatus
+- (BOOL)isPlayableInPictureInPicture { return IS_ENABLED(DisablesPiP) ? NO : %orig; }
+%end
+
+%hook YTPlayerResponse
+- (BOOL)isPlayableInPictureInPicture { return IS_ENABLED(DisablesPiP) ? NO : %orig; }
+%end
+
 // Try to disable Shorts PiP
 %hook YTColdConfig
 - (BOOL)shortsPlayerGlobalConfigEnableReelsPictureInPicture { return IS_ENABLED(DisablesShortsPiP) ? NO : %orig; }
@@ -46,6 +55,22 @@ Class YTILikeResponseClass, YTIDislikeResponseClass, YTIRemoveLikeResponseClass;
 
 %hook YTReelWatchRootViewController
 - (void)switchToPictureInPicture { if (!IS_ENABLED(DisablesShortsPiP)) %orig; }
+%end
+
+// Disable Hints
+%hook YTSettings
+- (BOOL)areHintsDisabled { return IS_ENABLED(DisableHints) ? YES : %orig; }
+- (void)setHintsDisabled:(BOOL)arg1 { IS_ENABLED(DisableHints) ? %orig(YES) : %orig; }
+%end
+
+%hook YTSettingsImpl
+- (BOOL)areHintsDisabled { return IS_ENABLED(DisableHints) ? YES : %orig; }
+- (void)setHintsDisabled:(BOOL)arg1 { IS_ENABLED(DisableHints) ? %orig(YES) : %orig; }
+%end
+
+%hook YTUserDefaults
+- (BOOL)areHintsDisabled { return IS_ENABLED(DisableHints) ? YES : %orig; }
+- (void)setHintsDisabled:(BOOL)arg1 { IS_ENABLED(DisableHints) ? %orig(YES) : %orig; }
 %end
 
 // Block upgrade dialogs

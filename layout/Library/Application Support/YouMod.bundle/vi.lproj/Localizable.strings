@@ -59,10 +59,7 @@
 "NO_STREAM_URL" = "No stream URL found";
 "CAPTIONS_FAILED" = "Failed to download captions";
 "NO_CAPTIONS" = "No captions available for this video";
-"AUDIO_FORMAT" = "Audio format";
 "NO_AUDIO_STREAM_FOUND" = "No audio streams found";
-"DOWNLOAD" = "Download";
-"AUDIO" = "Audio";
 "NO_VID_AUDIO_STREAM_FOUND" = "No video/audio streams found";
 "COPIED_VID_INFO" = "Copied video information";
 "SAVED_TO_PHOTOS" = "Saved to Photos";
@@ -109,12 +106,16 @@
 "FEED" = "Bảng tin";
 "HIDE_SUBBAR" = "Ẩn thanh phụ";
 "HIDE_SUBBAR_DESC" = "Ẩn thanh phụ ở đầu bảng tin.";
+"HIDE_HORI_SHELF" = "Remove horizontal feeds";
+"HIDE_HORI_SHELF_DESC" = "Removes all horizontal feeds (News, Continue Watching, Posts collection, etc.) from the feed.";
 "HIDE_MUSIC_PLAYLISTS" = "Ẩn trình tạo danh sách phát";
 "HIDE_MUSIC_PLAYLISTS_DESC" = "Ẩn trình tạo danh sách phát nhạc (Chọn ba giai điệu) trong bảng tin.";
 "HIDE_FEED_POST" = "Ẩn các bài đăng";
 "HIDE_FEED_POST_DESC" = "Ẩn bài đăng trên bảng tin.";
 "HIDE_SHORTS_SHELF" = "Ẩn Shorts trong bảng tin";
 "HIDE_SHORTS_SHELF_DESC" = "Ẩn các Shorts trên bảng tin, kể cả trong tab Kênh đăng kí.";
+"KEEP_SHORTS_SUBSCRIPT" = "Keep Shorts in Subscriptions";
+"KEEP_SHORTS_SUBSCRIPT_DESC" = "Prevents removing Shorts from Subscriptions tab.";
 "HIDE_SEARCH_HISTORY" = "Ẩn lịch sử tìm kiếm";
 "HIDE_SEARCH_HISTORY_DESC" = "Ẩn lịch sử tìm kiếm và các đề xuất trước đó khi sử dụng thanh tìm kiếm.\nGHI CHÚ: Lịch sử tìm kiếm của bạn vẫn khả dụng trên các ứng dụng YouTube khác.";
 "HIDE_SUB_BUTTON" = "Ẩn nút Đăng kí";
@@ -294,6 +295,10 @@
 "SPORTS_TAB" = "Sports";
 "NOTI_TAB" = "Notifications";
 "NEWS_TAB" = "News";
+"MUSIC_TAB" = "Music";
+"WATCH_LATER_TAB" = "Watch later";
+"PLAYLIST_TAB" = "Playlists";
+"LIKE_TAB" = "Liked videos";
 "MANAGE_TABS" = "Manage tabs";
 "MANAGE_TABS_DESC" = "Reorder and toggle tabs";
 "TAB_REORDER_HINT" = "Drag to reorder. Toggle to show/hide.";
@@ -306,8 +311,12 @@
 "MISCELLANEOUS" = "Khác";
 "BACKGROUND_PLAYBACK" = "Phát trong nền";
 "BACKGROUND_PLAYBACK_DESC" = "Cho phép video phát dưới nền";
+"DISABLES_PIP" = "Disables PiP";
+"DISABLES_PIP_DESC" = "Disables PiP (Picture-In-Picture) in all videos.";
 "DISABLES_SHORTS_PIP" = "Tắt PiP của Shorts";
 "DISABLES_SHORTS_PIP_DESC" = "Thử tắt tính năng Hình-trong-hình (PiP) của Shorts, có thể không hoạt động 100%.";
+"DISABLE_HINTS" = "Tắt gợi ý";
+"DISABLE_HINTS_DESC" = "Tắt các gợi ý hướng dẫn và cửa sổ tương tác bật lên";
 "BLOCK_UPGRADE_DIALOGS" = "Chặn hộp thoại nâng cấp";
 "BLOCK_UPGRADE_DIALOGS_DESC" = "Chặn các hộp thoại của YouTube yêu cầu bạn nâng cấp ứng dụng.";
 "ARE_YOU_THERE_DIALOG" = "Ẩn hộp thoại 'Bạn có ở đó không?'";
@@ -378,8 +387,3 @@
 "SB_SECTION_MAIN" = "Main";
 "SB_SKIP_ALERT_DURATION" = "Skip alert duration";
 "SB_UNSKIP_ALERT_DURATION" = "Unskip alert duration";
-
-// Download Progress
-"CANCEL_DOWNLOAD" = "Cancel download";
-"CANCEL_DOWNLOAD_TITLE" = "Cancel download?";
-"CANCEL_DOWNLOAD_DESC" = "The download will be stopped.";

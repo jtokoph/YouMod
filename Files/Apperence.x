@@ -57,9 +57,8 @@ static BOOL isDarkMode(UIView *view) {
 %hook ASCollectionView
 - (void)didMoveToWindow {
     %orig;
-    if (localPageStyle == 1 && [self.nextResponder isKindOfClass:%c(_ASDisplayView)]) {
-        self.superview.backgroundColor = [UIColor blackColor];
-        self.backgroundColor = [UIColor clearColor];
+    if (localPageStyle == 1 && ([self.accessibilityIdentifier isEqualToString:@"eml.chip_bar_collection"] || [self.accessibilityIdentifier isEqualToString:@"id.elements.components.more_drawer_collection"] || [self.accessibilityIdentifier isEqualToString:@"subs.channel_bar.collection"])) {
+        self.backgroundColor = [UIColor blackColor];
     }
 }
 %end

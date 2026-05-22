@@ -159,7 +159,7 @@ static const void *kYMSwitchKeyAssoc = &kYMSwitchKeyAssoc;
     self.tableView.rowHeight = UITableViewAutomaticDimension;
 
     if (self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
-        self.tableView.backgroundColor = [UIColor blackColor];
+        self.tableView.backgroundColor = [%c(YTColor) black0];
     } else {
         self.tableView.backgroundColor = [UIColor systemBackgroundColor];
     }
@@ -588,9 +588,9 @@ YMSettingsItem *YMImageSegment(NSString *title, NSString *key, NSArray<UIImage *
 
 static NSString * const kYMTabIDs[] = {
     @"home", @"shorts", @"create", @"subscriptions", @"library",
-    @"history", @"gaming", @"sports", @"notifications", @"news"
+    @"history", @"gaming", @"sports", @"notifications", @"news", @"music", @"watchlater", @"playlist", @"like"
 };
-static const NSInteger kYMTabCount = 10;
+static const NSInteger kYMTabCount = 14;
 static const NSInteger kYMTabMaxEnabled = 6;
 
 @interface YMTabOrderViewController : UIViewController <UITableViewDelegate, UITableViewDataSource>
@@ -626,6 +626,10 @@ static const void *kYMTabSnapshotKey = &kYMTabSnapshotKey;
     if ([tabID isEqualToString:@"sports"]) return YMLOC(@"SPORTS_TAB");
     if ([tabID isEqualToString:@"notifications"]) return YMLOC(@"NOTI_TAB");
     if ([tabID isEqualToString:@"news"]) return YMLOC(@"NEWS_TAB");
+    if ([tabID isEqualToString:@"music"]) return YMLOC(@"MUSIC_TAB");
+    if ([tabID isEqualToString:@"watchlater"]) return YMLOC(@"WATCH_LATER_TAB");
+    if ([tabID isEqualToString:@"playlist"]) return YMLOC(@"PLAYLIST_TAB");
+    if ([tabID isEqualToString:@"like"]) return YMLOC(@"LIKE_TAB");
     return tabID;
 }
 
@@ -642,7 +646,7 @@ static const void *kYMTabSnapshotKey = &kYMTabSnapshotKey;
     }
 
     NSDictionary *ytIconTypes = @{@"home": @(65), @"shorts": @(769), @"subscriptions": @(66), @"library": @(61)};
-    NSDictionary *bundleIcons = @{@"history": @"icons/history", @"gaming": @"icons/gaming", @"sports": @"icons/sports", @"notifications": @"icons/noti", @"news": @"icons/news"};
+    NSDictionary *bundleIcons = @{@"history": @"icons/history", @"gaming": @"icons/gaming", @"sports": @"icons/sports", @"notifications": @"icons/noti", @"news": @"icons/news", @"music": @"icons/music", @"watchlater": @"icons/watchlater", @"playlist": @"icons/playlist", @"like": @"icons/like"};
 
     NSNumber *iconType = ytIconTypes[tabID];
     if (iconType) {
@@ -683,7 +687,7 @@ static const void *kYMTabSnapshotKey = &kYMTabSnapshotKey;
     self.tableView.rowHeight = UITableViewAutomaticDimension;
 
     if (self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
-        self.tableView.backgroundColor = [UIColor blackColor];
+        self.tableView.backgroundColor = [%c(YTColor) black0];
     } else {
         self.tableView.backgroundColor = [UIColor systemBackgroundColor];
     }
@@ -843,13 +847,12 @@ static const void *kYMTabSnapshotKey = &kYMTabSnapshotKey;
     BOOL enabled = [entry[@"enabled"] boolValue];
 
     cell.textLabel.text = [self localizedNameForTabID:tabID];
-    cell.textLabel.textColor = (self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark)
-        ? [UIColor whiteColor] : [UIColor labelColor];
+    cell.textLabel.textColor = (self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) ? [UIColor whiteColor] : [UIColor labelColor];
     cell.textLabel.font = [UIFont systemFontOfSize:16 weight:UIFontWeightMedium];
 
     UIImage *tabIcon = [self iconForTabID:tabID];
     cell.imageView.image = tabIcon;
-    cell.imageView.tintColor = tabIcon ? [UIColor whiteColor] : nil;
+    cell.imageView.tintColor = (self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) ? [UIColor whiteColor] : [UIColor blackColor];
 
     sw.on = enabled;
     objc_setAssociatedObject(sw, kYMSwitchKeyAssoc, tabID, OBJC_ASSOCIATION_RETAIN_NONATOMIC);

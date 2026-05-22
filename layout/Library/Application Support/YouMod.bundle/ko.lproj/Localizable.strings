@@ -59,10 +59,7 @@
 "NO_STREAM_URL" = "No stream URL found";
 "CAPTIONS_FAILED" = "Failed to download captions";
 "NO_CAPTIONS" = "No captions available for this video";
-"AUDIO_FORMAT" = "Audio format";
 "NO_AUDIO_STREAM_FOUND" = "No audio streams found";
-"DOWNLOAD" = "Download";
-"AUDIO" = "Audio";
 "NO_VID_AUDIO_STREAM_FOUND" = "No video/audio streams found";
 "COPIED_VID_INFO" = "Copied video information";
 "SAVED_TO_PHOTOS" = "Saved to Photos";
@@ -109,12 +106,16 @@
 "FEED" = "피드 (홈 화면)";
 "HIDE_SUBBAR" = "서브 바(카테고리) 숨기기";
 "HIDE_SUBBAR_DESC" = "홈 화면 맨 위에 있는 주제별 필터(게임, 음악 등)를 숨깁니다.";
+"HIDE_HORI_SHELF" = "Remove horizontal feeds";
+"HIDE_HORI_SHELF_DESC" = "Removes all horizontal feeds (News, Continue Watching, Posts collection, etc.) from the feed.";
 "HIDE_MUSIC_PLAYLISTS" = "음악 재생목록 자동생성 숨기기";
 "HIDE_MUSIC_PLAYLISTS_DESC" = "피드 중간에 뜨는 유튜브 자동 생성 음악 믹스 추천을 숨깁니다.";
 "HIDE_FEED_POST" = "게시물 숨기기";
 "HIDE_FEED_POST_DESC" = "피드에서 텍스트나 이미지로 된 커뮤니티 게시물을 숨깁니다.";
 "HIDE_SHORTS_SHELF" = "쇼츠(Shorts) 선반 숨기기";
 "HIDE_SHORTS_SHELF_DESC" = "홈 화면과 구독 탭에서 여러 개가 가로로 나열된 쇼츠 영상 모음을 안 보이게 합니다.";
+"KEEP_SHORTS_SUBSCRIPT" = "Keep Shorts in Subscriptions";
+"KEEP_SHORTS_SUBSCRIPT_DESC" = "Prevents removing Shorts from Subscriptions tab.";
 "HIDE_SEARCH_HISTORY" = "검색 기록 숨기기";
 "HIDE_SEARCH_HISTORY_DESC" = "검색창을 누를 때 이전 검색 기록이나 추천 검색어가 안 보이게 숨깁니다.\n참고: 이 앱에서만 안 보일 뿐, 다른 기기의 유튜브에는 기록이 남아있습니다.";
 "HIDE_SUB_BUTTON" = "구독 버튼 숨기기";
@@ -295,6 +296,10 @@
 "SPORTS_TAB" = "Sports";
 "NOTI_TAB" = "Notifications";
 "NEWS_TAB" = "News";
+"MUSIC_TAB" = "Music";
+"WATCH_LATER_TAB" = "Watch later";
+"PLAYLIST_TAB" = "Playlists";
+"LIKE_TAB" = "Liked videos";
 "MANAGE_TABS" = "Manage tabs";
 "MANAGE_TABS_DESC" = "Reorder and toggle tabs";
 "TAB_REORDER_HINT" = "Drag to reorder. Toggle to show/hide.";
@@ -307,8 +312,12 @@
 "MISCELLANEOUS" = "기타 설정";
 "BACKGROUND_PLAYBACK" = "백그라운드 재생";
 "BACKGROUND_PLAYBACK_DESC" = "유튜브 앱을 닫거나 스마트폰 화면을 꺼도 소리가 계속 끊기지 않고 나오게 해줍니다.";
+"DISABLES_PIP" = "Disables PiP";
+"DISABLES_PIP_DESC" = "Disables PiP (Picture-In-Picture) in all videos.";
 "DISABLES_SHORTS_PIP" = "Shorts PIP 모드 끄기";
 "DISABLES_SHORTS_PIP_DESC" = "Shorts PIP 화면을 작은 팝업창으로 띄우는 기능을 끕니다. (완벽하게 꺼지지 않을 수도 있습니다.)";
+"DISABLE_HINTS" = "도움말 힌트 끄기";
+"DISABLE_HINTS_DESC" = "앱 사용법을 알려주는 튜토리얼 힌트나 팝업창을 안 보이게 막습니다.";
 "BLOCK_UPGRADE_DIALOGS" = "업데이트 강요 알림 차단";
 "BLOCK_UPGRADE_DIALOGS_DESC" = "유튜브 앱을 새 버전으로 업데이트하라고 귀찮게 뜨는 팝업창을 막아줍니다.";
 "ARE_YOU_THERE_DIALOG" = "'계속 시청하시겠어요?' 팝업 숨기기";
@@ -379,8 +388,3 @@
 "SB_SECTION_MAIN" = "Main";
 "SB_SKIP_ALERT_DURATION" = "Skip alert duration";
 "SB_UNSKIP_ALERT_DURATION" = "Unskip alert duration";
-
-// Download Progress
-"CANCEL_DOWNLOAD" = "Cancel download";
-"CANCEL_DOWNLOAD_TITLE" = "Cancel download?";
-"CANCEL_DOWNLOAD_DESC" = "The download will be stopped.";

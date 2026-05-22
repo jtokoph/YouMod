@@ -7,7 +7,7 @@ static float playbackRate = 1.0;
 static BOOL isAutoSelected = NO;
 
 static void YouModAddEndTime(YTPlayerViewController *self, YTSingleVideoController *video, YTSingleVideoTime *time) {
-    // if (!IS_ENABLED(ShowExtraTimeRemaining)) return;
+    if (!IS_ENABLED(ShowExtraTimeRemaining)) return;
 
     CGFloat rate = playbackRate != 0 ? playbackRate : 1.0;
     NSTimeInterval remainingSeconds = (lround(video.totalMediaTime) - lround(time.time)) / rate;
@@ -60,10 +60,13 @@ static void YouModAddEndTime(YTPlayerViewController *self, YTSingleVideoControll
 // Pause On Overlay
 - (void)setOverlayVisible:(BOOL)visible {
     %orig;
-    if (!IS_ENABLED(PauseOnOverlay)) return;
     YTMainAppVideoPlayerOverlayView *mainOverlayView = (YTMainAppVideoPlayerOverlayView *)self.superview;
     YTMainAppVideoPlayerOverlayViewController *mainOverlayController = (YTMainAppVideoPlayerOverlayViewController *)mainOverlayView.delegate;
     YTPlayerViewController *playerViewController = mainOverlayController.parentViewController;
+    YTSingleVideoController *sgvid = playerViewController.activeVideo;
+    YTSingleVideoTime *sgtime = sgvid.localTime;
+    if (visible) YouModAddEndTime(playerViewController, sgvid, sgtime);
+    if (!IS_ENABLED(PauseOnOverlay)) return;
     visible ? [playerViewController pause] : [playerViewController play];
 }
 %end
@@ -192,9 +195,50 @@ static void YouModAddEndTime(YTPlayerViewController *self, YTSingleVideoControll
     if (IS_ENABLED(ShortsToRegular)) [playerviewController performSelector:@selector(YouModShortsToRegular)];
     if (IS_ENABLED(DisablesCaptions)) [playerviewController performSelector:@selector(YouModTurnOffCaptions)];
     if (INTFORVAL(AutoSpeedIndex) != 0) [playerviewController performSelector:@selector(YouModSetAutoSpeed)];
-    if (INTFORVAL(WifiQualityIndex) != 0 || INTFORVAL(CellQualityIndex) != 0) [playerviewController performSelector:@selector(YouModAutoQuality)];
 }
 %end
+
+%hook MLHAMPlayerItem
+
+- (void)onSelectableVideoFormats:(NSArray <MLFormat *> *)formats {
+    %orig;
+    MLAVPlayer *avplayer = self.playerItemDelegate;
+    YTPlayerView *playerview = avplayer.renderingView;
+    YTPlayerViewController *playerviewController = playerview.playerViewDelegate;
+    if (INTFORVAL(WifiQualityIndex) != 0 || INTFORVAL(CellQualityIndex) != 0) [playerviewController performSelector:@selector(YouModAutoQuality)];
+}
+
+%end
+
+%hook MLAVPlayer
+
+- (void)streamSelectorHasSelectableVideoFormats:(NSArray <MLFormat *> *)formats {
+    %orig;
+    YTPlayerView *playerview = self.renderingView;
+    YTPlayerViewController *playerviewController = playerview.playerViewDelegate;
+    if (INTFORVAL(WifiQualityIndex) != 0 || INTFORVAL(CellQualityIndex) != 0) [playerviewController performSelector:@selector(YouModAutoQuality)];
+}
+
+%end
+
+/*
+%hook MLAVAssetPlayer
+
+// The changed value is not reliable but this method gets called whenever AirPlay session is started or stopped
+- (void)playerExternalPlaybackActiveDidChange:(NSDictionary *)change {
+    %orig;
+    BOOL multipleScreens = [UIScreen screens].count > 1;
+    if (isExternal != multipleScreens) {
+        isExternal = multipleScreens;
+        MLAVPlayer *player = (MLAVPlayer *)self.delegate;
+        YTPlayerView *playerview = player.renderingView;
+        YTPlayerViewController *playerviewController = playerview.playerViewDelegate;
+        if (INTFORVAL(WifiQualityIndex) != 0 || INTFORVAL(CellQualityIndex) != 0) [playerviewController performSelector:@selector(YouModAutoQuality)];
+    }
+}
+
+%end
+*/
 
 // Disable Fullscreen Actions
 %hook YTFullscreenActionsView
@@ -379,6 +423,9 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
 
 %hook YTPlayerViewController
 
+- (BOOL)zoomToFill { return NO; }
+- (void)setZoomToFill:(BOOL)arg { %orig(NO); }
+
 - (id)activeVideo {
     id value = %orig;
     if (value) {
@@ -388,7 +435,6 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
             if (IS_ENABLED(ShortsToRegular)) [self performSelector:@selector(YouModShortsToRegular)];
             if (IS_ENABLED(DisablesCaptions)) [self performSelector:@selector(YouModTurnOffCaptions)];
             if (INTFORVAL(AutoSpeedIndex) != 0) [self performSelector:@selector(YouModSetAutoSpeed)];
-            if (INTFORVAL(WifiQualityIndex) != 0 || INTFORVAL(CellQualityIndex) != 0) [self performSelector:@selector(YouModAutoQuality)];
             isAutoSelected = YES;
         }
     } else {

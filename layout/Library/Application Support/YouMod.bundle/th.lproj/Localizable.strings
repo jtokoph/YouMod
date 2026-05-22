@@ -59,10 +59,7 @@
 "NO_STREAM_URL" = "ไม่พบ URL ของสตรีม";
 "CAPTIONS_FAILED" = "ดาวน์โหลดคำบรรยายไม่สำเร็จ";
 "NO_CAPTIONS" = "ไม่มีคำบรรยายสำหรับวิดีโอนี้";
-"AUDIO_FORMAT" = "รูปแบบเสียง";
 "NO_AUDIO_STREAM_FOUND" = "ไม่พบสตรีมเสียง";
-"DOWNLOAD" = "ดาวน์โหลด";
-"AUDIO" = "เสียง";
 "NO_VID_AUDIO_STREAM_FOUND" = "ไม่พบสตรีมวิดีโอ/เสียง";
 "COPIED_VID_INFO" = "คัดลอกข้อมูลวิดีโอเรียบร้อยแล้ว";
 "SAVED_TO_PHOTOS" = "บันทึกลงในแอปรูปภาพแล้ว";
@@ -109,12 +106,16 @@
 "FEED" = "ฟีด";
 "HIDE_SUBBAR" = "ซ่อนแถบหมวดหมู่";
 "HIDE_SUBBAR_DESC" = "ซ่อนแถบหมวดหมู่ในฟีด";
+"HIDE_HORI_SHELF" = "ซ่อนฟีดแนวนอน";
+"HIDE_HORI_SHELF_DESC" = "ลบฟีดแนวนอนทั้งหมด (เช่น ข่าวสาร, รับชมต่อ, โพสต์ ฯลฯ) ออกจากหน้าฟีด";
 "HIDE_MUSIC_PLAYLISTS" = "ซ่อนเพลย์ลิสต์เพลง";
 "HIDE_MUSIC_PLAYLISTS_DESC" = "ซ่อนตัวสร้างเพลย์ลิสต์ในฟีด";
 "HIDE_FEED_POST" = "ซ่อนโพส";
 "HIDE_FEED_POST_DESC" = "ซ่อนโพสในฟีด";
 "HIDE_SHORTS_SHELF" = "ซ่อน Shorts";
 "HIDE_SHORTS_SHELF_DESC" = "ซ่อน Shorts ในฟีด";
+"KEEP_SHORTS_SUBSCRIPT" = "แสดง Shorts ในหน้าการติดตาม";
+"KEEP_SHORTS_SUBSCRIPT_DESC" = "ป้องกันไม่ให้วิดีโอ Shorts ถูกลบออกจากแท็บการติดตาม";
 "HIDE_SEARCH_HISTORY" = "ซ่อนประวัติการค้นหา";
 "HIDE_SEARCH_HISTORY_DESC" = "ซ่อนประวัติและคำแนะนำการค้นหา\nหมายเหตุ: ประวัติการค้นหายังสามารถเข้าถึงได้ในอุปกรณ์อื่น";
 "HIDE_SUB_BUTTON" = "ซ่อนปุ่มติดตาม";
@@ -294,6 +295,10 @@
 "SPORTS_TAB" = "กีฬา";
 "NOTI_TAB" = "การแจ้งเตือน";
 "NEWS_TAB" = "ข่าวสาร";
+"MUSIC_TAB" = "เพลง";
+"WATCH_LATER_TAB" = "ดูภายหลัง";
+"PLAYLIST_TAB" = "เพลย์ลิสต์";
+"LIKE_TAB" = "วิดีโอที่ชอบ";
 "MANAGE_TABS" = "จัดการแท็บ";
 "MANAGE_TABS_DESC" = "จัดเรียงและเปิด/ปิดใช้งานแท็บ";
 "TAB_REORDER_HINT" = "ลากเพื่อจัดเรียงใหม่ เปิด/ปิดเพื่อแสดง/ซ่อน";
@@ -306,8 +311,12 @@
 "MISCELLANEOUS" = "อื่นๆ";
 "BACKGROUND_PLAYBACK" = "เล่นภายในเบื้องหลัง";
 "BACKGROUND_PLAYBACK_DESC" = "เปิดใช้งานการเล่นวิดีโอภายในเบื้องหลัง";
+"DISABLES_PIP" = "ปิดใช้งาน PiP";
+"DISABLES_PIP_DESC" = "ปิดใช้งาน PiP (เล่นวิดีโอในหน้าต่างอื่น) สำหรับทุกวิดีโอ";
 "DISABLES_SHORTS_PIP" = "ปิด PiP ของ Shorts";
 "DISABLES_SHORTS_PIP_DESC" = "พยายามปิด PiP ของ Shorts อาจไม่สามารถปิดได้ 100%";
+"DISABLE_HINTS" = "ปิดคำแนะนำ";
+"DISABLE_HINTS_DESC" = "ปิดคำแนะนำการใช้งานต่างๆ";
 "BLOCK_UPGRADE_DIALOGS" = "บล็อกกล่องแจ้งเตือนอัปเดต";
 "BLOCK_UPGRADE_DIALOGS_DESC" = "บล็อกกล่องข้อความแจ้งเตือนให้อัปเดตแอป";
 "ARE_YOU_THERE_DIALOG" = "ซ่อนกล่องแจ้งเตือน 'คุณยังอยู่ไหม'";
@@ -378,7 +387,3 @@
 "SB_SECTION_MAIN" = "หลัก";
 "SB_SKIP_ALERT_DURATION" = "ระยะเวลาแสดงการแจ้งเตือนเมื่อข้าม";
 "SB_UNSKIP_ALERT_DURATION" = "ระยะเวลาแสดงการแจ้งเตือนเมื่อยกเลิกการข้าม";
-
-"CANCEL_DOWNLOAD" = "ยกเลิกการดาวน์โหลด";
-"CANCEL_DOWNLOAD_TITLE" = "ยกเลิกการดาวน์โหลดหรือไม่?";
-"CANCEL_DOWNLOAD_DESC" = "การดาวน์โหลดจะหยุดทำงาน";

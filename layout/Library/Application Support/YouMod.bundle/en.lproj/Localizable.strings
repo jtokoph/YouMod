@@ -60,7 +60,6 @@
 "CAPTIONS_FAILED" = "Failed to download captions";
 "NO_CAPTIONS" = "No captions available for this video";
 "NO_AUDIO_STREAM_FOUND" = "No audio streams found";
-"DOWNLOAD" = "Download";
 "NO_VID_AUDIO_STREAM_FOUND" = "No video/audio streams found";
 "COPIED_VID_INFO" = "Copied video information";
 "SAVED_TO_PHOTOS" = "Saved to Photos";
@@ -107,12 +106,16 @@
 "FEED" = "Feed";
 "HIDE_SUBBAR" = "Hide subbar";
 "HIDE_SUBBAR_DESC" = "Hide subbar at the top of the feed.";
+"HIDE_HORI_SHELF" = "Remove horizontal feeds";
+"HIDE_HORI_SHELF_DESC" = "Removes all horizontal feeds (News, Continue Watching, Posts collection, etc.) from the feed.";
 "HIDE_MUSIC_PLAYLISTS" = "Hide music playlist generator";
 "HIDE_MUSIC_PLAYLISTS_DESC" = "Hide music playlist generator (Select music tunes in three) in the feed.";
 "HIDE_FEED_POST" = "Hide posts";
 "HIDE_FEED_POST_DESC" = "Hide posts in feed.";
 "HIDE_SHORTS_SHELF" = "Hide Shorts shelf";
 "HIDE_SHORTS_SHELF_DESC" = "Hide Shorts shelf in the feed, including in the Subscriptions tab.";
+"KEEP_SHORTS_SUBSCRIPT" = "Keep Shorts in Subscriptions";
+"KEEP_SHORTS_SUBSCRIPT_DESC" = "Prevents removing Shorts from Subscriptions tab.";
 "HIDE_SEARCH_HISTORY" = "Hide search history";
 "HIDE_SEARCH_HISTORY_DESC" = "Hide previous search history and suggestions when using the search bar.\nNOTE: Your search history will still be accessible in your other YouTube clients.";
 "HIDE_SUB_BUTTON" = "Hide Subscribe button";
@@ -292,6 +295,10 @@
 "SPORTS_TAB" = "Sports";
 "NOTI_TAB" = "Notifications";
 "NEWS_TAB" = "News";
+"MUSIC_TAB" = "Music";
+"WATCH_LATER_TAB" = "Watch later";
+"PLAYLIST_TAB" = "Playlists";
+"LIKE_TAB" = "Liked videos";
 "MANAGE_TABS" = "Manage tabs";
 "MANAGE_TABS_DESC" = "Reorder and toggle tabs";
 "TAB_REORDER_HINT" = "Drag to reorder. Toggle to show/hide.";
@@ -304,8 +311,12 @@
 "MISCELLANEOUS" = "Miscellaneous";
 "BACKGROUND_PLAYBACK" = "Background playback";
 "BACKGROUND_PLAYBACK_DESC" = "Enables background playback for videos.";
+"DISABLES_PIP" = "Disables PiP";
+"DISABLES_PIP_DESC" = "Disables PiP (Picture-In-Picture) in all videos.";
 "DISABLES_SHORTS_PIP" = "Disables Shorts PiP";
 "DISABLES_SHORTS_PIP_DESC" = "Try to disables Shorts PiP, this might not 100% disables it.";
+"DISABLE_HINTS" = "Disable hints";
+"DISABLE_HINTS_DESC" = "Disable the tutorial hints and interactive pop-ups.";
 "BLOCK_UPGRADE_DIALOGS" = "Block upgrade dialogs";
 "BLOCK_UPGRADE_DIALOGS_DESC" = "Block the YouTube dialogs that ask you to upgrade the app.";
 "ARE_YOU_THERE_DIALOG" = "Hide 'Are you there?' dialog";
@@ -376,8 +387,3 @@
 "SB_SECTION_MAIN" = "Main";
 "SB_SKIP_ALERT_DURATION" = "Skip alert duration";
 "SB_UNSKIP_ALERT_DURATION" = "Unskip alert duration";
-
-// Download Progress
-"CANCEL_DOWNLOAD" = "Cancel download";
-"CANCEL_DOWNLOAD_TITLE" = "Cancel download?";
-"CANCEL_DOWNLOAD_DESC" = "The download will be stopped.";

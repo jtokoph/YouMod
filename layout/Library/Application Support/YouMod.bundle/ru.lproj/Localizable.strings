@@ -59,10 +59,7 @@
 "NO_STREAM_URL" = "No stream URL found";
 "CAPTIONS_FAILED" = "Failed to download captions";
 "NO_CAPTIONS" = "No captions available for this video";
-"AUDIO_FORMAT" = "Audio format";
 "NO_AUDIO_STREAM_FOUND" = "No audio streams found";
-"DOWNLOAD" = "Download";
-"AUDIO" = "Audio";
 "NO_VID_AUDIO_STREAM_FOUND" = "No video/audio streams found";
 "COPIED_VID_INFO" = "Copied video information";
 "SAVED_TO_PHOTOS" = "Saved to Photos";
@@ -109,12 +106,16 @@
 "FEED" = "Лента";
 "HIDE_SUBBAR" = "Скрыть верхнюю панель";
 "HIDE_SUBBAR_DESC" = "Скрыть верхнюю панель в ленте.";
+"HIDE_HORI_SHELF" = "Remove horizontal feeds";
+"HIDE_HORI_SHELF_DESC" = "Removes all horizontal feeds (News, Continue Watching, Posts collection, etc.) from the feed.";
 "HIDE_MUSIC_PLAYLISTS" = "Скрыть генератор музыкальных плейлистов";
 "HIDE_MUSIC_PLAYLISTS_DESC" = "Скрыть генератор музыкальных плейлистов в ленте.";
 "HIDE_FEED_POST" = "Hide posts";
 "HIDE_FEED_POST_DESC" = "Hide posts in feed.";
 "HIDE_SHORTS_SHELF" = "Скрыть блок Shorts";
 "HIDE_SHORTS_SHELF_DESC" = "Скрыть блок Shorts в ленте, включая вкладку «Подписки».";
+"KEEP_SHORTS_SUBSCRIPT" = "Keep Shorts in Subscriptions";
+"KEEP_SHORTS_SUBSCRIPT_DESC" = "Prevents removing Shorts from Subscriptions tab.";
 "HIDE_SEARCH_HISTORY" = "Скрыть историю поиска";
 "HIDE_SEARCH_HISTORY_DESC" = "Скрыть предыдущие поисковые запросы и подсказки при использовании строки поиска.\nПРИМЕЧАНИЕ: История поиска по-прежнему будет доступна в других клиентах YouTube.";
 "HIDE_SUB_BUTTON" = "Скрыть кнопку подписки";
@@ -294,6 +295,10 @@
 "SPORTS_TAB" = "Sports";
 "NOTI_TAB" = "Notifications";
 "NEWS_TAB" = "News";
+"MUSIC_TAB" = "Music";
+"WATCH_LATER_TAB" = "Watch later";
+"PLAYLIST_TAB" = "Playlists";
+"LIKE_TAB" = "Liked videos";
 "MANAGE_TABS" = "Manage tabs";
 "MANAGE_TABS_DESC" = "Reorder and toggle tabs";
 "TAB_REORDER_HINT" = "Drag to reorder. Toggle to show/hide.";
@@ -306,8 +311,12 @@
 "MISCELLANEOUS" = "Разное";
 "BACKGROUND_PLAYBACK" = "Background playback";
 "BACKGROUND_PLAYBACK_DESC" = "Enables background playback for videos.";
+"DISABLES_PIP" = "Disables PiP";
+"DISABLES_PIP_DESC" = "Disables PiP (Picture-In-Picture) in all videos.";
 "DISABLES_SHORTS_PIP" = "Отключить PiP для Shorts";
 "DISABLES_SHORTS_PIP_DESC" = "Попробовать отключить режим «картинка в картинке» для Shorts; это может сработать не во всех случаях.";
+"DISABLE_HINTS" = "Disable hints";
+"DISABLE_HINTS_DESC" = "Disable the tutorial hints and interactive pop-ups.";
 "BLOCK_UPGRADE_DIALOGS" = "Блокировать диалоги обновления";
 "BLOCK_UPGRADE_DIALOGS_DESC" = "Блокировать диалоги YouTube с предложением обновить приложение.";
 "ARE_YOU_THERE_DIALOG" = "Скрыть диалог «Вы ещё здесь?»";
@@ -378,8 +387,3 @@
 "SB_SECTION_MAIN" = "Main";
 "SB_SKIP_ALERT_DURATION" = "Skip alert duration";
 "SB_UNSKIP_ALERT_DURATION" = "Unskip alert duration";
-
-// Download Progress
-"CANCEL_DOWNLOAD" = "Cancel download";
-"CANCEL_DOWNLOAD_TITLE" = "Cancel download?";
-"CANCEL_DOWNLOAD_DESC" = "The download will be stopped.";
