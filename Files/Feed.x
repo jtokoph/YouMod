@@ -21,7 +21,7 @@ static NSMutableArray <YTIItemSectionRenderer *> *filteredArray(NSArray <YTIItem
             NSString *description = [sectionRenderer description];
             if ([description containsString:@"shorts_shelf.eml"] && ![description containsString:@"subscriptions"])
                 return YES;
-            if ([description containsString:@"horizontal_shelf.eml"])
+            if ([description containsString:@"horizontal_shelf.eml"] && ![description containsString:@"FEnews_destination"] && ![description containsString:@"FElibrary"])
                 return YES;
         }
         return NO;
