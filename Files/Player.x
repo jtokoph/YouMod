@@ -426,9 +426,6 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
 
 %hook YTPlayerViewController
 
-- (BOOL)zoomToFill { return NO; }
-- (void)setZoomToFill:(BOOL)arg { %orig(NO); }
-
 - (id)activeVideo {
     id value = %orig;
     if (value) {
