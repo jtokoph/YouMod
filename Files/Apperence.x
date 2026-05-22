@@ -1,5 +1,7 @@
 #import "Headers.h"
 
+static int localPageStyle;
+
 // OLEDKeyboard (https://github.com/dayanch96/OledKeyboard)
 static BOOL isDarkMode(UIView *view) {
     if ([view respondsToSelector:@selector(_mapkit_isDarkModeEnabled)]) {
@@ -29,7 +31,37 @@ static BOOL isDarkMode(UIView *view) {
 %end
 
 %hook YTInnerTubeCollectionViewController
-- (UIColor *)backgroundColor:(NSInteger)pageStyle { return pageStyle == 1 ? [UIColor blackColor] : %orig; }
+- (UIColor *)backgroundColor:(NSInteger)pageStyle { 
+    localPageStyle = pageStyle;
+    return pageStyle == 1 ? [UIColor blackColor] : %orig;
+}
+%end
+
+%hook UITableViewCell
+- (void)_layoutSystemBackgroundView {
+    %orig;
+    UIView *systemBackgroundView = [self valueForKey:@"_systemBackgroundView"];
+    NSString *backgroundViewKey = class_getInstanceVariable(systemBackgroundView.class, "_colorView") ? @"_colorView" : @"_backgroundView";
+    ((UIView *)[systemBackgroundView valueForKey:backgroundViewKey]).backgroundColor = [UIColor blackColor];
+}
+- (void)_layoutSystemBackgroundView:(BOOL)arg1 {
+    %orig;
+    ((UIView *)[[self valueForKey:@"_systemBackgroundView"] valueForKey:@"_colorView"]).backgroundColor = [UIColor blackColor];
+}
+%end
+
+%hook GOODialogView
++ (UIColor *)dialogBodyColor { return localPageStyle == 1 ? [UIColor blackColor] : %orig; }
+%end
+
+%hook ASCollectionView
+- (void)didMoveToWindow {
+    %orig;
+    if (localPageStyle == 1 && [self.nextResponder isKindOfClass:%c(_ASDisplayView)]) {
+        self.superview.backgroundColor = [UIColor blackColor];
+        self.backgroundColor = [UIColor clearColor];
+    }
+}
 %end
 %end
 

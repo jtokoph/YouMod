@@ -53,6 +53,7 @@
 #import <YouTubeHeader/YTIHamplayerConfig.h>
 #import <YouTubeHeader/YTAssetLoader.h>
 #import <MediaPlayer/MediaPlayer.h>
+#import <YouTubeHeader/ASCollectionView.h>
 #import <dlfcn.h>
 
 // For Settings.x and SponsorBlockSettings.x
