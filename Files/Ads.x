@@ -9,8 +9,6 @@ static BOOL isProductList(YTICommand *command) {
     return NO;
 }
 
-/*
-
 NSString *getAdString(NSString *description) {
     for (NSString *str in @[
         @"brand_promo",
@@ -45,12 +43,6 @@ static BOOL isAdRenderer(YTIElementRenderer *elementRenderer, int kind) {
     NSString *description = [elementRenderer description];
     NSString *adString = getAdString(description);
     if (adString) return YES;
-    if (IS_ENABLED(HideShortsShelf) && ([description containsString:@"shorts_shelf.eml"] || [description containsString:@"shorts_video_cell"]))
-        if (IS_ENABLED(KeepShortsSubscript) && [description containsString:@"subscriptions"])
-            return NO;
-        return YES;
-    if (IS_ENABLED(HideHoriShelf) && [description containsString:@"horizontal_shelf.eml"] && ![description containsString:@"FEnews_destination"] && ![description containsString:@"FEhistory"] && ![description containsString:@"FEplaylist_aggregation"])
-        return YES;
     return NO;
 }
 
@@ -84,8 +76,6 @@ static NSMutableArray <YTIItemSectionRenderer *> *filteredArray(NSArray <YTIItem
     [newArray removeObjectsAtIndexes:removeIndexes];
     return newArray;
 }
-
-*/
 
 %hook YTPlayerResponse
 %new(@@:)
@@ -176,8 +166,6 @@ static NSMutableArray <YTIItemSectionRenderer *> *filteredArray(NSArray <YTIItem
 }
 %end
 
-/*
-
 %hook YTInnerTubeCollectionViewController
 - (void)displaySectionsWithReloadingSectionControllerByRenderer:(id)renderer {
     NSMutableArray *sectionRenderers = [self valueForKey:@"_sectionRenderers"];
@@ -188,8 +176,6 @@ static NSMutableArray <YTIItemSectionRenderer *> *filteredArray(NSArray <YTIItem
     %orig(filteredArray(array));
 }
 %end
-
-*/
 
 %hook _ASDisplayView
 - (void)didMoveToWindow {
