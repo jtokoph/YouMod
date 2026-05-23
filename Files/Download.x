@@ -979,6 +979,7 @@ static YouModMediaFormat *YouModMediaFormatFromStream(id stream, BOOL video) {
     if (fps == 0) fps = YouModIntegerFromSelector(stream, @selector(frameRate));
     if (fps == 0) fps = YouModIntegerFromSelector(formatStream, @selector(frameRate));
     fps = YouModNormalizedFPS(fps);
+    if (video && (height > 1080 || fps < 30)) return nil;
     format.fps = fps;
     format.qualityLabel = YouModStringFromSelector(stream, @selector(qualityLabel));
     if (format.qualityLabel.length == 0) format.qualityLabel = YouModStringFromSelector(formatStream, @selector(qualityLabel));

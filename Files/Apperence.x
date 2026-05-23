@@ -40,12 +40,14 @@ static BOOL isDarkMode(UIView *view) {
 %hook UITableViewCell
 - (void)_layoutSystemBackgroundView {
     %orig;
+    if (localPageStyle != 1) return;
     UIView *systemBackgroundView = [self valueForKey:@"_systemBackgroundView"];
     NSString *backgroundViewKey = class_getInstanceVariable(systemBackgroundView.class, "_colorView") ? @"_colorView" : @"_backgroundView";
     ((UIView *)[systemBackgroundView valueForKey:backgroundViewKey]).backgroundColor = [UIColor blackColor];
 }
 - (void)_layoutSystemBackgroundView:(BOOL)arg1 {
     %orig;
+    if (localPageStyle != 1) return;
     ((UIView *)[[self valueForKey:@"_systemBackgroundView"] valueForKey:@"_colorView"]).backgroundColor = [UIColor blackColor];
 }
 %end
