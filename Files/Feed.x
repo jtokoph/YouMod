@@ -1,48 +1,5 @@
 #import "Headers.h"
 
-// Modified from YTUnShorts (https://github.com/PoomSmart/YTUnShorts)
-static NSMutableArray <YTIItemSectionRenderer *> *filteredArray(NSArray <YTIItemSectionRenderer *> *array) {
-    NSMutableArray <YTIItemSectionRenderer *> *newArray = [array mutableCopy];
-    NSIndexSet *removeIndexes = [newArray indexesOfObjectsPassingTest:^BOOL(YTIItemSectionRenderer *sectionRenderer, NSUInteger idx, BOOL *stop) {
-        if ([sectionRenderer isKindOfClass:%c(YTIShelfRenderer)]) {
-            YTIShelfSupportedRenderers *content = ((YTIShelfRenderer *)sectionRenderer).content;
-            YTIHorizontalListRenderer *horizontalListRenderer = content.horizontalListRenderer;
-            NSMutableArray <YTIHorizontalListSupportedRenderers *> *itemsArray = horizontalListRenderer.itemsArray;
-            NSIndexSet *removeItemsArrayIndexes = [itemsArray indexesOfObjectsPassingTest:^BOOL(YTIHorizontalListSupportedRenderers *horizontalListSupportedRenderers, NSUInteger idx2, BOOL *stop2) {
-                YTIElementRenderer *elementRenderer = horizontalListSupportedRenderers.elementRenderer;
-                NSString *description = [elementRenderer description];
-                BOOL hasShorts = [description containsString:@"shorts_video_cell"];
-                if (hasShorts && IS_ENABLED(HideShortsShelf)) *stop2 = YES;
-                return hasShorts;
-            }];
-            return removeItemsArrayIndexes.count > 0;
-        }
-        if ([sectionRenderer isKindOfClass:%c(YTIItemSectionRenderer)]) {
-            NSString *description = [sectionRenderer description];
-            if (IS_ENABLED(HideShortsShelf) && [description containsString:@"shorts_shelf.eml"])
-                if (IS_ENABLED(KeepShortsSubscript) && [description containsString:@"subscriptions"])
-                    return NO;
-                return YES;
-            if (IS_ENABLED(HideHoriShelf) && [description containsString:@"horizontal_shelf.eml"] && ![description containsString:@"FEnews_destination"] && ![description containsString:@"FEhistory"] && ![description containsString:@"FEplaylist_aggregation"])
-                return YES;
-        }
-        return NO;
-    }];
-    [newArray removeObjectsAtIndexes:removeIndexes];
-    return newArray;
-}
-
-%hook YTInnerTubeCollectionViewController
-- (void)displaySectionsWithReloadingSectionControllerByRenderer:(id)renderer {
-    NSMutableArray *sectionRenderers = [self valueForKey:@"_sectionRenderers"];
-    [self setValue:filteredArray(sectionRenderers) forKey:@"_sectionRenderers"];
-    %orig;
-}
-- (void)addSectionsFromArray:(NSArray <YTIItemSectionRenderer *> *)array {
-    %orig(filteredArray(array));
-}
-%end
-
 // Hide Subbar
 %hook YTMySubsFilterHeaderView
 - (void)setChipFilterView:(id)arg1 { if (!IS_ENABLED(HideSubbar)) %orig; }
