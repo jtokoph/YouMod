@@ -42,7 +42,6 @@ static NSMutableArray <YTIItemSectionRenderer *> *filteredArray(NSArray <YTIItem
     return newArray;
 }
 
-%group Filter
 %hook YTInnerTubeCollectionViewController
 - (void)displaySectionsWithReloadingSectionControllerByRenderer:(id)renderer {
     NSMutableArray *sectionRenderers = [self valueForKey:@"_sectionRenderers"];
@@ -52,7 +51,6 @@ static NSMutableArray <YTIItemSectionRenderer *> *filteredArray(NSArray <YTIItem
 - (void)addSectionsFromArray:(NSArray <YTIItemSectionRenderer *> *)array {
     %orig(filteredArray(array));
 }
-%end
 %end
 
 // Hide Subbar
@@ -88,10 +86,3 @@ static NSMutableArray <YTIItemSectionRenderer *> *filteredArray(NSArray <YTIItem
 %hook YTPersonalizedSuggestionsCacheProvider
 - (id)activeCache { return IS_ENABLED(HideSearchHis) ? nil : %orig; }
 %end
-
-%ctor {
-    %init;
-    if (IS_ENABLED(HideShortsShelf) || IS_ENABLED(HideHoriShelf)) {
-        %init(Filter);
-    }
-}
