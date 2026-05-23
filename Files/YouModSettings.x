@@ -159,7 +159,7 @@ static const void *kYMSwitchKeyAssoc = &kYMSwitchKeyAssoc;
     self.tableView.rowHeight = UITableViewAutomaticDimension;
 
     if (self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
-        self.tableView.backgroundColor = [%c(YTColor) black0];
+        self.tableView.backgroundColor = [UIColor blackColor];
     } else {
         self.tableView.backgroundColor = [UIColor systemBackgroundColor];
     }
@@ -687,7 +687,7 @@ static const void *kYMTabSnapshotKey = &kYMTabSnapshotKey;
     self.tableView.rowHeight = UITableViewAutomaticDimension;
 
     if (self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
-        self.tableView.backgroundColor = [%c(YTColor) black0];
+        self.tableView.backgroundColor = [UIColor blackColor];
     } else {
         self.tableView.backgroundColor = [UIColor systemBackgroundColor];
     }
