@@ -42,7 +42,9 @@ static BOOL isAdRenderer(YTIElementRenderer *elementRenderer, int kind) {
     }
     NSString *description = [elementRenderer description];
     NSString *adString = getAdString(description);
-    if (adString) return YES;
+    if (adString) {
+        return YES;
+    }
     return NO;
 }
 

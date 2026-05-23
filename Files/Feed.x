@@ -12,16 +12,16 @@ static NSMutableArray <YTIItemSectionRenderer *> *filteredArray(NSArray <YTIItem
                 YTIElementRenderer *elementRenderer = horizontalListSupportedRenderers.elementRenderer;
                 NSString *description = [elementRenderer description];
                 BOOL hasShorts = [description containsString:@"shorts_video_cell"];
-                if (hasShorts && IS_ENABLED(HideShortsShelf)) *stop2 = YES;
+                if (hasShorts) *stop2 = YES;
                 return hasShorts;
             }];
             return removeItemsArrayIndexes.count > 0;
         }
         if ([sectionRenderer isKindOfClass:%c(YTIItemSectionRenderer)]) {
             NSString *description = [sectionRenderer description];
-            if (IS_ENABLED(HideShortsShelf) && [description containsString:@"shorts_shelf.eml"])
-                if (IS_ENABLED(KeepShortsSubscript) && [description containsString:@"subscriptions"])
-                    return NO;
+            if (IS_ENABLED(HideShortsShelf) && [description containsString:@"shorts_shelf.eml"] && ![description containsString:@"subscriptions"])
+                // if (IS_ENABLED(KeepShortsSubscript) && [description containsString:@"subscriptions"])
+                    // return NO;
                 return YES;
             if (IS_ENABLED(HideHoriShelf) && [description containsString:@"horizontal_shelf.eml"] && ![description containsString:@"FEnews_destination"] && ![description containsString:@"FEhistory"] && ![description containsString:@"FEplaylist_aggregation"])
                 return YES;
