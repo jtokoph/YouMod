@@ -9,6 +9,8 @@ static BOOL isProductList(YTICommand *command) {
     return NO;
 }
 
+/*
+
 NSString *getAdString(NSString *description) {
     for (NSString *str in @[
         @"brand_promo",
@@ -82,6 +84,8 @@ static NSMutableArray <YTIItemSectionRenderer *> *filteredArray(NSArray <YTIItem
     [newArray removeObjectsAtIndexes:removeIndexes];
     return newArray;
 }
+
+*/
 
 %hook YTPlayerResponse
 %new(@@:)
@@ -172,6 +176,8 @@ static NSMutableArray <YTIItemSectionRenderer *> *filteredArray(NSArray <YTIItem
 }
 %end
 
+/*
+
 %hook YTInnerTubeCollectionViewController
 - (void)displaySectionsWithReloadingSectionControllerByRenderer:(id)renderer {
     NSMutableArray *sectionRenderers = [self valueForKey:@"_sectionRenderers"];
@@ -183,11 +189,12 @@ static NSMutableArray <YTIItemSectionRenderer *> *filteredArray(NSArray <YTIItem
 }
 %end
 
+*/
+
 %hook _ASDisplayView
 - (void)didMoveToWindow {
     %orig;
     if ([self.accessibilityIdentifier isEqualToString:@"eml.expandable_metadata.vpp"]) [self removeFromSuperview];
-    if ([self.accessibilityIdentifier isEqualToString:@"eml.ad_layout.full_width_square_image_layout"]) self.hidden = YES;
 }
 %end
 
