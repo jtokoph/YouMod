@@ -42,9 +42,13 @@ static BOOL isAdRenderer(YTIElementRenderer *elementRenderer, int kind) {
     }
     NSString *description = [elementRenderer description];
     NSString *adString = getAdString(description);
-    if (adString) {
+    if (adString) return YES;
+    if (IS_ENABLED(HideShortsShelf) && [description containsString:@"shorts_shelf.eml"])
+        if (IS_ENABLED(KeepShortsSubscript) && [description containsString:@"subscriptions"])
+            return NO;
         return YES;
-    }
+    if (IS_ENABLED(HideHoriShelf) && [description containsString:@"horizontal_shelf.eml"] && ![description containsString:@"FEnews_destination"] && ![description containsString:@"FEhistory"] && ![description containsString:@"FEplaylist_aggregation"])
+        return YES;
     return NO;
 }
 
