@@ -164,6 +164,7 @@ typedef void (^YouModRangeDownloadProgress)(unsigned long long completedBytes);
 @property (nonatomic, strong) NSURLSessionDownloadTask *task;
 @property (nonatomic, strong) NSURLSessionDataTask *metadataTask;
 @property (nonatomic, strong) YouModRangeDownloader *rangeDownloader;
+@property (nonatomic, strong) AVAssetExportSession *exporter;
 @property (nonatomic, strong) UIAlertController *progressAlert;
 @property (nonatomic, strong) UIProgressView *progressView;
 @property (nonatomic, strong) YMDownloadProgressView *progressPill;
@@ -1311,13 +1312,16 @@ static void YouModPresentMenu(NSString *title, NSArray <YouModMenuItem *> *items
     [self.task cancel];
     [self.metadataTask cancel];
     [self.rangeDownloader cancel];
+    [self.exporter cancelExport];
     self.task = nil;
     self.metadataTask = nil;
     self.rangeDownloader = nil;
+    self.exporter = nil;
     self.fileCompletion = nil;
     self.active = NO;
     self.cancelled = YES;
     if (self.progressPill) { [self.progressPill dismiss]; self.progressPill = nil; }
+    if (self.progressAlert) { [self.progressAlert dismissViewControllerAnimated:YES completion:nil]; self.progressAlert = nil; self.progressView = nil; }
     [self cleanupTemporaryFiles];
     if (message.length) YouModSendError(message);
 }
@@ -1637,12 +1641,15 @@ static void YouModPresentMenu(NSString *title, NSArray <YouModMenuItem *> *items
     exporter.outputURL = outputURL;
     exporter.outputFileType = AVFileTypeMPEG4;
     exporter.shouldOptimizeForNetworkUse = YES;
+    self.exporter = exporter;
 
     __weak typeof(self) weakSelf = self;
     [exporter exportAsynchronouslyWithCompletionHandler:^{
         dispatch_async(dispatch_get_main_queue(), ^{
             __strong typeof(weakSelf) self = weakSelf;
             if (!self) return;
+            self.exporter = nil;
+            if (self.cancelled || exporter.status == AVAssetExportSessionStatusCancelled) return;
             if (exporter.status == AVAssetExportSessionStatusCompleted) {
                 [self completeWithFileURL:outputURL isVideo:YES presenter:presenter];
             } else {
@@ -1694,12 +1701,15 @@ static void YouModPresentMenu(NSString *title, NSArray <YouModMenuItem *> *items
     exporter.outputURL = outputURL;
     exporter.outputFileType = AVFileTypeMPEG4;
     exporter.shouldOptimizeForNetworkUse = YES;
+    self.exporter = exporter;
 
     __weak typeof(self) weakSelf = self;
     [exporter exportAsynchronouslyWithCompletionHandler:^{
         dispatch_async(dispatch_get_main_queue(), ^{
             __strong typeof(weakSelf) self = weakSelf;
             if (!self) return;
+            self.exporter = nil;
+            if (self.cancelled || exporter.status == AVAssetExportSessionStatusCancelled) return;
             if (exporter.status == AVAssetExportSessionStatusCompleted) {
                 [self completeWithFileURL:outputURL isVideo:YES presenter:presenter];
             } else {
@@ -1710,6 +1720,7 @@ static void YouModPresentMenu(NSString *title, NSArray <YouModMenuItem *> *items
 }
 
 - (void)completeWithFileURL:(NSURL *)fileURL isVideo:(BOOL)isVideo presenter:(UIViewController *)presenter {
+    if (self.cancelled) return;
     self.active = NO;
     [self updateProgressTitle:LOC(@"DOWNLOAD_COMPLETED") progress:1.0f];
     if (self.progressPill) { [self.progressPill dismiss]; self.progressPill = nil; }
@@ -1736,6 +1747,7 @@ static void YouModPresentMenu(NSString *title, NSArray <YouModMenuItem *> *items
 }
 
 - (void)failWithError:(NSError *)error {
+    if (self.cancelled) return;
     self.active = NO;
     if (self.progressPill) { [self.progressPill dismiss]; self.progressPill = nil; }
     [self.progressAlert dismissViewControllerAnimated:YES completion:nil];
