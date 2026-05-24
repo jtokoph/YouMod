@@ -457,10 +457,10 @@ static NSString *GetCacheSize() { // YTLite - @dayanch96
             YMHeader(LOC(@"CACHE")),
             YMAction(LOC(@"CLEARCACHE"), GetCacheSize(), ^(UIViewController *vc) {
                 __weak UIViewController *weakVC = vc;
+                NSString *clearTitle = LOC(@"CLEARCACHE");
                 dispatch_async(dispatch_get_main_queue(), ^{
                     __strong UIViewController *strongVC = weakVC;
                     if (!strongVC) return;
-                    NSString *clearTitle = LOC(@"CLEARCACHE");
                     if ([strongVC respondsToSelector:@selector(items)] && [strongVC respondsToSelector:@selector(tableView)]) {
                         NSArray *items = [(id)strongVC items];
                         for (id item in items) {
