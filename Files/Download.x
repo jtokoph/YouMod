@@ -1359,6 +1359,11 @@ static void YouModPresentMenu(NSString *title, NSArray <YouModMenuItem *> *items
     self.fileCompletion = completion;
     [NSFileManager.defaultManager removeItemAtURL:destinationURL error:nil];
 
+    if (self.cancelled) {
+        if (completion) completion(nil, [NSError errorWithDomain:NSCocoaErrorDomain code:NSUserCancelledError userInfo:@{NSLocalizedDescriptionKey: LOC(@"DOWNLOAD_CANCELLED")}]);
+        return;
+    }
+
     if (allowFast && expectedBytes == 0) allowFast = NO;
 
     if (allowFast && expectedBytes >= YouModFastDownloadMinimumBytes) {
@@ -1486,7 +1491,8 @@ static void YouModPresentMenu(NSString *title, NSArray <YouModMenuItem *> *items
     __weak typeof(self) weakSelf = self;
     [self downloadURL:videoURL toURL:self.videoTempURL expectedBytes:videoFormat.contentLength headers:videoFormat.httpHeaders completion:^(NSURL *videoFileURL, NSError *videoError) {
         __strong typeof(weakSelf) self = weakSelf;
-        if (!self || videoError) {
+        if (!self || self.cancelled) return;
+        if (videoError) {
             [self failWithError:videoError ?: [NSError errorWithDomain:@"YouMod" code:2 userInfo:@{NSLocalizedDescriptionKey: @"Video download failed"}]];
             return;
         }
@@ -1495,7 +1501,8 @@ static void YouModPresentMenu(NSString *title, NSArray <YouModMenuItem *> *items
         [self updateProgressTitle:LOC(@"DOWNLOADING_AUDIO") progress:(self.totalBytes ? (float)self.completedBytes / (float)self.totalBytes : 0.5f)];
         [self downloadURL:audioURL toURL:self.audioTempURL expectedBytes:audioFormat.contentLength headers:audioFormat.httpHeaders completion:^(NSURL *audioFileURL, NSError *audioError) {
             __strong typeof(weakSelf) self = weakSelf;
-            if (!self || audioError) {
+            if (!self || self.cancelled) return;
+            if (audioError) {
                 [self failWithError:audioError ?: [NSError errorWithDomain:@"YouMod" code:3 userInfo:@{NSLocalizedDescriptionKey: @"Audio download failed"}]];
                 return;
             }
@@ -1584,7 +1591,8 @@ static void YouModPresentMenu(NSString *title, NSArray <YouModMenuItem *> *items
     __weak typeof(self) weakSelf = self;
     [self downloadURL:audioURL toURL:downloadURL expectedBytes:audioFormat.contentLength headers:audioFormat.httpHeaders completion:^(NSURL *fileURL, NSError *error) {
         __strong typeof(weakSelf) self = weakSelf;
-        if (!self || error || !passthrough) {
+        if (!self || self.cancelled) return;
+        if (error || !passthrough) {
             [self failWithError:error ?: [NSError errorWithDomain:@"YouMod" code:4 userInfo:@{NSLocalizedDescriptionKey: @"Audio download failed"}]];
             return;
         }
@@ -1768,6 +1776,7 @@ static void YouModPresentMenu(NSString *title, NSArray <YouModMenuItem *> *items
 }
 
 - (void)URLSession:(NSURLSession *)session downloadTask:(NSURLSessionDownloadTask *)downloadTask didFinishDownloadingToURL:(NSURL *)location {
+    if (self.cancelled) return;
     self.finishedCurrentFile = YES;
     NSError *error = nil;
     [NSFileManager.defaultManager removeItemAtURL:self.destinationURL error:nil];

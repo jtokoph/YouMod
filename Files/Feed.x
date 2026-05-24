@@ -23,12 +23,13 @@ static NSMutableArray <YTIItemSectionRenderer *> *filteredArray(NSArray <YTIItem
         if ([sectionRenderer isKindOfClass:%c(YTIItemSectionRenderer)]) {
             NSString *description = [sectionRenderer description];
             BOOL isShortsShelf = [description containsString:@"shorts_shelf.eml"];
+            BOOL isHistory = [description containsString:@"history-shorts-shelf-item"];
             if (IS_ENABLED(HideShortsShelf) && IS_ENABLED(KeepShortsSubscript)) {
-                if (isShortsShelf && ![description containsString:@"subscriptions"]) {
+                if (isShortsShelf && ![description containsString:@"subscriptions-shorts-shelf-item"] && !isHistory) {
                     return YES;
                 }
             } else if (IS_ENABLED(HideShortsShelf)) {
-                if (isShortsShelf) {
+                if (isShortsShelf && !isHistory) {
                     return YES;
                 }   
             }
