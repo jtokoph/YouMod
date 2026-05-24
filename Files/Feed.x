@@ -32,7 +32,7 @@ static NSMutableArray <YTIItemSectionRenderer *> *filteredArray(NSArray <YTIItem
                     return YES;
                 }   
             }
-            if (IS_ENABLED(HideHoriShelf) && [description containsString:@"horizontal_shelf.eml"] && ![description containsString:@"FEnews_destination"] && ![description containsString:@"FEhistory"] && ![description containsString:@"FEplaylist_aggregation"]) {
+            if (IS_ENABLED(HideHoriShelf) && [description containsString:@"horizontal_shelf.eml"] && ![description containsString:@"FEnews_destination"] && ![description containsString:@"FElibrary"] && ![description containsString:@"FEplaylist_aggregation"]) {
                 return YES;
             }
         }
