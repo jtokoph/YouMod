@@ -48,7 +48,7 @@ static NSString *ymPivotIDForTabID(NSString *tabID) {
     if ([tabID isEqualToString:@"gaming"]) return [%c(YTIBrowseRequest) browseIDForGamingDestination];
     if ([tabID isEqualToString:@"sports"]) return [%c(YTIBrowseRequest) browseIDForSportsDestination];
     if ([tabID isEqualToString:@"notifications"]) return [%c(YTIBrowseRequest) browseIDForNotificationsInbox];
-    if ([tabID isEqualToString:@"news"]) return @"FEnews_destination";
+    if ([tabID isEqualToString:@"news"]) return @"UCYfdidRxbB8Qhf0Nx7ioOYw"; // FEnews_destination
     if ([tabID isEqualToString:@"music"]) return @"UC-9-kyTW8ZkZNDHQJ6FgpwQ";
     if ([tabID isEqualToString:@"watchlater"]) return @"VLWL";
     if ([tabID isEqualToString:@"playlist"]) return @"FEplaylist_aggregation";
@@ -85,7 +85,6 @@ static NSString *ymTitleForTabID(NSString *tabID) {
 %hook YTPivotBarView
 - (void)setRenderer:(YTIPivotBarRenderer *)renderer {
     NSArray *savedOrder = [[NSUserDefaults standardUserDefaults] arrayForKey:TabOrder];
-
     if (savedOrder.count > 0) {
         NSMutableArray <YTIPivotBarSupportedRenderers *> *items = [renderer itemsArray];
 
@@ -121,7 +120,6 @@ static NSString *ymTitleForTabID(NSString *tabID) {
                 }
             }
         }
-
         // Replace items with ordered set
         [items removeAllObjects];
         [items addObjectsFromArray:ordered];

@@ -144,6 +144,16 @@ static const void *kSBColorIndexPathKey = &kSBColorIndexPathKey;
     [self.view addSubview:self.tableView];
 }
 
+- (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection {
+    [super traitCollectionDidChange:previousTraitCollection];
+    if (previousTraitCollection.userInterfaceStyle != self.traitCollection.userInterfaceStyle) {
+        self.tableView.backgroundColor = (self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark)
+            ? [UIColor blackColor]
+            : [UIColor systemBackgroundColor];
+        [self.tableView reloadData];
+    }
+}
+
 - (void)viewWillAppear:(BOOL)animated {
     Class ytStyled = objc_getClass("YTStyledViewController");
     struct objc_super superStruct = { self, ytStyled ?: [UIViewController class] };
