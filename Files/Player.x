@@ -522,6 +522,22 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
 
 %end
 
+%hook YTAudioTrackSwitchController
+
+// ปรับ arg1 ให้รับค่าเป็น id (หรือประกาศเป็น YTIAudioTrack) และใช้ long long ให้ตรงตามระบบ
+- (void)switchToAudioTrack:(YTIAudioTrack *)arg1 source:(long long)arg2 {
+    
+    // ดึงชื่อภาษาหรือ ID ออกมาจากออบเจกต์เพื่อพิมพ์ใน Log (ถ้ามีเมธอด id_p หรือ displayName)
+    NSString *trackID = [arg1 description];
+
+    // แก้ไข %lld สำหรับตัวเลข และแปลงเป็น C-String (%s) เพื่อป้องกัน <private> ใน Console
+    NSLog(@"[YouMod] Audio track - Track: %s, Source: %lld", [trackID UTF8String], arg2);
+    
+    %orig;
+}
+
+%end
+
 %hook YTPlayerViewController
 
 %new
