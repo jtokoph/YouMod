@@ -277,6 +277,7 @@ typedef NS_ENUM(NSUInteger, GestureSection) {
 - (void)YouModShortsToRegular;
 - (void)YouModSetAutoSpeed;
 - (void)setActiveCaptionTrack:(id)arg1 source:(long long)arg2;
+- (void)setActiveCaptionTrack:(id)arg;
 - (void)setPlaybackRate:(float)rate;
 - (void)play;
 - (void)pause;

@@ -184,14 +184,6 @@ static void YouModAddEndTime(YTPlayerViewController *self, YTSingleVideoControll
             playerBar.shouldDisplayTimeRemaining = YES;
         }
     }
-    YTSingleVideoController *sgvid = [self valueForKey:@"_currentSingleVideo"];
-    YTPlayerView *playerview = [sgvid valueForKey:@"_playerView"];
-    YTPlayerViewController *playerviewController = [playerview valueForKey:@"_playerViewDelegate"];
-    YouModDownloadSetCurrentPlayer(playerviewController);
-    if (IS_ENABLED(AutoFullScreen)) [playerviewController YouModAutoFullscreen];
-    if (IS_ENABLED(ShortsToRegular)) [playerviewController YouModShortsToRegular];
-    if (IS_ENABLED(DisablesCaptions)) [playerviewController YouModTurnOffCaptions];
-    if (INTFORVAL(AutoSpeedIndex) != 0) [playerviewController YouModSetAutoSpeed];
 }
 %end
 
@@ -458,7 +450,16 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
 
 - (void)playerItem:(id)arg1 hasSelectableVideoFormats:(id)arg2 {
     %orig;
-    if (arg2 && (INTFORVAL(WifiQualityIndex) != 0 || INTFORVAL(CellQualityIndex) != 0)) [self YouModAutoQuality];
+    if (arg2) {
+        YTPlayerView *playerview = [self valueForKey:@"_playerView"];
+        YTPlayerViewController *playerviewController = [playerview valueForKey:@"_playerViewDelegate"];
+        YouModDownloadSetCurrentPlayer(playerviewController);
+        if (INTFORVAL(WifiQualityIndex) != 0 || INTFORVAL(CellQualityIndex) != 0) [self YouModAutoQuality];
+        if (IS_ENABLED(AutoFullScreen)) [playerviewController YouModAutoFullscreen];
+        if (IS_ENABLED(ShortsToRegular)) [playerviewController YouModShortsToRegular];
+        if (IS_ENABLED(DisablesCaptions)) [playerviewController YouModTurnOffCaptions];
+        if (INTFORVAL(AutoSpeedIndex) != 0) [playerviewController YouModSetAutoSpeed];
+    }
 }
 
 %new
@@ -526,7 +527,11 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
 %new
 - (void)YouModTurnOffCaptions {
     if ([self.view.superview isKindOfClass:NSClassFromString(@"YTWatchView")]) {
-        [self setActiveCaptionTrack:nil source:0];
+        @try {
+            [self setActiveCaptionTrack:nil source:0];
+        } @cache (id ex) {
+            [self setActiveCaptionTrack:nil];
+        }
     }
 }
 
@@ -538,12 +543,9 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
 
 %new
 - (void)YouModSetAutoSpeed {
-    if ([self.activeVideoPlayerOverlay isKindOfClass:NSClassFromString(@"YTMainAppVideoPlayerOverlayViewController")]
-        && [self.view.superview isKindOfClass:NSClassFromString(@"YTWatchView")]) {
-        YTMainAppVideoPlayerOverlayViewController *overlayVC = (YTMainAppVideoPlayerOverlayViewController *)self.activeVideoPlayerOverlay;
-
+    if ([self.view.superview isKindOfClass:NSClassFromString(@"YTWatchView")]) {
         NSArray *speedLabels = @[@0.01, @0.25, @0.5, @0.75, @1.0, @1.25, @1.5, @1.75, @2.0, @3.0, @4.0, @5.0];
-        [overlayVC setPlaybackRate:[speedLabels[INTFORVAL(AutoSpeedIndex)] floatValue]];
+        [self setPlaybackRate:[speedLabels[INTFORVAL(AutoSpeedIndex)] floatValue]];
     }
 }
 
