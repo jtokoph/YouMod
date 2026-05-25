@@ -51,6 +51,7 @@ Class YTILikeResponseClass, YTIDislikeResponseClass, YTIRemoveLikeResponseClass;
 
 %hook YTReelPlayerViewController
 - (BOOL)isPictureInPictureAllowed { return IS_ENABLED(DisablesShortsPiP) ? NO : %orig; }
+- (void)setupPlayerForPiP { if (!IS_ENABLED(DisablesShortsPiP)) %orig; }
 %end
 
 %hook YTReelWatchRootViewController

@@ -6,6 +6,8 @@ static float playbackRate = 1.0;
 
 static BOOL isExternal = NO;
 
+static BOOL canRunAutoActions = NO;
+
 static void YouModAddEndTime(YTPlayerViewController *self, YTSingleVideoController *video, YTSingleVideoTime *time) {
     if (!IS_ENABLED(ShowExtraTimeRemaining)) return;
 
@@ -176,6 +178,7 @@ static void YouModAddEndTime(YTPlayerViewController *self, YTSingleVideoControll
 // When a new video is played, enable time remaining flag
 - (void)setActiveSingleVideo:(id)arg1 {
     %orig;
+    canRunAutoActions = YES;
     if (IS_ENABLED(AlwaysShowRemaining) && !IS_ENABLED(DisablesShowRemaining)) {
         // Get the player bar view
         YTInlinePlayerBarContainerView *playerBar = self.playerBar;
@@ -455,7 +458,7 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
         YTPlayerViewController *playerviewController = [playerview valueForKey:@"_playerViewDelegate"];
         YouModDownloadSetCurrentPlayer(playerviewController);
         if (INTFORVAL(WifiQualityIndex) != 0 || INTFORVAL(CellQualityIndex) != 0) [self YouModAutoQuality];
-        if (IS_ENABLED(AutoFullScreen)) [playerviewController YouModAutoFullscreen];
+        if (IS_ENABLED(AutoFullScreen)) [playerviewController performSelector:@selector(YouModAutoFullscreen) withObject:nil afterDelay:0.5];
         if (IS_ENABLED(ShortsToRegular)) [playerviewController YouModShortsToRegular];
         if (IS_ENABLED(DisablesCaptions)) [playerviewController YouModTurnOffCaptions];
         if (INTFORVAL(AutoSpeedIndex) != 0) [playerviewController YouModSetAutoSpeed];
@@ -522,23 +525,19 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
 
 %end
 
-%hook YTAudioTrackSwitchController
-
-// ปรับ arg1 ให้รับค่าเป็น id (หรือประกาศเป็น YTIAudioTrack) และใช้ long long ให้ตรงตามระบบ
-- (void)switchToAudioTrack:(YTIAudioTrack *)arg1 source:(long long)arg2 {
-    
-    // ดึงชื่อภาษาหรือ ID ออกมาจากออบเจกต์เพื่อพิมพ์ใน Log (ถ้ามีเมธอด id_p หรือ displayName)
-    NSString *trackID = [arg1 description];
-
-    // แก้ไข %lld สำหรับตัวเลข และแปลงเป็น C-String (%s) เพื่อป้องกัน <private> ใน Console
-    NSLog(@"[YouMod] Audio track - Track: %s, Source: %lld", [trackID UTF8String], arg2);
-    
-    %orig;
-}
-
-%end
-
 %hook YTPlayerViewController
+
+- (id)activeVideo {
+    id value = %orig;
+    if (value && canRunAutoActions) {
+        if (IS_ENABLED(AutoFullScreen)) [self performSelector:@selector(YouModAutoFullscreen) withObject:nil afterDelay:0.5];
+        if (IS_ENABLED(ShortsToRegular)) [self YouModShortsToRegular];
+        if (IS_ENABLED(DisablesCaptions)) [self YouModTurnOffCaptions];
+        if (INTFORVAL(AutoSpeedIndex) != 0) [self YouModSetAutoSpeed];
+        canRunAutoActions = NO;
+    }
+    return value;
+}
 
 %new
 - (void)YouModTurnOffCaptions {
@@ -582,7 +581,8 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
 
 %new
 - (void)YouModShortsToRegular {
-    if (self.contentVideoID != nil && [self.parentViewController isKindOfClass:NSClassFromString(@"YTReelPlayerViewController")]) {
+    if (self.contentVideoID != nil && ([self.parentViewController isKindOfClass:NSClassFromString(@"YTReelPlayerViewController")] || [self.parentViewController isKindOfClass:NSClassFromString(@"YTShortsPlayerViewController")])) {
+        [self pause];
         NSString *vidLink = [NSString stringWithFormat:@"vnd.youtube://%@", self.contentVideoID];
         if ([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:vidLink]]) {
             [[UIApplication sharedApplication] openURL:[NSURL URLWithString:vidLink] options:@{} completionHandler:nil];

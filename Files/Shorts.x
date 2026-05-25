@@ -54,12 +54,8 @@ static void YouModMakeAShortsAction(YTPlayerViewController *self, YTSingleVideoC
     }
 }
 
-%hook YTPlayerViewController
+%hook YTReelPlayerViewController
 - (void)singleVideo:(YTSingleVideoController *)video currentVideoTimeDidChange:(YTSingleVideoTime *)time {
-    %orig;
-    YouModMakeAShortsAction(self, video, time);
-}
-- (void)potentiallyMutatedSingleVideo:(YTSingleVideoController *)video currentVideoTimeDidChange:(YTSingleVideoTime *)time {
     %orig;
     YouModMakeAShortsAction(self, video, time);
 }
