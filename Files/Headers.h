@@ -276,12 +276,10 @@ typedef NS_ENUM(NSUInteger, GestureSection) {
 - (void)YouModTurnOffCaptions;
 - (void)YouModShortsToRegular;
 - (void)YouModSetAutoSpeed;
-- (void)YouModAutoQuality;
 - (void)setActiveCaptionTrack:(id)arg1 source:(long long)arg2;
 - (void)setPlaybackRate:(float)rate;
 - (void)play;
 - (void)pause;
-- (void)setVideoFormatConstraint:(id)arg;
 @end
 
 @interface SSOConfiguration : NSObject
@@ -358,6 +356,7 @@ typedef NS_ENUM(NSUInteger, GestureSection) {
 @property (nonatomic, readonly, strong) YTSingleVideoTime *localTime;
 @property (nonatomic, strong, readonly) id <MLVideoFormatConstraint> videoFormatConstraint;
 - (void)setVideoFormatConstraint:(id)arg;
+- (void)YouModAutoQuality;
 @end
 
 @protocol MLPlayerItemDelegate <NSObject>
