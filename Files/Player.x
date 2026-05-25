@@ -531,7 +531,6 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
     id value = %orig;
     if (value && canRunAutoActions) {
         if (IS_ENABLED(AutoFullScreen)) [self performSelector:@selector(YouModAutoFullscreen) withObject:nil afterDelay:0.5];
-        if (IS_ENABLED(ShortsToRegular)) [self YouModShortsToRegular];
         if (IS_ENABLED(DisablesCaptions)) [self YouModTurnOffCaptions];
         if (INTFORVAL(AutoSpeedIndex) != 0) [self YouModSetAutoSpeed];
         canRunAutoActions = NO;
