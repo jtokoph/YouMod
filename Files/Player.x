@@ -6,6 +6,8 @@ static float playbackRate = 1.0;
 
 static BOOL Check = NO;
 
+static BOOL isExternal = NO;
+
 static void YouModAddEndTime(YTPlayerViewController *self, YTSingleVideoController *video, YTSingleVideoTime *time) {
     if (!IS_ENABLED(ShowExtraTimeRemaining)) return;
 
