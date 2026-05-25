@@ -195,6 +195,7 @@ static void YouModAddEndTime(YTPlayerViewController *self, YTSingleVideoControll
     if (IS_ENABLED(ShortsToRegular)) [playerviewController performSelector:@selector(YouModShortsToRegular)];
     if (IS_ENABLED(DisablesCaptions)) [playerviewController performSelector:@selector(YouModTurnOffCaptions)];
     if (INTFORVAL(AutoSpeedIndex) != 0) [playerviewController performSelector:@selector(YouModSetAutoSpeed)];
+    if (INTFORVAL(WifiQualityIndex) != 0 || INTFORVAL(CellQualityIndex) != 0) [playerviewController performSelector:@selector(YouModAutoQuality)];
 }
 %end
 
@@ -423,12 +424,6 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
 
 %hook YTPlayerViewController
 
-- (id)playerTransition {
-    id value = %orig;
-    if (value && (INTFORVAL(WifiQualityIndex) != 0 || INTFORVAL(CellQualityIndex) != 0)) [self performSelector:@selector(YouModAutoQuality)];
-    return value;
-}
-
 %new
 - (void)YouModTurnOffCaptions {
     if ([self.view.superview isKindOfClass:NSClassFromString(@"YTWatchView")]) {
@@ -507,12 +502,12 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
         }
     }
 
-    MLQuickMenuVideoQualitySettingFormatConstraint *fc = [[%c(MLQuickMenuVideoQualitySettingFormatConstraint) alloc] init];
-    if ([fc respondsToSelector:@selector(initWithVideoQualitySetting:formatSelectionReason:qualityLabel:resolutionCap:)]) {
-        [self.activeVideo setVideoFormatConstraint:[fc initWithVideoQualitySetting:3 formatSelectionReason:2 qualityLabel:qualityLabel resolutionCap:0]];
-    } else {
-        [self.activeVideo setVideoFormatConstraint:[fc initWithVideoQualitySetting:3 formatSelectionReason:2 qualityLabel:qualityLabel]];
-    }
+    MLQuickMenuVideoQualitySettingFormatConstraint *fc = [%c(MLQuickMenuVideoQualitySettingFormatConstraint) alloc];
+    // if ([fc respondsToSelector:@selector(initWithVideoQualitySetting:formatSelectionReason:qualityLabel:resolutionCap:)]) {
+    //    self.activeVideo.videoFormatConstraint = [fc initWithVideoQualitySetting:3 formatSelectionReason:2 qualityLabel:qualityLabel resolutionCap:0];
+    // } else {
+    self.activeVideo.videoFormatConstraint = [fc initWithVideoQualitySetting:3 formatSelectionReason:2 qualityLabel:qualityLabel];
+    // }
 }
 
 - (void)singleVideo:(YTSingleVideoController *)video currentVideoTimeDidChange:(YTSingleVideoTime *)time {
