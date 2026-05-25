@@ -4,8 +4,6 @@ extern void YouModDownloadSetCurrentPlayer(YTPlayerViewController *player);
 
 static float playbackRate = 1.0;
 
-// static BOOL isExternal = NO;
-
 static void YouModAddEndTime(YTPlayerViewController *self, YTSingleVideoController *video, YTSingleVideoTime *time) {
     if (!IS_ENABLED(ShowExtraTimeRemaining)) return;
 
@@ -64,11 +62,6 @@ static void YouModAddEndTime(YTPlayerViewController *self, YTSingleVideoControll
     YTMainAppVideoPlayerOverlayView *mainOverlayView = (YTMainAppVideoPlayerOverlayView *)self.superview;
     YTMainAppVideoPlayerOverlayViewController *mainOverlayController = (YTMainAppVideoPlayerOverlayViewController *)mainOverlayView.delegate;
     YTPlayerViewController *playerViewController = mainOverlayController.parentViewController;
-    /*
-    YTSingleVideoController *sgvid = playerViewController.activeVideo;
-    YTSingleVideoTime *sgtime = sgvid.localTime;
-    if (visible) YouModAddEndTime(playerViewController, sgvid, sgtime);
-    */
     visible ? [playerViewController pause] : [playerViewController play];
 }
 %end
@@ -193,14 +186,12 @@ static void YouModAddEndTime(YTPlayerViewController *self, YTSingleVideoControll
     YTPlayerView *playerview = [sgvid valueForKey:@"_playerView"];
     YTPlayerViewController *playerviewController = [playerview valueForKey:@"_playerViewDelegate"];
     YouModDownloadSetCurrentPlayer(playerviewController);
-    if (IS_ENABLED(AutoFullScreen)) [playerviewController performSelector:@selector(YouModAutoFullscreen)];
-    if (IS_ENABLED(ShortsToRegular)) [playerviewController performSelector:@selector(YouModShortsToRegular)];
-    if (IS_ENABLED(DisablesCaptions)) [playerviewController performSelector:@selector(YouModTurnOffCaptions)];
-    if (INTFORVAL(AutoSpeedIndex) != 0) [playerviewController performSelector:@selector(YouModSetAutoSpeed)];
+    if (IS_ENABLED(AutoFullScreen)) [playerviewController YouModAutoFullscreen];
+    if (IS_ENABLED(ShortsToRegular)) [playerviewController YouModShortsToRegular];
+    if (IS_ENABLED(DisablesCaptions)) [playerviewController YouModTurnOffCaptions];
+    if (INTFORVAL(AutoSpeedIndex) != 0) [playerviewController YouModSetAutoSpeed];
 }
 %end
-
-/*
 
 static NSString *getQualityLabel(NSArray <MLFormat *> *formats) {
     BOOL isWifi = [[%c(GCKNNetworkReachability) sharedInstance] currentStatus] == 1;
@@ -263,29 +254,6 @@ static MLQuickMenuVideoQualitySettingFormatConstraint *getConstraint(NSString *q
     return constraint;
 }
 
-%hook MLHAMPlayerItem
-
-- (void)onSelectableVideoFormats:(NSArray <MLFormat *> *)formats {
-    %orig;
-    if (INTFORVAL(WifiQualityIndex) == 0 && INTFORVAL(CellQualityIndex) == 0) return;
-    NSString *qualityLabel = getQualityLabel(formats);
-    MLQuickMenuVideoQualitySettingFormatConstraint *constraint = getConstraint(qualityLabel);
-    self.videoFormatConstraint = constraint;
-}
-
-%end
-
-%hook MLAVPlayer
-
-- (void)streamSelectorHasSelectableVideoFormats:(NSArray <MLFormat *> *)formats {
-    %orig;
-    if (INTFORVAL(WifiQualityIndex) == 0 && INTFORVAL(CellQualityIndex) == 0) return;
-    NSString *qualityLabel = getQualityLabel(formats);
-    self.videoFormatConstraint = getConstraint(qualityLabel);
-}
-
-%end
-
 %hook MLAVAssetPlayer
 
 // The changed value is not reliable but this method gets called whenever AirPlay session is started or stopped
@@ -302,8 +270,6 @@ static MLQuickMenuVideoQualitySettingFormatConstraint *getConstraint(NSString *q
 }
 
 %end
-
-*/
 
 // Disable Fullscreen Actions
 %hook YTFullscreenActionsView
@@ -490,9 +456,7 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
 
 - (void)playerItem:(id)arg1 hasSelectableVideoFormats:(id)arg2 {
     %orig;
-    if (arg2 && (INTFORVAL(WifiQualityIndex) != 0 || INTFORVAL(CellQualityIndex) != 0)) {
-        [self YouModAutoQuality];
-    }
+    if (arg2 && (INTFORVAL(WifiQualityIndex) != 0 || INTFORVAL(CellQualityIndex) != 0)) [self YouModAutoQuality];
 }
 
 %new
@@ -556,70 +520,6 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
 %end
 
 %hook YTPlayerViewController
-
-/*
-%new
-- (void)YouModAutoQuality {
-    if (![self.view.superview isKindOfClass:NSClassFromString(@"YTWatchView")]) {
-        return;
-    }
-
-    BOOL isWifi = [[%c(GCKNNetworkReachability) sharedInstance] currentStatus] == 1;
-    NSInteger kQualityIndex = isWifi ? INTFORVAL(WifiQualityIndex) : INTFORVAL(CellQualityIndex);
-
-    NSString *bestQualityLabel;
-    int highestResolution = 0;
-    for (MLFormat *format in self.activeVideo.selectableVideoFormats) {
-        int reso = format.singleDimensionResolution;
-        if (reso > highestResolution) {
-            highestResolution = reso;
-            bestQualityLabel = format.qualityLabel;
-        }
-    }
-
-    NSArray *qualityLabels = @[@"Default", bestQualityLabel, @"2160p60", @"2160p", @"1440p60", @"1440p", @"1080p60", @"1080p", @"720p60", @"720p", @"480p", @"360p", @"240p", @"144p"];
-    NSString *qualityLabel = qualityLabels[kQualityIndex];
-
-    if (![qualityLabel isEqualToString:bestQualityLabel]) {
-        BOOL exactMatch = NO;
-        NSString *closestQualityLabel = qualityLabel;
-
-        for (MLFormat *format in self.activeVideo.selectableVideoFormats) {
-            if ([format.qualityLabel isEqualToString:qualityLabel]) {
-                exactMatch = YES;
-                break;
-            }
-        }
-
-        if (!exactMatch) {
-            NSInteger bestQualityDifference = NSIntegerMax;
-
-            for (MLFormat *format in self.activeVideo.selectableVideoFormats) {
-                NSArray *formatСomponents = [format.qualityLabel componentsSeparatedByString:@"p"];
-                NSArray *targetComponents = [qualityLabel componentsSeparatedByString:@"p"];
-                if (formatСomponents.count == 2) {
-                    NSInteger formatQuality = [formatСomponents.firstObject integerValue];
-                    NSInteger targetQuality = [targetComponents.firstObject integerValue];
-                    NSInteger difference = labs(formatQuality - targetQuality);
-                    if (difference < bestQualityDifference) {
-                        bestQualityDifference = difference;
-                        closestQualityLabel = format.qualityLabel;
-                    }
-                }
-            }
-
-            qualityLabel = closestQualityLabel;
-        }
-    }
-
-    MLQuickMenuVideoQualitySettingFormatConstraint *fc = [%c(MLQuickMenuVideoQualitySettingFormatConstraint) alloc];
-    if ([fc respondsToSelector:@selector(initWithVideoQualitySetting:formatSelectionReason:qualityLabel:resolutionCap:)]) {
-        [self.activeVideo setVideoFormatConstraint:[fc initWithVideoQualitySetting:3 formatSelectionReason:2 qualityLabel:qualityLabel resolutionCap:0]];
-    } else {
-        [self.activeVideo setVideoFormatConstraint:[fc initWithVideoQualitySetting:3 formatSelectionReason:2 qualityLabel:qualityLabel]];
-    }
-}
-*/
 
 %new
 - (void)YouModTurnOffCaptions {
