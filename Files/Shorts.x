@@ -39,17 +39,14 @@
 - (void)setTitleLabelVisible:(BOOL)arg1 animated:(BOOL)arg2 { IS_ENABLED(HideShortsHeader) ? %orig(NO, arg2) : %orig; }
 %end
 
-static void YouModMakeAShortsAction(YTPlayerViewController *self, YTSingleVideoController *video, YTSingleVideoTime *time) {
+static void YouModMakeAShortsAction(YTSingleVideoController *video, YTSingleVideoTime *time) {
     if (INTFORVAL(ShortsActionIndex) == 0) return;
 
     if (floor(time.time) >= floor(video.totalMediaTime)) {
-        if ([self.parentViewController isKindOfClass:%c(YTReelPlayerViewController)]) {
-            YTReelPlayerViewController *reelVC = (YTReelPlayerViewController *)self.parentViewController;
-            if ([reelVC respondsToSelector:@selector(reelContentViewRequestsAdvanceToNextVideo:)] && INTFORVAL(ShortsActionIndex) == 1) {
-                [reelVC performSelector:@selector(reelContentViewRequestsAdvanceToNextVideo:)];
-            } else if ([reelVC respondsToSelector:@selector(reelContentViewRequestsPlayPauseToggle:)] && INTFORVAL(ShortsActionIndex) == 2) {
-                [reelVC performSelector:@selector(reelContentViewRequestsPlayPauseToggle:)];
-            }
+        if ([self respondsToSelector:@selector(reelContentViewRequestsAdvanceToNextVideo:)] && INTFORVAL(ShortsActionIndex) == 1) {
+            [self performSelector:@selector(reelContentViewRequestsAdvanceToNextVideo:)];
+        } else if ([self respondsToSelector:@selector(reelContentViewRequestsPlayPauseToggle:)] && INTFORVAL(ShortsActionIndex) == 2) {
+            [self performSelector:@selector(reelContentViewRequestsPlayPauseToggle:)];
         }
     }
 }
@@ -57,6 +54,6 @@ static void YouModMakeAShortsAction(YTPlayerViewController *self, YTSingleVideoC
 %hook YTReelPlayerViewController
 - (void)singleVideo:(YTSingleVideoController *)video currentVideoTimeDidChange:(YTSingleVideoTime *)time {
     %orig;
-    YouModMakeAShortsAction(self, video, time);
+    YouModMakeAShortsAction(video, time);
 }
 %end
