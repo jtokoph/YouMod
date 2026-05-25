@@ -459,7 +459,7 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
         YouModDownloadSetCurrentPlayer(playerviewController);
         if (INTFORVAL(WifiQualityIndex) != 0 || INTFORVAL(CellQualityIndex) != 0) [self YouModAutoQuality];
         if (IS_ENABLED(AutoFullScreen)) [playerviewController performSelector:@selector(YouModAutoFullscreen) withObject:nil afterDelay:0.5];
-        if (IS_ENABLED(ShortsToRegular)) [playerviewController YouModShortsToRegular];
+        if (IS_ENABLED(ShortsToRegular)) [playerviewController performSelector:@selector(YouModShortsToRegular) withObject:nil afterDelay:0.25];
         if (IS_ENABLED(DisablesCaptions)) [playerviewController YouModTurnOffCaptions];
         if (INTFORVAL(AutoSpeedIndex) != 0) [playerviewController YouModSetAutoSpeed];
     }
@@ -581,6 +581,7 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
 %new
 - (void)YouModShortsToRegular {
     if (self.contentVideoID != nil && ([self.parentViewController isKindOfClass:NSClassFromString(@"YTReelPlayerViewController")] || [self.parentViewController isKindOfClass:NSClassFromString(@"YTShortsPlayerViewController")])) {
+        [self pause];
         NSString *vidLink = [NSString stringWithFormat:@"vnd.youtube://%@", self.contentVideoID];
         if ([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:vidLink]]) {
             [[UIApplication sharedApplication] openURL:[NSURL URLWithString:vidLink] options:@{} completionHandler:nil];
