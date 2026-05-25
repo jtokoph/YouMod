@@ -497,10 +497,6 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
 
 %new
 - (void)YouModAutoQuality {
-    if (![self.view.superview isKindOfClass:NSClassFromString(@"YTWatchView")]) {
-        return;
-    }
-
     BOOL isWifi = [[%c(GCKNNetworkReachability) sharedInstance] currentStatus] == 1;
     NSInteger kQualityIndex = isWifi ? INTFORVAL(WifiQualityIndex) : INTFORVAL(CellQualityIndex);
 
