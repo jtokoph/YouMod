@@ -450,10 +450,6 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
 
 %new
 - (void)YouModAutoQuality {
-    if (![self.view.superview isKindOfClass:NSClassFromString(@"YTWatchView")]) {
-        return;
-    }
-
     BOOL isWifi = [[%c(GCKNNetworkReachability) sharedInstance] currentStatus] == 1;
     NSInteger kQualityIndex = isWifi ? INTFORVAL(WifiQualityIndex) : INTFORVAL(CellQualityIndex);
 
@@ -503,11 +499,11 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
     }
 
     MLQuickMenuVideoQualitySettingFormatConstraint *fc = [%c(MLQuickMenuVideoQualitySettingFormatConstraint) alloc];
-    // if ([fc respondsToSelector:@selector(initWithVideoQualitySetting:formatSelectionReason:qualityLabel:resolutionCap:)]) {
-    //    self.activeVideo.videoFormatConstraint = [fc initWithVideoQualitySetting:3 formatSelectionReason:2 qualityLabel:qualityLabel resolutionCap:0];
-    // } else {
-    self.activeVideo.videoFormatConstraint = [fc initWithVideoQualitySetting:3 formatSelectionReason:2 qualityLabel:qualityLabel];
-    // }
+    if ([fc respondsToSelector:@selector(initWithVideoQualitySetting:formatSelectionReason:qualityLabel:resolutionCap:)]) {
+        [self.activeVideo setVideoFormatConstraint:[fc initWithVideoQualitySetting:3 formatSelectionReason:2 qualityLabel:qualityLabel resolutionCap:0]];
+    } else {
+        [self.activeVideo setVideoFormatConstraint:[fc initWithVideoQualitySetting:3 formatSelectionReason:2 qualityLabel:qualityLabel]];
+    }
 }
 
 - (void)singleVideo:(YTSingleVideoController *)video currentVideoTimeDidChange:(YTSingleVideoTime *)time {
