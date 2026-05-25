@@ -529,7 +529,7 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
     if ([self.view.superview isKindOfClass:NSClassFromString(@"YTWatchView")]) {
         @try {
             [self setActiveCaptionTrack:nil source:0];
-        } @cache (id ex) {
+        } @catch (id ex) {
             [self setActiveCaptionTrack:nil];
         }
     }
