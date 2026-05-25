@@ -4,8 +4,6 @@ extern void YouModDownloadSetCurrentPlayer(YTPlayerViewController *player);
 
 static float playbackRate = 1.0;
 
-static BOOL Check = NO;
-
 static BOOL isExternal = NO;
 
 static void YouModAddEndTime(YTPlayerViewController *self, YTSingleVideoController *video, YTSingleVideoTime *time) {
@@ -267,7 +265,7 @@ static MLQuickMenuVideoQualitySettingFormatConstraint *getConstraint(NSString *q
 
 - (void)onSelectableVideoFormats:(NSArray <MLFormat *> *)formats {
     %orig;
-    if (!Check) return;
+    if (INTFORVAL(WifiQualityIndex) == 0 && INTFORVAL(CellQualityIndex) == 0) return;
     NSString *qualityLabel = getQualityLabel(formats);
     MLQuickMenuVideoQualitySettingFormatConstraint *constraint = getConstraint(qualityLabel);
     self.videoFormatConstraint = constraint;
@@ -279,7 +277,7 @@ static MLQuickMenuVideoQualitySettingFormatConstraint *getConstraint(NSString *q
 
 - (void)streamSelectorHasSelectableVideoFormats:(NSArray <MLFormat *> *)formats {
     %orig;
-    if (!Check) return;
+    if (INTFORVAL(WifiQualityIndex) == 0 && INTFORVAL(CellQualityIndex) == 0) return;
     NSString *qualityLabel = getQualityLabel(formats);
     self.videoFormatConstraint = getConstraint(qualityLabel);
 }
@@ -291,7 +289,7 @@ static MLQuickMenuVideoQualitySettingFormatConstraint *getConstraint(NSString *q
 // The changed value is not reliable but this method gets called whenever AirPlay session is started or stopped
 - (void)playerExternalPlaybackActiveDidChange:(NSDictionary *)change {
     %orig;
-    if (!Check) return;
+    if (INTFORVAL(WifiQualityIndex) == 0 && INTFORVAL(CellQualityIndex) == 0) return;
     BOOL multipleScreens = [UIScreen screens].count > 1;
     if (isExternal != multipleScreens) {
         isExternal = multipleScreens;
@@ -485,15 +483,6 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
 %end
 
 %hook YTPlayerViewController
-
-- (void)prepareToLoadWithPlayerTransition:(id)arg1 expectedLayout:(id)arg2 {
-    %orig;
-    if ([self.parentViewController isKindOfClass:%c(YTReelPlayerViewController)] || [self.parentViewController isKindOfClass:%c(YTShortsPlayerViewController)]) {
-        Check = NO;
-    } else {
-        Check = YES;
-    }
-}
 
 %new
 - (void)YouModTurnOffCaptions {
