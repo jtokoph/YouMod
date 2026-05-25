@@ -281,6 +281,7 @@ typedef NS_ENUM(NSUInteger, GestureSection) {
 - (void)setPlaybackRate:(float)rate;
 - (void)play;
 - (void)pause;
+- (void)setVideoFormatConstraint:(id)arg;
 @end
 
 @interface SSOConfiguration : NSObject

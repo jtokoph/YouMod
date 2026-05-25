@@ -197,8 +197,11 @@ static void YouModAddEndTime(YTPlayerViewController *self, YTSingleVideoControll
     if (IS_ENABLED(ShortsToRegular)) [playerviewController performSelector:@selector(YouModShortsToRegular)];
     if (IS_ENABLED(DisablesCaptions)) [playerviewController performSelector:@selector(YouModTurnOffCaptions)];
     if (INTFORVAL(AutoSpeedIndex) != 0) [playerviewController performSelector:@selector(YouModSetAutoSpeed)];
+    if (INTFORVAL(WifiQualityIndex) != 0 || INTFORVAL(CellQualityIndex) != 0) [playerviewController performSelector:@selector(YouModAutoQuality)];
 }
 %end
+
+/*
 
 static NSString *getQualityLabel(NSArray <MLFormat *> *formats) {
     BOOL isWifi = [[%c(GCKNNetworkReachability) sharedInstance] currentStatus] == 1;
@@ -300,6 +303,8 @@ static MLQuickMenuVideoQualitySettingFormatConstraint *getConstraint(NSString *q
 }
 
 %end
+
+*/
 
 // Disable Fullscreen Actions
 %hook YTFullscreenActionsView
@@ -483,6 +488,68 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
 %end
 
 %hook YTPlayerViewController
+
+%new
+- (void)YouModAutoQuality {
+    if (![self.view.superview isKindOfClass:NSClassFromString(@"YTWatchView")]) {
+        return;
+    }
+
+    BOOL isWifi = [[%c(GCKNNetworkReachability) sharedInstance] currentStatus] == 1;
+    NSInteger kQualityIndex = isWifi ? INTFORVAL(WifiQualityIndex) : INTFORVAL(CellQualityIndex);
+
+    NSString *bestQualityLabel;
+    int highestResolution = 0;
+    for (MLFormat *format in self.activeVideo.selectableVideoFormats) {
+        int reso = format.singleDimensionResolution;
+        if (reso > highestResolution) {
+            highestResolution = reso;
+            bestQualityLabel = format.qualityLabel;
+        }
+    }
+
+    NSArray *qualityLabels = @[@"Default", bestQualityLabel, @"2160p60", @"2160p", @"1440p60", @"1440p", @"1080p60", @"1080p", @"720p60", @"720p", @"480p", @"360p", @"240p", @"144p"];
+    NSString *qualityLabel = qualityLabels[kQualityIndex];
+
+    if (![qualityLabel isEqualToString:bestQualityLabel]) {
+        BOOL exactMatch = NO;
+        NSString *closestQualityLabel = qualityLabel;
+
+        for (MLFormat *format in self.activeVideo.selectableVideoFormats) {
+            if ([format.qualityLabel isEqualToString:qualityLabel]) {
+                exactMatch = YES;
+                break;
+            }
+        }
+
+        if (!exactMatch) {
+            NSInteger bestQualityDifference = NSIntegerMax;
+
+            for (MLFormat *format in self.activeVideo.selectableVideoFormats) {
+                NSArray *formatСomponents = [format.qualityLabel componentsSeparatedByString:@"p"];
+                NSArray *targetComponents = [qualityLabel componentsSeparatedByString:@"p"];
+                if (formatСomponents.count == 2) {
+                    NSInteger formatQuality = [formatСomponents.firstObject integerValue];
+                    NSInteger targetQuality = [targetComponents.firstObject integerValue];
+                    NSInteger difference = labs(formatQuality - targetQuality);
+                    if (difference < bestQualityDifference) {
+                        bestQualityDifference = difference;
+                        closestQualityLabel = format.qualityLabel;
+                    }
+                }
+            }
+
+            qualityLabel = closestQualityLabel;
+        }
+    }
+
+    MLQuickMenuVideoQualitySettingFormatConstraint *fc = [[%c(MLQuickMenuVideoQualitySettingFormatConstraint) alloc] init];
+    if ([fc respondsToSelector:@selector(initWithVideoQualitySetting:formatSelectionReason:qualityLabel:resolutionCap:)]) {
+        [self setVideoFormatConstraint:[fc initWithVideoQualitySetting:3 formatSelectionReason:2 qualityLabel:qualityLabel resolutionCap:0]];
+    } else {
+        [self setVideoFormatConstraint:[fc initWithVideoQualitySetting:3 formatSelectionReason:2 qualityLabel:qualityLabel]];
+    }
+}
 
 %new
 - (void)YouModTurnOffCaptions {
