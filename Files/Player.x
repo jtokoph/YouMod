@@ -203,10 +203,10 @@ static void YouModAddEndTime(YTPlayerViewController *self, YTSingleVideoControll
 }
 %end
 
-%hook YTSingleVideoController
-- (id)selectableVideoFormats {
-    id value = %orig;
-    if (value && canRunAutoQuality) {
+%hook YTSingleVideo
+- (void)setPlayerTransition:(id)arg {
+    %orig;
+    if (canRunAutoQuality) {
         BOOL isWifi = [[%c(GCKNNetworkReachability) sharedInstance] currentStatus] == 1;
         NSInteger kQualityIndex = isWifi ? INTFORVAL(WifiQualityIndex) : INTFORVAL(CellQualityIndex);
 
@@ -255,7 +255,7 @@ static void YouModAddEndTime(YTPlayerViewController *self, YTSingleVideoControll
             }
         }
 
-        MLQuickMenuVideoQualitySettingFormatConstraint *fc = [[%c(MLQuickMenuVideoQualitySettingFormatConstraint) alloc] init];
+        MLQuickMenuVideoQualitySettingFormatConstraint *fc = [%c(MLQuickMenuVideoQualitySettingFormatConstraint) alloc];
         if ([fc respondsToSelector:@selector(initWithVideoQualitySetting:formatSelectionReason:qualityLabel:resolutionCap:)]) {
             [self setVideoFormatConstraint:[fc initWithVideoQualitySetting:3 formatSelectionReason:2 qualityLabel:qualityLabel resolutionCap:0]];
         } else {
@@ -263,7 +263,6 @@ static void YouModAddEndTime(YTPlayerViewController *self, YTSingleVideoControll
         }
         canRunAutoQuality = NO;
     }
-    return value;
 }
 %end
 
