@@ -355,6 +355,7 @@ typedef NS_ENUM(NSUInteger, GestureSection) {
 @interface YTSingleVideoController (YouMod)
 @property (nonatomic, assign, readonly) CGFloat totalMediaTime;
 @property (nonatomic, readonly, strong) YTSingleVideoTime *localTime;
+@property (nonatomic, strong, readonly) id <MLVideoFormatConstraint> videoFormatConstraint;
 - (void)setVideoFormatConstraint:(id)arg;
 @end
 
