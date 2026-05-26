@@ -178,7 +178,6 @@ static void YouModAddEndTime(YTPlayerViewController *self, YTSingleVideoControll
 // When a new video is played, enable time remaining flag
 - (void)setActiveSingleVideo:(id)arg1 {
     %orig;
-    canRunAutoActions = YES;
     if (IS_ENABLED(AlwaysShowRemaining) && !IS_ENABLED(DisablesShowRemaining)) {
         // Get the player bar view
         YTInlinePlayerBarContainerView *playerBar = self.playerBar;
