@@ -524,10 +524,6 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
 
 %end
 
-@interface YTIAudioTrack : NSObject
-- (NSString *)id_p;
-@end
-
 @interface YTAudioTrackSwitchController : NSObject
 - (void)switchToAudioTrack:(id)track source:(NSInteger)source;
 @end
@@ -539,7 +535,7 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
     %orig; // รันคำสั่งพื้นฐานให้ YouTube จัดอาร์เรย์ _availableAudioTracks ในภาพที่ 2 ให้เสร็จก่อน
 
     // ดึงรหัสภาษาที่เราต้องการล็อกไว้จาก Settings เช่น @"th" หรือ @"ja"
-    NSString *userTargetLang = @"th"; 
+    NSString *userTargetLang = @"en"; 
     // if (!userTargetLang || userTargetLang.length == 0) return;
 
     // เข้าถึงอาร์เรย์ที่คุณเปิดให้ดูในภาพขวา (_availableAudioTracks)
@@ -548,7 +544,7 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
 
     // ตรวจสอบภาษาปัจจุบันที่กำลังเล่นอยู่เพื่อไม่ให้ลูปนรกทำงานซ้ำซ้อน
     YTIAudioTrack *currentTrack = [self valueForKey:@"_lastSelectedAudioTrack"];
-    if (currentTrack && [currentTrack respondsToSelector:@selector(id_p)]) {
+    if (currentTrack) {
         // ถ้าแทร็กเสียงตอนนี้ตรงกับภาษาที่ตั้งไว้แล้ว... ให้หยุดทำงานทันที
         if ([currentTrack.id_p hasPrefix:userTargetLang]) {
             return;
@@ -558,7 +554,7 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
     // วนลูปหาแทร็กภาษาที่ตรงกับความต้องการจากลิสต์ 22 รายการของคุณ
     YTIAudioTrack *matchedTrack = nil;
     for (YTIAudioTrack *track in availableTracks) {
-        if ([track respondsToSelector:@selector(id_p)] && [track.id_p hasPrefix:userTargetLang]) {
+        if ([track.id_p hasPrefix:userTargetLang]) {
             matchedTrack = track;
             break;
         }
