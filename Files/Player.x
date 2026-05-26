@@ -540,7 +540,7 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
 %hook YTAudioTrackSwitchController
 
 // ใช้ตัวนี้เพื่อดักจับทุกครั้งที่รายการภาษาเสียงเปลี่ยนไป หรือโหลดคลิปใหม่ (อ้างอิงชื่อเมธอดจากสกรีนช็อตชุดที่แล้วของคุณ)
-- (void)setActiveVideo:(id)arg {
+- (void)setUserSelectableFormats:(id)arg {
     %orig; // รันคำสั่งพื้นฐานให้ YouTube จัดอาร์เรย์ _availableAudioTracks ในภาพที่ 2 ให้เสร็จก่อน
 
     // ดึงรหัสภาษาที่เราต้องการล็อกไว้จาก Settings เช่น @"th" หรือ @"ja"
