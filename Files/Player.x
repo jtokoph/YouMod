@@ -453,16 +453,16 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
 
 - (void)playerItem:(id)arg1 hasSelectableVideoFormats:(id)arg2 {
     %orig;
-    if (arg2) {
-        YTPlayerView *playerview = [self valueForKey:@"_playerView"];
-        YTPlayerViewController *playerviewController = [playerview valueForKey:@"_playerViewDelegate"];
-        YouModDownloadSetCurrentPlayer(playerviewController);
-        if (INTFORVAL(WifiQualityIndex) != 0 || INTFORVAL(CellQualityIndex) != 0) [self YouModAutoQuality];
-        if (IS_ENABLED(AutoFullScreen)) [playerviewController performSelector:@selector(YouModAutoFullscreen) withObject:nil afterDelay:0.5];
-        if (IS_ENABLED(ShortsToRegular)) [playerviewController performSelector:@selector(YouModShortsToRegular) withObject:nil afterDelay:0.25];
-        if (IS_ENABLED(DisablesCaptions)) [playerviewController YouModTurnOffCaptions];
-        if (INTFORVAL(AutoSpeedIndex) != 0) [playerviewController YouModSetAutoSpeed];
-    }
+    if (!arg2) return;
+    YTPlayerView *playerview = [self valueForKey:@"_playerView"];
+    YTPlayerViewController *playerviewController = [playerview valueForKey:@"_playerViewDelegate"];
+    YouModDownloadSetCurrentPlayer(playerviewController);
+    if (canRunAutoActions) return;
+    if (INTFORVAL(WifiQualityIndex) != 0 || INTFORVAL(CellQualityIndex) != 0) [self YouModAutoQuality];
+    if (IS_ENABLED(AutoFullScreen)) [playerviewController performSelector:@selector(YouModAutoFullscreen) withObject:nil afterDelay:0.5];
+    if (IS_ENABLED(ShortsToRegular)) [playerviewController performSelector:@selector(YouModShortsToRegular) withObject:nil afterDelay:0.25];
+    if (IS_ENABLED(DisablesCaptions)) [playerviewController YouModTurnOffCaptions];
+    if (INTFORVAL(AutoSpeedIndex) != 0) [playerviewController YouModSetAutoSpeed];
 }
 
 %new
@@ -529,11 +529,15 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
 
 - (id)activeVideo {
     id value = %orig;
-    if (value && canRunAutoActions) {
-        if (IS_ENABLED(AutoFullScreen)) [self performSelector:@selector(YouModAutoFullscreen) withObject:nil afterDelay:0.5];
-        if (IS_ENABLED(DisablesCaptions)) [self YouModTurnOffCaptions];
-        if (INTFORVAL(AutoSpeedIndex) != 0) [self YouModSetAutoSpeed];
-        canRunAutoActions = NO;
+    if (value) {
+        if (canRunAutoActions) {
+            if (IS_ENABLED(AutoFullScreen)) [self performSelector:@selector(YouModAutoFullscreen) withObject:nil afterDelay:0.5];
+            if (IS_ENABLED(DisablesCaptions)) [self YouModTurnOffCaptions];
+            if (INTFORVAL(AutoSpeedIndex) != 0) [self YouModSetAutoSpeed];
+            canRunAutoActions = NO;
+        }
+    } else {
+        canRunAutoActions = YES;
     }
     return value;
 }
