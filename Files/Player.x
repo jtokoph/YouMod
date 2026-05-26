@@ -546,7 +546,7 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
     YTIAudioTrack *currentTrack = [self valueForKey:@"_lastSelectedAudioTrack"];
     if (currentTrack) {
         // ถ้าแทร็กเสียงตอนนี้ตรงกับภาษาที่ตั้งไว้แล้ว... ให้หยุดทำงานทันที
-        if ([currentTrack.id_p hasPrefix:userTargetLang]) {
+        if ([currentTrack hasPrefix:userTargetLang]) {
             return;
         }
     }
@@ -562,11 +562,14 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
 
     // เจอปุ๊บ สั่งสลับรางเสียงทันที
     if (matchedTrack) {
+        /*
         dispatch_async(dispatch_get_main_queue(), ^{
             // source: 2 คือรหัสจำลองเสมือนว่า User กดจิ้มเปลี่ยนภาษาด้วยตัวเองผ่านหน้าจอ Settings Overlay
             [self switchToAudioTrack:matchedTrack source:2];
             NSLog(@"[YouMod] Triggered auto-switch to language: %s", [matchedTrack.id_p UTF8String]);
         });
+        */
+        [self switchToAudioTrack:matchedTrack source:2];
     }
 }
 
