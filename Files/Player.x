@@ -468,7 +468,7 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
     if (IS_ENABLED(ShortsToRegular)) [playerviewController performSelector:@selector(YouModShortsToRegular) withObject:nil afterDelay:0.25];
     if (IS_ENABLED(DisablesCaptions)) [playerviewController YouModTurnOffCaptions];
     if (INTFORVAL(AutoSpeedIndex) != 0) [playerviewController YouModSetAutoSpeed];
-    [playerviewController YouModAudioTrack];
+    // [playerviewController YouModAudioTrack];
 }
 
 %new
@@ -536,12 +536,11 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
 - (void)updateCurrentAudioTrack;
 @end
 
-/*
 // Audio track selection
 %hook YTAudioTrackSwitchController
 
 // ใช้ตัวนี้เพื่อดักจับทุกครั้งที่รายการภาษาเสียงเปลี่ยนไป หรือโหลดคลิปใหม่ (อ้างอิงชื่อเมธอดจากสกรีนช็อตชุดที่แล้วของคุณ)
-- (void)singleVideo:(id)singleVideo selectableAudioFormatsDidChange:(id)formats {
+- (void)setActiveVideo:(id)arg {
     %orig; // รันคำสั่งพื้นฐานให้ YouTube จัดอาร์เรย์ _availableAudioTracks ในภาพที่ 2 ให้เสร็จก่อน
 
     // ดึงรหัสภาษาที่เราต้องการล็อกไว้จาก Settings เช่น @"th" หรือ @"ja"
@@ -572,19 +571,20 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
 
     // เจอปุ๊บ สั่งสลับรางเสียงทันที
     if (matchedTrack) {
+        /*
         dispatch_async(dispatch_get_main_queue(), ^{
             // source: 2 คือรหัสจำลองเสมือนว่า User กดจิ้มเปลี่ยนภาษาด้วยตัวเองผ่านหน้าจอ Settings Overlay
             [self switchToAudioTrack:matchedTrack source:0];
             [self updateCurrentAudioTrack];
             NSLog(@"[YouMod] Triggered auto-switch to language: %s", [matchedTrack.id_p UTF8String]);
         });
+        */
         [self switchToAudioTrack:matchedTrack source:0];
         [self updateCurrentAudioTrack];
     }
 }
 
 %end
-*/
 
 %hook YTPlayerViewController
 
@@ -604,7 +604,7 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
     return value;
 }
 
-*/
+
 
 %new
 - (void)YouModAudioTrack {
@@ -636,17 +636,16 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
 
     // เจอปุ๊บ สั่งสลับรางเสียงทันที
     if (matchedTrack) {
-        /*
         dispatch_async(dispatch_get_main_queue(), ^{
             // source: 2 คือรหัสจำลองเสมือนว่า User กดจิ้มเปลี่ยนภาษาด้วยตัวเองผ่านหน้าจอ Settings Overlay
             [self switchToAudioTrack:matchedTrack source:0];
             [self updateCurrentAudioTrack];
             NSLog(@"[YouMod] Triggered auto-switch to language: %s", [matchedTrack.id_p UTF8String]);
         });
-        */
         [self setAudioTrack:matchedTrack source:0];
     }
 }
+*/
 
 %new
 - (void)YouModTurnOffCaptions {
