@@ -629,7 +629,7 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
 
     // วนลูปหาแทร็กภาษาที่ตรงกับความต้องการจากลิสต์ 22 รายการของคุณ
     YTIAudioTrack *matchedTrack = nil;
-    for (YTIAudioTrack *track in main.availableTracks) {
+    for (YTIAudioTrack *track in availableTracks) {
         if ([track.id_p hasPrefix:userTargetLang]) {
             matchedTrack = track;
             break;
