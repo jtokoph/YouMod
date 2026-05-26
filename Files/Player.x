@@ -2,6 +2,12 @@
 
 extern void YouModDownloadSetCurrentPlayer(YTPlayerViewController *player);
 
+@interface YTPlayerViewController (YouModTest)
+- (id)audioTrackController;
+- (void)YouModAudioTrack;
+- (void)setAudioTrack:(id)arg1 source:(NSInteger)arg2;
+@end
+
 static float playbackRate = 1.0;
 
 static BOOL isExternal = NO;
@@ -579,12 +585,6 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
 
 %end
 */
-
-@interface YTPlayerViewController (YouModTest)
-- (id)audioTrackController;
-- (void)YouModAudioTrack;
-- (void)setAudioTrack:(id)arg1 source:(NSInteger)arg2;
-@end
 
 %hook YTPlayerViewController
 
