@@ -543,7 +543,7 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
     if (!availableTracks || availableTracks.count == 0) return;
 
     // ตรวจสอบภาษาปัจจุบันที่กำลังเล่นอยู่เพื่อไม่ให้ลูปนรกทำงานซ้ำซ้อน
-    YTIAudioTrack *currentTrack = [self valueForKey:@"_lastSelectedAudioTrack"];
+    NSString *currentTrack = [self valueForKey:@"_lastSelectedAudioTrack"];
     if (currentTrack) {
         // ถ้าแทร็กเสียงตอนนี้ตรงกับภาษาที่ตั้งไว้แล้ว... ให้หยุดทำงานทันที
         if ([currentTrack hasPrefix:userTargetLang]) {
