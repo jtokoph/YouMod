@@ -526,8 +526,10 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
 
 @interface YTAudioTrackSwitchController : NSObject
 - (void)switchToAudioTrack:(id)track source:(NSInteger)source;
+- (void)updateCurrentAudioTrack;
 @end
 
+// Audio track selection
 %hook YTAudioTrackSwitchController
 
 // ใช้ตัวนี้เพื่อดักจับทุกครั้งที่รายการภาษาเสียงเปลี่ยนไป หรือโหลดคลิปใหม่ (อ้างอิงชื่อเมธอดจากสกรีนช็อตชุดที่แล้วของคุณ)
@@ -566,10 +568,12 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
         dispatch_async(dispatch_get_main_queue(), ^{
             // source: 2 คือรหัสจำลองเสมือนว่า User กดจิ้มเปลี่ยนภาษาด้วยตัวเองผ่านหน้าจอ Settings Overlay
             [self switchToAudioTrack:matchedTrack source:0];
+            [self updateCurrentAudioTrack];
             NSLog(@"[YouMod] Triggered auto-switch to language: %s", [matchedTrack.id_p UTF8String]);
         });
         */
         [self switchToAudioTrack:matchedTrack source:0];
+        [self updateCurrentAudioTrack];
     }
 }
 
