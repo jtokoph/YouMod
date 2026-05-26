@@ -581,26 +581,11 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
             NSLog(@"[YouMod] Triggered auto-switch to language: %s", [matchedTrack.id_p UTF8String]);
         });
         */
-        dispatch_async(dispatch_get_main_queue(), ^{
-            
-            // 1. แจ้งเตือน Observer รอบข้างว่า แทร็กกำลังจะเปลี่ยน
-            if ([self respondsToSelector:@selector(notifyObserversAudioTrackWillChange:source:)]) {
-                [self notifyObserversAudioTrackWillChange:matchedTrack source:2];
-            }
-
-            // 2. สั่งแอปย้ายไอดีสตรีมมิ่งเบื้องหลังไปยังภาษาที่เราล็อกไว้
-            [self switchToAudioTrack:matchedTrack source:2];
-
-            // 3. แจ้งเตือนปิดท้ายว่า สลับแทร็กเสร็จสมบูรณ์แล้ว (จุดตัดสายบัฟเฟอร์เก่าทิ้ง)
-            if ([self respondsToSelector:@selector(notifyObserversAudioTrackDidChange:source:)]) {
-                [self notifyObserversAudioTrackDidChange:matchedTrack source:2];
-            }
-            
-            // 4. บังคับเรียกใช้เมธอดตามในรูปที่คุณส่งมาล่าสุด เพื่อบังคับอัปเดตสลัก UI และเครื่องเล่นให้ซิงค์ตรงกันร้อยเปอร์เซ็นต์
-            if ([self respondsToSelector:@selector(updateCurrentAudioTrack)]) {
-                [self updateCurrentAudioTrack];
-            }
-        });
+        [self notifyObserversAudioTrackWillChange:matchedTrack source:0];
+        [self switchToAudioTrack:matchedTrack source:0];
+        [self updateCurrentAudioTrack];
+        [self notifyObserversAudioTrackDidChange:matchedTrack source:0];
+        [self updateCurrentAudioTrack];
     }
 }
 
