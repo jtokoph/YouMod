@@ -1,7 +1,7 @@
 # YouMod
 
 <p align="center">
-<a href="https://www.star-history.com/?repos=Tonwalter888%2FYouMod&type=date&legend=top-left">
+<a href="https://www.star-history.com/?repos=Tonwalter888%2FYouMod&type=date&legend=bottom-right">
  <picture>
    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=Tonwalter888/YouMod&type=date&theme=dark&legend=top-left" />
    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=Tonwalter888/YouMod&type=date&legend=top-left" />

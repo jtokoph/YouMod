@@ -136,7 +136,7 @@ static const void *kSBColorIndexPathKey = &kSBColorIndexPathKey;
     self.tableView.rowHeight = UITableViewAutomaticDimension;
 
     if (self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
-        self.tableView.backgroundColor = [UIColor blackColor];
+        self.tableView.backgroundColor = [%c(YTColor) black3];
     } else {
         self.tableView.backgroundColor = [UIColor systemBackgroundColor];
     }
@@ -148,7 +148,7 @@ static const void *kSBColorIndexPathKey = &kSBColorIndexPathKey;
     [super traitCollectionDidChange:previousTraitCollection];
     if (previousTraitCollection.userInterfaceStyle != self.traitCollection.userInterfaceStyle) {
         self.tableView.backgroundColor = (self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark)
-            ? [UIColor blackColor]
+            ? [%c(YTColor) black3]
             : [UIColor systemBackgroundColor];
         [self.tableView reloadData];
     }

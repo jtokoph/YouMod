@@ -27,7 +27,16 @@ static BOOL isDarkMode(UIView *view) {
 - (UIColor *)brandBackgroundSecondary { return self.pageStyle == 1 ? [UIColor blackColor] : %orig; }
 - (UIColor *)raisedBackground { return self.pageStyle == 1 ? [UIColor blackColor] : %orig; }
 - (UIColor *)staticBrandBlack { return self.pageStyle == 1 ? [UIColor blackColor] : %orig; }
+- (UIColor *)background1 { return self.pageStyle == 1 ? [UIColor blackColor] : %orig; }
+- (UIColor *)background2 { return self.pageStyle == 1 ? [UIColor blackColor] : %orig; }
+- (UIColor *)background3 { return self.pageStyle == 1 ? [UIColor blackColor] : %orig; }
+- (UIColor *)badgeChipBackground { return self.pageStyle == 1 ? [UIColor blackColor] : %orig; }
+- (UIColor *)additiveBackground { return self.pageStyle == 1 ? [UIColor blackColor] : %orig; }
 - (UIColor *)generalBackgroundA { return self.pageStyle == 1 ? [UIColor blackColor] : %orig; }
+- (UIColor *)generalBackgroundB { return self.pageStyle == 1 ? [UIColor blackColor] : %orig; }
+- (UIColor *)generalBackgroundC { return self.pageStyle == 1 ? [UIColor blackColor] : %orig; }
+- (UIColor *)darkPalette { return self.pageStyle == 1 ? [UIColor blackColor] : %orig; }
+- (UIColor *)staticBlack { return self.pageStyle == 1 ? [UIColor blackColor] : %orig; }
 %end
 
 %hook YTInnerTubeCollectionViewController
@@ -49,19 +58,6 @@ static BOOL isDarkMode(UIView *view) {
     %orig;
     if (localPageStyle != 1) return;
     ((UIView *)[[self valueForKey:@"_systemBackgroundView"] valueForKey:@"_colorView"]).backgroundColor = [UIColor blackColor];
-}
-%end
-
-%hook GOODialogView
-+ (UIColor *)dialogBodyColor { return localPageStyle == 1 ? [UIColor blackColor] : %orig; }
-%end
-
-%hook ASCollectionView
-- (void)didMoveToWindow {
-    %orig;
-    if (localPageStyle == 1 && ([self.accessibilityIdentifier isEqualToString:@"eml.chip_bar_collection"] || [self.accessibilityIdentifier isEqualToString:@"id.elements.components.more_drawer_collection"] || [self.accessibilityIdentifier isEqualToString:@"subs.channel_bar.collection"])) {
-        self.backgroundColor = [UIColor blackColor];
-    }
 }
 %end
 %end

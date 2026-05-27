@@ -370,10 +370,6 @@ typedef NS_ENUM(NSUInteger, GestureSection) {
 @interface YTGLMediaPlayerViewFactory : NSObject
 @end
 
-@interface YTColor (YouMod)
-+ (instancetype)black0;
-@end
-
 @interface YTReelPlayerViewController (YouMod)
 - (void)reelContentViewRequestsAdvanceToNextVideo:(id)arg;
 - (void)reelContentViewRequestsPlayPauseToggle:(id)arg;

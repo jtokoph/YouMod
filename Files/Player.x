@@ -465,7 +465,7 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
     // if (canRunAutoActions) return;
     if (INTFORVAL(WifiQualityIndex) != 0 || INTFORVAL(CellQualityIndex) != 0) [self YouModAutoQuality];
     if (IS_ENABLED(AutoFullScreen)) [playerviewController performSelector:@selector(YouModAutoFullscreen) withObject:nil afterDelay:0.5];
-    if (IS_ENABLED(ShortsToRegular)) [playerviewController performSelector:@selector(YouModShortsToRegular) withObject:nil afterDelay:0.25];
+    if (IS_ENABLED(ShortsToRegular)) [playerviewController performSelector:@selector(YouModShortsToRegular) withObject:nil afterDelay:0.4];
     if (IS_ENABLED(DisablesCaptions)) [playerviewController YouModTurnOffCaptions];
     if (INTFORVAL(AutoSpeedIndex) != 0) [playerviewController YouModSetAutoSpeed];
     // [playerviewController YouModAudioTrack];
@@ -533,7 +533,7 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
 
 @interface YTAudioTrackSwitchController : NSObject
 - (void)switchToAudioTrack:(id)track source:(NSInteger)source;
-- (void)updateCurrentAudioTrack;
+// - (void)updateCurrentAudioTrack;
 - (void)notifyObserversAudioTrackDidChange:(id)arg1 source:(NSInteger)arg2;
 - (void)notifyObserversAudioTrackWillChange:(id)arg1 source:(NSInteger)arg2;
 @end
@@ -541,28 +541,21 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
 // Audio track selection
 %hook YTAudioTrackSwitchController
 
-// ใช้ตัวนี้เพื่อดักจับทุกครั้งที่รายการภาษาเสียงเปลี่ยนไป หรือโหลดคลิปใหม่ (อ้างอิงชื่อเมธอดจากสกรีนช็อตชุดที่แล้วของคุณ)
 - (void)setUserSelectableFormats:(id)arg {
-    %orig; // รันคำสั่งพื้นฐานให้ YouTube จัดอาร์เรย์ _availableAudioTracks ในภาพที่ 2 ให้เสร็จก่อน
-
-    // ดึงรหัสภาษาที่เราต้องการล็อกไว้จาก Settings เช่น @"th" หรือ @"ja"
-    NSString *userTargetLang = @"en"; 
+    %orig;
+    NSString *userTargetLang = @"en";
     // if (!userTargetLang || userTargetLang.length == 0) return;
-
-    // เข้าถึงอาร์เรย์ที่คุณเปิดให้ดูในภาพขวา (_availableAudioTracks)
     NSArray *availableTracks = [self valueForKey:@"_availableAudioTracks"];
     if (!availableTracks || availableTracks.count == 0) return;
-
-    // ตรวจสอบภาษาปัจจุบันที่กำลังเล่นอยู่เพื่อไม่ให้ลูปนรกทำงานซ้ำซ้อน
+    // Check if the current audio track is already the same as the user perferences
     NSString *currentTrack = [self valueForKey:@"_lastSelectedAudioTrack"];
     if (currentTrack) {
-        // ถ้าแทร็กเสียงตอนนี้ตรงกับภาษาที่ตั้งไว้แล้ว... ให้หยุดทำงานทันที
         if ([currentTrack hasPrefix:userTargetLang]) {
             return;
         }
     }
 
-    // วนลูปหาแทร็กภาษาที่ตรงกับความต้องการจากลิสต์ 22 รายการของคุณ
+    // Loop for all tracks
     YTIAudioTrack *matchedTrack = nil;
     for (YTIAudioTrack *track in availableTracks) {
         if ([track.id_p hasPrefix:userTargetLang]) {
@@ -571,21 +564,13 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
         }
     }
 
-    // เจอปุ๊บ สั่งสลับรางเสียงทันที
+    // If found, change to it
     if (matchedTrack) {
-        /*
-        dispatch_async(dispatch_get_main_queue(), ^{
-            // source: 2 คือรหัสจำลองเสมือนว่า User กดจิ้มเปลี่ยนภาษาด้วยตัวเองผ่านหน้าจอ Settings Overlay
-            [self switchToAudioTrack:matchedTrack source:0];
-            [self updateCurrentAudioTrack];
-            NSLog(@"[YouMod] Triggered auto-switch to language: %s", [matchedTrack.id_p UTF8String]);
-        });
-        */
         [self notifyObserversAudioTrackWillChange:matchedTrack source:0];
         [self switchToAudioTrack:matchedTrack source:0];
-        [self updateCurrentAudioTrack];
+        // [self updateCurrentAudioTrack];
         [self notifyObserversAudioTrackDidChange:matchedTrack source:0];
-        [self updateCurrentAudioTrack];
+        // [self updateCurrentAudioTrack];
     }
 }
 
