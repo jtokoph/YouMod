@@ -533,15 +533,16 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
 
 @interface YTAudioTrackSwitchController : NSObject
 - (void)switchToAudioTrack:(id)track source:(NSInteger)source;
-// - (void)updateCurrentAudioTrack;
 - (void)notifyObserversAudioTrackDidChange:(id)arg1 source:(NSInteger)arg2;
 - (void)notifyObserversAudioTrackWillChange:(id)arg1 source:(NSInteger)arg2;
+- (void)YouModChangeAudioTrackWithTrack:(YTIAudioTrack *)matchedTrack;
 @end
 
 // Audio track selection
 %hook YTAudioTrackSwitchController
 
 - (void)setUserSelectableFormats:(id)arg {
+    [NSObject cancelPreviousPerformRequestsWithTarget:self];
     %orig;
     NSString *userTargetLang = @"en";
     // if (!userTargetLang || userTargetLang.length == 0) return;
@@ -566,12 +567,15 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
 
     // If found, change to it
     if (matchedTrack) {
-        [self notifyObserversAudioTrackWillChange:matchedTrack source:0];
-        [self switchToAudioTrack:matchedTrack source:0];
-        // [self updateCurrentAudioTrack];
-        [self notifyObserversAudioTrackDidChange:matchedTrack source:0];
-        // [self updateCurrentAudioTrack];
+        [self performSelector:@selector(YouModChangeAudioTrackWithTrack:) withObject:matchedTrack afterDelay:1.0];
     }
+}
+
+%new
+- (void)YouModChangeAudioTrackWithTrack:(YTIAudioTrack *)matchedTrack {
+    [self notifyObserversAudioTrackWillChange:matchedTrack source:0];
+    [self switchToAudioTrack:matchedTrack source:0];
+    [self notifyObserversAudioTrackDidChange:matchedTrack source:0];
 }
 
 %end
