@@ -55,6 +55,7 @@ static BOOL isDarkMode(UIView *view) {
 %hook _ASDisplayView
 - (void)didMoveToWindow {
     %orig;
+    if (localPageStyle != 1) return;
     if ([self.accessibilityIdentifier isEqualToString:@"eml.chip_bar_collection"]) self.backgroundColor = [UIColor blackColor];
     if ([self.accessibilityIdentifier isEqualToString:@"subs_channel_bar.collection"]) self.backgroundColor = [UIColor blackColor];
     if ([self.accessibilityIdentifier isEqualToString:@"share-sheet-container"]) self.backgroundColor = [UIColor blackColor];

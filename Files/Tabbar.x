@@ -43,7 +43,7 @@ static NSString *ymPivotIDForTabID(NSString *tabID) {
     if ([tabID isEqualToString:@"shorts"]) return @"FEshorts";
     if ([tabID isEqualToString:@"create"]) return @"FEuploads";
     if ([tabID isEqualToString:@"subscriptions"]) return @"FEsubscriptions";
-    // if ([tabID isEqualToString:@"library"]) return @"FElibrary";
+    if ([tabID isEqualToString:@"library"]) return @"FElibrary";
     if ([tabID isEqualToString:@"history"]) return [%c(YTIBrowseRequest) browseIDForHistory];
     if ([tabID isEqualToString:@"gaming"]) return [%c(YTIBrowseRequest) browseIDForGamingDestination];
     if ([tabID isEqualToString:@"sports"]) return [%c(YTIBrowseRequest) browseIDForSportsDestination];
