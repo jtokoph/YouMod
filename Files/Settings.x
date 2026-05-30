@@ -53,6 +53,47 @@ static NSString *GetCacheSize() { // YTLite - @dayanch96
     return [formatter stringFromByteCount:folderSize];
 }
 
+// Audio track list
+static NSArray *getAllSystemLanguageTitles() {
+    NSMutableArray *titles = [NSMutableArray array];
+    NSArray *allLocales = [NSLocale availableLocaleIdentifiers];
+    NSMutableSet *seenLanguages = [NSMutableSet set];
+    NSLocale *currentLocale = [NSLocale currentLocale];
+    
+    for (NSString *localeId in allLocales) {
+        NSDictionary *components = [NSLocale componentsFromLocaleIdentifier:localeId];
+        NSString *langCode = components[NSLocaleLanguageCode];
+        
+        if (langCode && ![seenLanguages containsObject:langCode]) {
+            [seenLanguages addObject:langCode];
+            NSString *displayName = [currentLocale localizedStringForLocaleIdentifier:langCode];
+            if (displayName) [titles addObject:displayName];
+        }
+    }
+    return [titles sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
+}
+
+static NSArray *getAllSystemLanguageValues() {
+    NSArray *sortedTitles = getAllSystemLanguageTitles();
+    NSMutableArray *sortedCodes = [NSMutableArray array];
+    NSArray *allLocales = [NSLocale availableLocaleIdentifiers];
+    NSLocale *currentLocale = [NSLocale currentLocale];
+    
+    NSMutableDictionary *titleToCodeMap = [NSMutableDictionary dictionary];
+    for (NSString *localeId in allLocales) {
+        NSDictionary *components = [NSLocale componentsFromLocaleIdentifier:localeId];
+        NSString *langCode = components[NSLocaleLanguageCode];
+        if (langCode) {
+            NSString *displayName = [currentLocale localizedStringForLocaleIdentifier:langCode];
+            if (displayName) titleToCodeMap[displayName] = langCode;
+        }
+    }
+    
+    for (NSString *title in sortedTitles) {
+        [sortedCodes addObject:titleToCodeMap[title] ? titleToCodeMap[title] : @"en"];
+    }
+    return [sortedCodes copy];
+}
 
 %hook YTSettingsGroupData
 
@@ -254,6 +295,9 @@ static NSString *GetCacheSize() { // YTLite - @dayanch96
         YMPushSubSettings(LOC(@"PLAYER"), @[
             YMPicker(LOC(@"QUALITY_WIFI"), LOC(@"QUALITY_WIFI_DESC"), WifiQualityIndex, (@[LOC(@"DEFAULT"), LOC(@"BEST"), @"2160p60", @"2160p", @"1440p60", @"1440p", @"1080p60", @"1080p", @"720p60", @"720p", @"480p", @"360p", @"240p", @"144p"]), 0),
             YMPicker(LOC(@"QUALITY_CELLULAR"), LOC(@"QUALITY_CELLULAR_DESC"), CellQualityIndex, (@[LOC(@"DEFAULT"), LOC(@"BEST"), @"2160p60", @"2160p", @"1440p60", @"1440p", @"1080p60", @"1080p", @"720p60", @"720p", @"480p", @"360p", @"240p", @"144p"]), 0),
+            YMTextSegment(LOC(@"AUDIO_TRACK"), AudioTrack, (@[LOC(@"DEFAULT"), LOC(@"ORIGINAL"), LOC(@"SELECT_MANUALLY")]), 0),
+            YMPicker(LOC(@"AUDIO_TRACK_SELECT"), LOC(@"AUDIO_TRACK_SELECT_DESC"), AudioTrackLangIndex, getAllSystemLanguageTitles(), 0),
+            YMToggle(LOC(@"NO_AUTO_DUBBED"), LOC(@"NO_AUTO_DUBBED_DESC"), NoDubbedAudioTrack),
             YMPicker(LOC(@"DEFAULT_SPEED"), LOC(@"DEFAULT_SPEED_DESC"), AutoSpeedIndex, (@[LOC(@"DISABLED"), @"0.25x", @"0.5x", @"0.75x", @"1x", @"1.25x", @"1.5x", @"1.75x", @"2x", @"3x", @"4x", @"5x"]), 0),
             YMPicker(LOC(@"HOLD_TO_SPEED"), LOC(@"HOLD_TO_SPEED_DESC"), HoldToSpeedIndex, (@[LOC(@"DEFAULT"), @"0.25x", @"0.5x", @"0.75x", @"1x", @"1.25x", @"1.5x", @"1.75x", @"2x", @"3x", @"4x", @"5x"]), 0),
             YMToggle(LOC(@"HIDE_AUTOPLAY"), LOC(@"HIDE_AUTOPLAY_DESC"), HideAutoPlayToggle),

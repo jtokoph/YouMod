@@ -2,11 +2,47 @@
 
 extern void YouModDownloadSetCurrentPlayer(YTPlayerViewController *player);
 
-@interface YTPlayerViewController (YouModTest)
-- (id)audioTrackController;
-- (void)YouModAudioTrack;
-- (void)setAudioTrack:(id)arg1 source:(NSInteger)arg2;
-@end
+// Audio track list
+static NSArray *getAllSystemLanguageTitles() {
+    NSMutableArray *titles = [NSMutableArray array];
+    NSArray *allLocales = [NSLocale availableLocaleIdentifiers];
+    NSMutableSet *seenLanguages = [NSMutableSet set];
+    NSLocale *currentLocale = [NSLocale currentLocale];
+    
+    for (NSString *localeId in allLocales) {
+        NSDictionary *components = [NSLocale componentsFromLocaleIdentifier:localeId];
+        NSString *langCode = components[NSLocaleLanguageCode];
+        
+        if (langCode && ![seenLanguages containsObject:langCode]) {
+            [seenLanguages addObject:langCode];
+            NSString *displayName = [currentLocale localizedStringForLocaleIdentifier:langCode];
+            if (displayName) [titles addObject:displayName];
+        }
+    }
+    return [titles sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
+}
+
+static NSArray *getAllSystemLanguageValues() {
+    NSArray *sortedTitles = getAllSystemLanguageTitles();
+    NSMutableArray *sortedCodes = [NSMutableArray array];
+    NSArray *allLocales = [NSLocale availableLocaleIdentifiers];
+    NSLocale *currentLocale = [NSLocale currentLocale];
+    
+    NSMutableDictionary *titleToCodeMap = [NSMutableDictionary dictionary];
+    for (NSString *localeId in allLocales) {
+        NSDictionary *components = [NSLocale componentsFromLocaleIdentifier:localeId];
+        NSString *langCode = components[NSLocaleLanguageCode];
+        if (langCode) {
+            NSString *displayName = [currentLocale localizedStringForLocaleIdentifier:langCode];
+            if (displayName) titleToCodeMap[displayName] = langCode;
+        }
+    }
+    
+    for (NSString *title in sortedTitles) {
+        [sortedCodes addObject:titleToCodeMap[title] ? titleToCodeMap[title] : @"en"];
+    }
+    return [sortedCodes copy];
+}
 
 static float playbackRate = 1.0;
 
@@ -531,42 +567,58 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
 
 %end
 
-@interface YTAudioTrackSwitchController : NSObject
-- (void)switchToAudioTrack:(id)track source:(NSInteger)source;
-- (void)notifyObserversAudioTrackDidChange:(id)arg1 source:(NSInteger)arg2;
-- (void)notifyObserversAudioTrackWillChange:(id)arg1 source:(NSInteger)arg2;
-- (void)YouModChangeAudioTrackWithTrack:(YTIAudioTrack *)matchedTrack;
-@end
-
 // Audio track selection
 %hook YTAudioTrackSwitchController
+
+// When playing a new video, remove the old timer first
+- (void)setActiveVideo:(id)arg {
+    [NSObject cancelPreviousPerformRequestsWithTarget:self];
+    %orig;
+}
 
 - (void)setUserSelectableFormats:(id)arg {
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
     %orig;
-    NSString *userTargetLang = @"en";
-    // if (!userTargetLang || userTargetLang.length == 0) return;
+    if (INTFORVAL(AudioTrack) == 0) return;
+    NSInteger selectedIndex = INTFORVAL(AudioTrackLangIndex);
+    NSArray *langCodes = getAllSystemLanguageValues();
+    NSString *userTargetLang = langCodes[selectedIndex];
     NSArray *availableTracks = [self valueForKey:@"_availableAudioTracks"];
     if (!availableTracks || availableTracks.count == 0) return;
     // Check if the current audio track is already the same as the user perferences
-    NSString *currentTrack = [self valueForKey:@"_lastSelectedAudioTrack"];
-    if (currentTrack) {
-        if ([currentTrack hasPrefix:userTargetLang]) {
-            return;
-        }
-    }
-
-    // Loop for all tracks
+    YTIAudioTrack *currentTrack = [self valueForKey:@"_lastSelectedAudioTrack"];
     YTIAudioTrack *matchedTrack = nil;
-    for (YTIAudioTrack *track in availableTracks) {
-        if ([track.id_p hasPrefix:userTargetLang]) {
-            matchedTrack = track;
-            break;
+
+    if (INTFORVAL(AudioTrack) == 1) {
+        if ([currentTrack.id_p hasSuffix:@"4"]) return;
+
+        // Loop for all tracks
+        for (YTIAudioTrack *track in availableTracks) {
+            if ([track.id_p hasSuffix:@"4"]) {
+                matchedTrack = track;
+                break;
+            }
+        }
+    } else if (INTFORVAL(AudioTrack) == 2) {
+        if ([currentTrack.id_p hasPrefix:userTargetLang]) return;
+
+        // Loop for all tracks
+        for (YTIAudioTrack *track in availableTracks) {
+            if ([track.id_p hasPrefix:userTargetLang]) {
+                matchedTrack = track;
+                break;
+            }
+        }
+
+        // Check if it's dubbed
+        if (matchedTrack && [matchedTrack isAutoDubbed] && IS_ENABLED(NoDubbedAudioTrack)) {
+            matchedTrack = nil;
         }
     }
 
     // If found, change to it
     if (matchedTrack) {
+        // Delay this for 1 second
         [self performSelector:@selector(YouModChangeAudioTrackWithTrack:) withObject:matchedTrack afterDelay:1.0];
     }
 }
@@ -596,48 +648,6 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
         canRunAutoActions = YES;
     }
     return value;
-}
-
-
-
-%new
-- (void)YouModAudioTrack {
-    NSString *userTargetLang = @"en"; 
-    // if (!userTargetLang || userTargetLang.length == 0) return;
-
-    YTAudioTrackSwitchController *main = (YTAudioTrackSwitchController *)self.audioTrackController;
-    // เข้าถึงอาร์เรย์ที่คุณเปิดให้ดูในภาพขวา (_availableAudioTracks)
-    NSArray *availableTracks = [main valueForKey:@"_availableAudioTracks"];
-    if (!availableTracks || availableTracks.count == 0) return;
-
-    // ตรวจสอบภาษาปัจจุบันที่กำลังเล่นอยู่เพื่อไม่ให้ลูปนรกทำงานซ้ำซ้อน
-    NSString *currentTrack = [main valueForKey:@"_lastSelectedAudioTrack"];
-    if (currentTrack) {
-        // ถ้าแทร็กเสียงตอนนี้ตรงกับภาษาที่ตั้งไว้แล้ว... ให้หยุดทำงานทันที
-        if ([currentTrack hasPrefix:userTargetLang]) {
-            return;
-        }
-    }
-
-    // วนลูปหาแทร็กภาษาที่ตรงกับความต้องการจากลิสต์ 22 รายการของคุณ
-    YTIAudioTrack *matchedTrack = nil;
-    for (YTIAudioTrack *track in availableTracks) {
-        if ([track.id_p hasPrefix:userTargetLang]) {
-            matchedTrack = track;
-            break;
-        }
-    }
-
-    // เจอปุ๊บ สั่งสลับรางเสียงทันที
-    if (matchedTrack) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            // source: 2 คือรหัสจำลองเสมือนว่า User กดจิ้มเปลี่ยนภาษาด้วยตัวเองผ่านหน้าจอ Settings Overlay
-            [self switchToAudioTrack:matchedTrack source:0];
-            [self updateCurrentAudioTrack];
-            NSLog(@"[YouMod] Triggered auto-switch to language: %s", [matchedTrack.id_p UTF8String]);
-        });
-        [self setAudioTrack:matchedTrack source:0];
-    }
 }
 */
 

@@ -130,6 +130,13 @@
 "QUALITY_WIFI_DESC" = "Automatically applies the selected quality when streaming over Wi-Fi.";
 "QUALITY_CELLULAR" = "Playback quality on Cellular";
 "QUALITY_CELLULAR_DESC" = "Automatically applies the selected quality when streaming over mobile data.";
+"AUDIO_TRACK" = "Preferred audio track";
+"ORIGINAL" = "Original";
+"SELECT_MANUALLY" = "Select manually";
+"AUDIO_TRACK_SELECT" = "Selected audio track";
+"AUDIO_TRACK_SELECT_DESC" = "Specifies the preferred audio track language to use for playback, if available";
+"NO_AUTO_DUBBED" = "Ignore auto-dubbed tracks";
+"NO_AUTO_DUBBED_DESC" = "Skips manual selection if the preferred language track is auto-dubbed.";
 "DEFAULT" = "Default";
 "BEST" = "Best";
 "DEFAULT_SPEED" = "Default playback rate";

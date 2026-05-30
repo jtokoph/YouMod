@@ -103,6 +103,9 @@
 // Player
 #define WifiQualityIndex @"YouModWifiQualityIndex"
 #define CellQualityIndex @"YouModCellQualityIndex"
+#define AudioTrack @"YouModAudioTrackSegment"
+#define AudioTrackLangIndex @"YouModAudioTrackLangIndex"
+#define NoDubbedAudioTrack @"YouModNoDubbedAudioTrack"
 #define AutoSpeedIndex @"YouModAutoSpeedIndex"
 #define HoldToSpeedIndex @"YouModHoldToSpeedIndex"
 #define HideAutoPlayToggle @"YouModHideAutoPlayToggle"
@@ -319,6 +322,17 @@ typedef NS_ENUM(NSUInteger, GestureSection) {
 - (void)exportYouModSettingsFromVC:(UIViewController *)vc;
 - (void)importYouModSettingsFromVC:(UIViewController *)vc;
 - (void)restoreYouModDefaults;
+@end
+
+@interface YTAudioTrackSwitchController : NSObject
+- (void)switchToAudioTrack:(id)track source:(NSInteger)source;
+- (void)notifyObserversAudioTrackDidChange:(id)arg1 source:(NSInteger)arg2;
+- (void)notifyObserversAudioTrackWillChange:(id)arg1 source:(NSInteger)arg2;
+- (void)YouModChangeAudioTrackWithTrack:(YTIAudioTrack *)matchedTrack;
+@end
+
+@interface YTIAudioTrack (YouMod)
+@property (nonatomic, assign, readwrite) BOOL isAutoDubbed;
 @end
 
 // Player Gestures - @bhackel (YTLitePlus)
