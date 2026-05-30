@@ -73,28 +73,6 @@ static NSArray *getAllSystemLanguageTitles() {
     return [titles sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
 }
 
-static NSArray *getAllSystemLanguageValues() {
-    NSArray *sortedTitles = getAllSystemLanguageTitles();
-    NSMutableArray *sortedCodes = [NSMutableArray array];
-    NSArray *allLocales = [NSLocale availableLocaleIdentifiers];
-    NSLocale *currentLocale = [NSLocale currentLocale];
-    
-    NSMutableDictionary *titleToCodeMap = [NSMutableDictionary dictionary];
-    for (NSString *localeId in allLocales) {
-        NSDictionary *components = [NSLocale componentsFromLocaleIdentifier:localeId];
-        NSString *langCode = components[NSLocaleLanguageCode];
-        if (langCode) {
-            NSString *displayName = [currentLocale localizedStringForLocaleIdentifier:langCode];
-            if (displayName) titleToCodeMap[displayName] = langCode;
-        }
-    }
-    
-    for (NSString *title in sortedTitles) {
-        [sortedCodes addObject:titleToCodeMap[title] ? titleToCodeMap[title] : @"en"];
-    }
-    return [sortedCodes copy];
-}
-
 %hook YTSettingsGroupData
 
 - (NSArray <NSNumber *> *)orderedCategories {
