@@ -228,6 +228,16 @@ static void YouModAddEndTime(YTPlayerViewController *self, YTSingleVideoControll
             playerBar.shouldDisplayTimeRemaining = YES;
         }
     }
+    YTSingleVideoController *sgvid = [self valueForKey:@"_currentSingleVideo"];
+    YTPlayerView *playerview = [sgvid valueForKey:@"_playerView"];
+    YTPlayerViewController *playerviewController = [playerview valueForKey:@"_playerViewDelegate"];
+    YouModDownloadSetCurrentPlayer(playerviewController);
+    // if (canRunAutoActions) return;
+    if (INTFORVAL(WifiQualityIndex) != 0 || INTFORVAL(CellQualityIndex) != 0) [self YouModAutoQuality];
+    if (IS_ENABLED(AutoFullScreen)) [playerviewController performSelector:@selector(YouModAutoFullscreen)];
+    // if (IS_ENABLED(ShortsToRegular)) [playerviewController performSelector:@selector(YouModShortsToRegular) withObject:nil afterDelay:0.4];
+    if (IS_ENABLED(DisablesCaptions)) [playerviewController YouModTurnOffCaptions];
+    if (INTFORVAL(AutoSpeedIndex) != 0) [playerviewController YouModSetAutoSpeed];
 }
 %end
 
@@ -490,21 +500,22 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
 }
 %end
 
+%hook YTReelPlayerViewController
+
+- (void)loadPlayerBar {
+    %orig;
+    YTPlayerViewController *playerviewController = self.player;
+    [playerviewController performSelector:@selector(YouModShortsToRegular)];
+}
+
+%end
+
 %hook YTSingleVideoController
 
 - (void)playerItem:(id)arg1 hasSelectableVideoFormats:(id)arg2 {
     %orig;
     if (!arg2) return;
-    YTPlayerView *playerview = [self valueForKey:@"_playerView"];
-    YTPlayerViewController *playerviewController = [playerview valueForKey:@"_playerViewDelegate"];
-    YouModDownloadSetCurrentPlayer(playerviewController);
-    // if (canRunAutoActions) return;
     if (INTFORVAL(WifiQualityIndex) != 0 || INTFORVAL(CellQualityIndex) != 0) [self YouModAutoQuality];
-    if (IS_ENABLED(AutoFullScreen)) [playerviewController performSelector:@selector(YouModAutoFullscreen) withObject:nil afterDelay:0.5];
-    if (IS_ENABLED(ShortsToRegular)) [playerviewController performSelector:@selector(YouModShortsToRegular) withObject:nil afterDelay:0.4];
-    if (IS_ENABLED(DisablesCaptions)) [playerviewController YouModTurnOffCaptions];
-    if (INTFORVAL(AutoSpeedIndex) != 0) [playerviewController YouModSetAutoSpeed];
-    // [playerviewController YouModAudioTrack];
 }
 
 %new
@@ -590,8 +601,6 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
     YTIAudioTrack *matchedTrack = nil;
 
     if (INTFORVAL(AudioTrack) == 1) {
-        if ([currentTrack.id_p hasSuffix:@"4"]) return;
-
         // Loop for all tracks
         for (YTIAudioTrack *track in availableTracks) {
             if ([track.id_p hasSuffix:@"4"]) {
@@ -600,8 +609,6 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
             }
         }
     } else if (INTFORVAL(AudioTrack) == 2) {
-        if ([currentTrack.id_p hasPrefix:userTargetLang]) return;
-
         // Loop for all tracks
         for (YTIAudioTrack *track in availableTracks) {
             if ([track.id_p hasPrefix:userTargetLang]) {
@@ -617,7 +624,7 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
     }
 
     // If found, change to it
-    if (matchedTrack) {
+    if (matchedTrack && matchedTrack != currentTrack) {
         // Delay this for 1 second
         [self performSelector:@selector(YouModChangeAudioTrackWithTrack:) withObject:matchedTrack afterDelay:1.0];
     }
