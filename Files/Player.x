@@ -236,10 +236,9 @@ static void YouModAddEndTime(YTPlayerViewController *self, YTSingleVideoControll
     YTPlayerView *playerview = [sgvid valueForKey:@"_playerView"];
     YTPlayerViewController *playerviewController = [playerview valueForKey:@"_playerViewDelegate"];
     YouModDownloadSetCurrentPlayer(playerviewController);
-    // if (canRunAutoActions) return;
-    if (IS_ENABLED(AutoFullScreen)) [playerviewController performSelector:@selector(YouModAutoFullscreen) withObject:nil afterDelay:0.75];
-    if (IS_ENABLED(DisablesCaptions)) [playerviewController performSelector:@selector(YouModTurnOffCaptions) withObject:nil afterDelay:0.75];
-    if (INTFORVAL(AutoSpeedIndex) != 0) [playerviewController performSelector:@selector(YouModSetAutoSpeed) withObject:nil afterDelay:0.75];
+    if (IS_ENABLED(AutoFullScreen)) [playerviewController performSelector:@selector(YouModAutoFullscreen) withObject:nil afterDelay:0.5];
+    if (IS_ENABLED(DisablesCaptions)) [playerviewController performSelector:@selector(YouModTurnOffCaptions) withObject:nil afterDelay:0.5];
+    if (INTFORVAL(AutoSpeedIndex) != 0) [playerviewController performSelector:@selector(YouModSetAutoSpeed) withObject:nil afterDelay:0.5];
 }
 %end
 
@@ -533,6 +532,8 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
 - (void)playerItem:(id)arg1 hasSelectableVideoFormats:(id)arg2 {
     %orig;
     if (!arg2) return;
+    BOOL multipleScreens = [UIScreen screens].count > 1;
+    if (multipleScreens) return; // Prevent the app crashes
     if (INTFORVAL(WifiQualityIndex) != 0 || INTFORVAL(CellQualityIndex) != 0) [self YouModAutoQuality];
 }
 
@@ -626,6 +627,10 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
                 break;
             }
         }
+        if (matchedTrack && matchedTrack == currentTrack) {
+            matchedTrack = nil;
+            return;
+        }
     } else if (INTFORVAL(AudioTrack) == 2) {
         // Loop for all tracks
         for (YTIAudioTrack *track in availableTracks) {
@@ -638,12 +643,11 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
         // Check if it's dubbed
         if (matchedTrack && [matchedTrack isAutoDubbed] && IS_ENABLED(NoDubbedAudioTrack)) {
             matchedTrack = nil;
+            return;
+        } else if (matchedTrack && matchedTrack == currentTrack) {
+            matchedTrack = nil;
+            return;
         }
-    }
-
-    if (matchedTrack.id_p == currentTrack.id_p) {
-        matchedTrack = nil;
-        return;
     }
 
     // If found, change to it
@@ -707,7 +711,6 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
 %new
 - (void)YouModShortsToRegular {
     if (self.contentVideoID != nil && ([self.parentViewController isKindOfClass:NSClassFromString(@"YTReelPlayerViewController")] || [self.parentViewController isKindOfClass:NSClassFromString(@"YTShortsPlayerViewController")])) {
-        [self pause];
         NSString *vidLink = [NSString stringWithFormat:@"vnd.youtube://%@", self.contentVideoID];
         if ([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:vidLink]]) {
             [[UIApplication sharedApplication] openURL:[NSURL URLWithString:vidLink] options:@{} completionHandler:nil];
