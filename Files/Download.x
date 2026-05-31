@@ -46,10 +46,6 @@ static NSBundle *YouModBundle() {
 - (id)streamingData;
 @end
 
-@interface YTIStreamingData : NSObject
-- (NSArray *)adaptiveFormatsArray;
-@end
-
 @interface YTIFormatStream (YouModDownload)
 - (NSString *)mimeType;
 - (BOOL)hasContentLength;
