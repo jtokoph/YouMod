@@ -233,7 +233,7 @@ static void YouModAddEndTime(YTPlayerViewController *self, YTSingleVideoControll
     YTPlayerViewController *playerviewController = [playerview valueForKey:@"_playerViewDelegate"];
     YouModDownloadSetCurrentPlayer(playerviewController);
     // if (canRunAutoActions) return;
-    if (INTFORVAL(WifiQualityIndex) != 0 || INTFORVAL(CellQualityIndex) != 0) [self YouModAutoQuality];
+    // if (INTFORVAL(WifiQualityIndex) != 0 || INTFORVAL(CellQualityIndex) != 0) [self YouModAutoQuality];
     if (IS_ENABLED(AutoFullScreen)) [playerviewController performSelector:@selector(YouModAutoFullscreen)];
     // if (IS_ENABLED(ShortsToRegular)) [playerviewController performSelector:@selector(YouModShortsToRegular) withObject:nil afterDelay:0.4];
     if (IS_ENABLED(DisablesCaptions)) [playerviewController YouModTurnOffCaptions];
