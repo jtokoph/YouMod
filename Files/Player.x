@@ -2,6 +2,10 @@
 
 extern void YouModDownloadSetCurrentPlayer(YTPlayerViewController *player);
 
+static NSString *shortsVidID;
+
+static BOOL isShortsTab;
+
 // Audio track list
 static NSArray *getAllSystemLanguageTitles() {
     NSMutableArray *titles = [NSMutableArray array];
@@ -233,11 +237,9 @@ static void YouModAddEndTime(YTPlayerViewController *self, YTSingleVideoControll
     YTPlayerViewController *playerviewController = [playerview valueForKey:@"_playerViewDelegate"];
     YouModDownloadSetCurrentPlayer(playerviewController);
     // if (canRunAutoActions) return;
-    // if (INTFORVAL(WifiQualityIndex) != 0 || INTFORVAL(CellQualityIndex) != 0) [self YouModAutoQuality];
-    if (IS_ENABLED(AutoFullScreen)) [playerviewController performSelector:@selector(YouModAutoFullscreen)];
-    // if (IS_ENABLED(ShortsToRegular)) [playerviewController performSelector:@selector(YouModShortsToRegular) withObject:nil afterDelay:0.4];
-    if (IS_ENABLED(DisablesCaptions)) [playerviewController YouModTurnOffCaptions];
-    if (INTFORVAL(AutoSpeedIndex) != 0) [playerviewController YouModSetAutoSpeed];
+    if (IS_ENABLED(AutoFullScreen)) [playerviewController performSelector:@selector(YouModAutoFullscreen) withObject:nil afterDelay:0.3];
+    if (IS_ENABLED(DisablesCaptions)) [playerviewController performSelector:@selector(YouModTurnOffCaptions) withObject:nil afterDelay:0.3];
+    if (INTFORVAL(AutoSpeedIndex) != 0) [playerviewController performSelector:@selector(YouModSetAutoSpeed) withObject:nil afterDelay:0.3];
 }
 %end
 
@@ -506,9 +508,23 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
     %orig;
     if (!IS_ENABLED(ShortsToRegular)) return;
     YTPlayerViewController *playerviewController = self.player;
-    [playerviewController performSelector:@selector(YouModShortsToRegular)];
+    if (shortsVidID != playerviewController.currentVideoID && !isShortsTab) {
+        [playerviewController performSelector:@selector(YouModShortsToRegular)];
+    }
+    shortsVidID = playerviewController.currentVideoID;
 }
 
+%end
+
+%hook YTPivotBarViewController
+- (void)selectItemWithPivotIdentifier:(NSString *)pivotIndentifier {
+    %orig;
+    if ([pivotIndentifier isEqualToString:@"FEshorts"]) {
+        isShortsTab = YES;
+    } else {
+        isShortsTab = NO;
+    }
+}
 %end
 
 %hook YTSingleVideoController
