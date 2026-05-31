@@ -237,9 +237,9 @@ static void YouModAddEndTime(YTPlayerViewController *self, YTSingleVideoControll
     YTPlayerViewController *playerviewController = [playerview valueForKey:@"_playerViewDelegate"];
     YouModDownloadSetCurrentPlayer(playerviewController);
     // if (canRunAutoActions) return;
-    if (IS_ENABLED(AutoFullScreen)) [playerviewController performSelector:@selector(YouModAutoFullscreen) withObject:nil afterDelay:0.3];
-    if (IS_ENABLED(DisablesCaptions)) [playerviewController performSelector:@selector(YouModTurnOffCaptions) withObject:nil afterDelay:0.3];
-    if (INTFORVAL(AutoSpeedIndex) != 0) [playerviewController performSelector:@selector(YouModSetAutoSpeed) withObject:nil afterDelay:0.3];
+    if (IS_ENABLED(AutoFullScreen)) [playerviewController performSelector:@selector(YouModAutoFullscreen) withObject:nil afterDelay:0.75];
+    if (IS_ENABLED(DisablesCaptions)) [playerviewController performSelector:@selector(YouModTurnOffCaptions) withObject:nil afterDelay:0.75];
+    if (INTFORVAL(AutoSpeedIndex) != 0) [playerviewController performSelector:@selector(YouModSetAutoSpeed) withObject:nil afterDelay:0.75];
 }
 %end
 
@@ -517,9 +517,10 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
 %end
 
 %hook YTPivotBarViewController
-- (void)selectItemWithPivotIdentifier:(NSString *)pivotIndentifier {
+- (void)setSelectedPivotIdentifier:(id)arg {
     %orig;
-    if ([pivotIndentifier isEqualToString:@"FEshorts"]) {
+    NSString *pivotIdentifier = [self valueForKey:@"_pivotIdentifier"];
+    if ([pivotIdentifier isEqualToString:@"FEshorts"]) {
         isShortsTab = YES;
     } else {
         isShortsTab = NO;
@@ -640,8 +641,13 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
         }
     }
 
+    if (matchedTrack.id_p == currentTrack.id_p) {
+        matchedTrack = nil;
+        return;
+    }
+
     // If found, change to it
-    if (matchedTrack && matchedTrack != currentTrack) {
+    if (matchedTrack) {
         // Delay this for 1 second
         [self performSelector:@selector(YouModChangeAudioTrackWithTrack:) withObject:matchedTrack afterDelay:1.0];
     }
@@ -657,23 +663,6 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
 %end
 
 %hook YTPlayerViewController
-
-/*
-- (id)activeVideo {
-    id value = %orig;
-    if (value) {
-        if (canRunAutoActions) {
-            if (IS_ENABLED(AutoFullScreen)) [self performSelector:@selector(YouModAutoFullscreen) withObject:nil afterDelay:0.5];
-            if (IS_ENABLED(DisablesCaptions)) [self YouModTurnOffCaptions];
-            if (INTFORVAL(AutoSpeedIndex) != 0) [self YouModSetAutoSpeed];
-            canRunAutoActions = NO;
-        }
-    } else {
-        canRunAutoActions = YES;
-    }
-    return value;
-}
-*/
 
 %new
 - (void)YouModTurnOffCaptions {
