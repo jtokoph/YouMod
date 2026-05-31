@@ -504,6 +504,7 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
 
 - (void)loadPlayerBar {
     %orig;
+    if (!IS_ENABLED(ShortsToRegular)) return;
     YTPlayerViewController *playerviewController = self.player;
     [playerviewController performSelector:@selector(YouModShortsToRegular)];
 }
