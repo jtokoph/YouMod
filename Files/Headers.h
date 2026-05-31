@@ -266,7 +266,7 @@ typedef NS_ENUM(NSUInteger, GestureSection) {
 
 @interface YTPivotBarViewController : UIViewController
 - (void)selectItemWithPivotIdentifier:(NSString *)pivotIndentifier;
-@endc
+@end
 
 @interface YTPlayerViewController (YouMod) <UIGestureRecognizerDelegate>
 @property (nonatomic, retain) UIPanGestureRecognizer *YouModPanGesture;
