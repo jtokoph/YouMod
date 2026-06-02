@@ -61,6 +61,10 @@ static BOOL isDarkMode(UIView *view) {
     if ([self.accessibilityIdentifier isEqualToString:@"share-sheet-container"]) self.backgroundColor = [UIColor blackColor];
 }
 %end
+
+%hook GOODialogView
++ (UIColor *)dialogBodyColor { return localPageStyle == 1 ? [UIColor blackColor] : %orig; }
+%end
 %end
 
 %group OLEDKeyboard
