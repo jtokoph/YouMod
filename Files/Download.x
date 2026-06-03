@@ -101,7 +101,6 @@ static UIImage *YouModIconImage(NSInteger iconType) {
 @property (nonatomic, assign) BOOL video;
 @property (nonatomic, copy) NSString *languageCode;
 @property (nonatomic, copy) NSString *languageName;
-@property (nonatomic, copy) NSString *id_p;
 @property (nonatomic, assign) BOOL drcAudio;
 @end
 
@@ -976,7 +975,7 @@ static YouModMediaFormat *YouModMediaFormatFromStream(id stream, BOOL video) {
     if (fps == 0) fps = YouModIntegerFromSelector(stream, @selector(frameRate));
     if (fps == 0) fps = YouModIntegerFromSelector(formatStream, @selector(frameRate));
     fps = YouModNormalizedFPS(fps);
-    if (video && (height > 1080 || fps < 30)) return nil;
+    if (video && (height > 1080 || height < 144 || fps < 30)) return nil;
     format.fps = fps;
     format.qualityLabel = YouModStringFromSelector(stream, @selector(qualityLabel));
     if (format.qualityLabel.length == 0) format.qualityLabel = YouModStringFromSelector(formatStream, @selector(qualityLabel));
@@ -1008,7 +1007,7 @@ static YouModMediaFormat *YouModMediaFormatFromStream(id stream, BOOL video) {
             YouModStringFromSelector(stream, @selector(audioTrack)) ?: @"",
             YouModStringFromSelector(formatStream, @selector(audioTrack)) ?: @"",
         ]) {
-            if (value.length) [audioTraits addObject:value];
+            if (value.length && [value containsString:@".4"]) [audioTraits addObject:value];
         }
         format.drcAudio = [[audioTraits componentsJoinedByString:@" "] localizedCaseInsensitiveContainsString:@"drc"];
     }
@@ -1125,17 +1124,7 @@ static NSArray <YouModMediaFormat *> *YouModFormatsForPlayer(YTPlayerViewControl
 
 static YouModMediaFormat *YouModBestAudioFormatForPlayer(YTPlayerViewController *player) {
     NSArray <YouModMediaFormat *> *audioFormats = YouModFormatsForPlayer(player, NO);
-
-    YouModMediaFormat *bestFormat = nil;
-
-    for (YouModMediaFormat *format in audioFormats) {
-        if (format.id_p && [format.id_p hasSuffix:@".4"]) {
-            bestFormat = format;
-            break;
-        }
-    }
-
-    return bestFormat ?: audioFormats.firstObject;
+    return audioFormats.firstObject;
 }
 
 static UIViewController *YouModPresenterForSender(UIView *sender, YTPlayerViewController *player) {
