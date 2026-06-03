@@ -101,7 +101,7 @@ static UIImage *YouModIconImage(NSInteger iconType) {
 @property (nonatomic, assign) BOOL video;
 @property (nonatomic, copy) NSString *languageCode;
 @property (nonatomic, copy) NSString *languageName;
-@property (nonatomic, strong, readwrite) YTIAudioTrack *audioTrackId;
+@property (nonatomic, copy) NSString *id_p;
 @property (nonatomic, assign) BOOL drcAudio;
 @end
 
@@ -1001,22 +1001,14 @@ static YouModMediaFormat *YouModMediaFormatFromStream(id stream, BOOL video) {
         if (languageName.length == 0) languageName = YouModStringFromSelector(formatStream, @selector(displayName));
         format.languageName = languageName.length ? languageName : languageCode;
 
-        YTIAudioTrack *audioTrackId = YouModStringFromSelector(stream, @selector(audioTrack));
-        if (audioTrackId.length == 0) audioTrackId = YouModStringFromSelector(formatStream, @selector(audioTrack));
-        format.audioTrackId = audioTrackId;
-
         NSMutableArray *audioTraits = [NSMutableArray array];
         for (NSString *value in @[
             mimeType ?: @"",
             format.qualityLabel ?: @"",
             YouModStringFromSelector(stream, @selector(audioTrack)) ?: @"",
             YouModStringFromSelector(formatStream, @selector(audioTrack)) ?: @"",
-            YouModStringFromSelector(stream, @selector(audioTrackType)) ?: @"",
-            YouModStringFromSelector(formatStream, @selector(audioTrackType)) ?: @"",
-            YouModStringFromSelector(stream, @selector(audioTrackDisplayName)) ?: @"",
-            YouModStringFromSelector(formatStream, @selector(audioTrackDisplayName)) ?: @"",
         ]) {
-            if (value.length) [audioTraits addObject:value];
+            if (value.length && [value.id_p hasSuffix:@"4"]) [audioTraits addObject:value];
         }
         format.drcAudio = [[audioTraits componentsJoinedByString:@" "] localizedCaseInsensitiveContainsString:@"drc"];
     }
@@ -1133,17 +1125,7 @@ static NSArray <YouModMediaFormat *> *YouModFormatsForPlayer(YTPlayerViewControl
 
 static YouModMediaFormat *YouModBestAudioFormatForPlayer(YTPlayerViewController *player) {
     NSArray <YouModMediaFormat *> *audioFormats = YouModFormatsForPlayer(player, NO);
-
-    YouModMediaFormat *bestFormat = nil;
-
-    for (YouModMediaFormat *format in audioFormats) {
-        if ([format.audioTrackId.id_p hasSuffix:@"4"]) {
-            bestFormat = format;
-            break;
-        }
-    }
-
-    return bestFormat ?: audioFormats.firstObject;
+    return audioFormats.firstObject;
 }
 
 static UIViewController *YouModPresenterForSender(UIView *sender, YTPlayerViewController *player) {
