@@ -101,7 +101,7 @@ static UIImage *YouModIconImage(NSInteger iconType) {
 @property (nonatomic, assign) BOOL video;
 @property (nonatomic, copy) NSString *languageCode;
 @property (nonatomic, copy) NSString *languageName;
-@property (nonatomic, copy) NSString *id_p;
+@property (nonatomic, strong, readwrite) YTIAudioTrack *audioTrackId;
 @property (nonatomic, assign) BOOL drcAudio;
 @end
 
@@ -1001,8 +1001,8 @@ static YouModMediaFormat *YouModMediaFormatFromStream(id stream, BOOL video) {
         if (languageName.length == 0) languageName = YouModStringFromSelector(formatStream, @selector(displayName));
         format.languageName = languageName.length ? languageName : languageCode;
 
-        NSString *audioTrackId = YouModStringFromSelector(stream, @selector(id_p));
-        if (audioTrackId.length == 0) audioTrackId = YouModStringFromSelector(formatStream, @selector(id_p));
+        YTIAudioTrack *audioTrackId = YouModStringFromSelector(stream, @selector(audioTrack));
+        if (audioTrackId.length == 0) audioTrackId = YouModStringFromSelector(formatStream, @selector(audioTrack));
         format.audioTrackId = audioTrackId;
 
         NSMutableArray *audioTraits = [NSMutableArray array];
@@ -1137,7 +1137,7 @@ static YouModMediaFormat *YouModBestAudioFormatForPlayer(YTPlayerViewController 
     YouModMediaFormat *bestFormat = nil;
 
     for (YouModMediaFormat *format in audioFormats) {
-        if ([format.id_p hasSuffix:@"4"]) {
+        if ([format.audioTrackId.id_p hasSuffix:@"4"]) {
             bestFormat = format;
             break;
         }
