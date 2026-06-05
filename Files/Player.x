@@ -478,9 +478,12 @@ static CGFloat YouModSpeedForHoldIndex(NSInteger index) {
 static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMainAppVideoPlayerOverlayViewController *delegate) {
     NSInteger speedIndex = INTFORVAL(HoldToSpeedIndex);
     CGFloat speed = YouModSpeedForHoldIndex(speedIndex);
+    YTMainAppVideoPlayerOverlayView *vidOverlay = delegate.videoPlayerOverlayView;
+    YTMainAppControlsOverlayView *controlsOverlay = vidOverlay.controlsOverlayView;
 
     if (gesture.state == UIGestureRecognizerStateBegan) {
         YouModRateBeforeHoldToSpeed = [delegate currentPlaybackRate];
+        [controlsOverlay setOverlayVisible:NO];
         [delegate setPlaybackRate:speed];
     } else if (gesture.state == UIGestureRecognizerStateEnded || gesture.state == UIGestureRecognizerStateCancelled || gesture.state == UIGestureRecognizerStateFailed) {
         [delegate setPlaybackRate:YouModRateBeforeHoldToSpeed];
@@ -491,7 +494,7 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
 - (void)setLongPressGestureRecognizer:(id)arg1 {
     if (INTFORVAL(HoldToSpeedIndex) != 0) {
         UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(YouModHoldToSpeed:)];
-        longPress.minimumPressDuration = 0.3;
+        longPress.minimumPressDuration = 0.35;
         [self addGestureRecognizer:longPress];
     } else {
         %orig;

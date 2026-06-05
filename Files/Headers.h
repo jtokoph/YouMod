@@ -250,6 +250,10 @@ typedef NS_ENUM(NSUInteger, GestureSection) {
 - (void)YouModHoldToSpeed:(UILongPressGestureRecognizer *)gesture;
 @end
 
+@interface YTMainAppControlsOverlayView (YouMod)
+- (void)setOverlayVisible:(BOOL)visible;
+@end
+
 @interface YTNavigationBarTitleView : UIView
 @end
 
