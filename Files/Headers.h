@@ -225,6 +225,9 @@ typedef NS_ENUM(NSUInteger, GestureSection) {
     GestureSectionInvalid
 };
 
+@interface ASScrollView : UIScrollView
+@end
+
 @interface YTIBrowseRequest (YouMod)
 + (NSString *)browseIDForGamingDestination;
 + (NSString *)browseIDForSportsDestination;
