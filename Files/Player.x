@@ -242,6 +242,8 @@ static void YouModAddEndTime(YTPlayerViewController *self, YTSingleVideoControll
 }
 %end
 
+/*
+
 static NSString *getQualityLabel(NSArray <MLFormat *> *formats) {
     BOOL isWifi = [[%c(GCKNNetworkReachability) sharedInstance] currentStatus] == 1;
     NSInteger kQualityIndex = isWifi ? INTFORVAL(WifiQualityIndex) : INTFORVAL(CellQualityIndex);
@@ -319,6 +321,8 @@ static MLQuickMenuVideoQualitySettingFormatConstraint *getConstraint(NSString *q
 }
 
 %end
+
+*/
 
 // Disable Fullscreen Actions
 %hook YTFullscreenActionsView

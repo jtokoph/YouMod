@@ -56,14 +56,33 @@ static BOOL isDarkMode(UIView *view) {
 - (void)didMoveToWindow {
     %orig;
     if (localPageStyle != 1) return;
-    if ([self.accessibilityIdentifier isEqualToString:@"eml.chip_bar_collection"]) self.backgroundColor = [UIColor blackColor];
-    if ([self.accessibilityIdentifier isEqualToString:@"subs_channel_bar.collection"]) self.backgroundColor = [UIColor blackColor];
-    if ([self.accessibilityIdentifier isEqualToString:@"share-sheet-container"]) self.backgroundColor = [UIColor blackColor];
+    UIResponder *responder = self.nextResponder;
+    UIViewController *closestViewController = nil;
+    while (responder != nil) {
+        if ([responder isKindOfClass:[UIViewController class]]) {
+            closestViewController = (UIViewController *)responder;
+            break;
+        }
+        responder = responder.nextResponder;
+    }
+    if ([NSStringFromClass([closestViewController class]) isEqualToString:@"YTActionSheetDialogViewController"]) self.backgroundColor = [UIColor backColor];
 }
 %end
 
-%hook GOODialogView
-+ (UIColor *)dialogBodyColor { return localPageStyle == 1 ? [UIColor blackColor] : %orig; }
+%hook ASScrollView 
+- (void)didMoveToWindow {
+    %orig;
+    if (localPageStyle == 1) {
+        self.backgroundColor = [UIColor clearColor];
+    }
+}
+%end
+
+%hook ASCollectionView
+- (void)collectionView:(id)arg1 willDisplayCell:(id)arg2 forItemAtIndexPath:(id)arg3 {
+    if (localPageStyle == 1 && self.backgroundColor != nil) self.backgroundColor = [UIColor blackColor];
+    %orig;
+}
 %end
 %end
 
