@@ -70,6 +70,7 @@ static BOOL isDarkMode(UIView *view) {
         responder = responder.nextResponder;
     }
     if ([NSStringFromClass([closestViewController class]) isEqualToString:@"YTActionSheetDialogViewController"]) self.backgroundColor = [UIColor clearColor];
+    if ([NSStringFromClass([closestViewController class]) isEqualToString:@"YTEngagementPanelViewController"] || [NSStringFromClass([closestViewController class]) isEqualToString:@"YTEngagementPanelViewControllerImpl"]) self.backgroundColor = [UIColor clearColor];
     if ([NSStringFromClass([closestViewController class]) isEqualToString:@"YTMySubsFilterHeaderViewController"] && ([NSStringFromClass([self.superview class]) isEqualToString:@"YTELMView"])) { 
         self.backgroundColor = [UIColor clearColor]; 
     }
@@ -80,6 +81,9 @@ static BOOL isDarkMode(UIView *view) {
         UIResponder *responder = [self nextResponder];
         while (responder != nil) {
             if ([responder isKindOfClass:NSClassFromString(@"YTActionSheetDialogViewController")]) {
+                self.backgroundColor = [UIColor blackColor];
+            }
+            if ([responder isKindOfClass:NSClassFromString(@"YTEngagementPanelViewController")] || [responder isKindOfClass:NSClassFromString(@"YTEngagementPanelViewControllerImpl")]) {
                 self.backgroundColor = [UIColor blackColor];
             }
             responder = [responder nextResponder];
