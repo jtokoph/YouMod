@@ -74,7 +74,7 @@ static BOOL isDarkMode(UIView *view) {
 }
 - (void)layoutSubviews {
     %orig;
-    f (localPageStyle == 1) {
+    if (localPageStyle == 1) {
         if ([self.accessibilityIdentifier isEqualToString:@"id.elements.components.comment_composer"]) self.backgroundColor = [UIColor blackColor];
         UIResponder *responder = [self nextResponder];
         while (responder != nil) {
