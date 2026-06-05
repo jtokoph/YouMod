@@ -2,6 +2,9 @@
 
 static int localPageStyle;
 
+@interface YTStartupAnimationViewController : UIViewController
+@end
+
 // OLEDKeyboard (https://github.com/dayanch96/OledKeyboard)
 static BOOL isDarkMode(UIView *view) {
     if ([view respondsToSelector:@selector(_mapkit_isDarkModeEnabled)]) {
@@ -102,6 +105,14 @@ static BOOL isDarkMode(UIView *view) {
         if ([self.accessibilityIdentifier isEqualToString:@"eml.chip_bar_collection"]) self.backgroundColor = [UIColor blackColor];
         if ([self.accessibilityIdentifier isEqualToString:@"subs_channel_bar.collection"]) self.backgroundColor = [UIColor blackColor];
     }
+}
+%end
+
+%hook YTStartupAnimationViewController
+- (void)viewDidLoad {
+    %orig;
+    if (localPageStyle != 1) return;
+    self.backgroundColor = [UIColor blackColor];
 }
 %end
 %end
