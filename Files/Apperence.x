@@ -65,7 +65,7 @@ static BOOL isDarkMode(UIView *view) {
         }
         responder = responder.nextResponder;
     }
-    if ([NSStringFromClass([closestViewController class]) isEqualToString:@"YTActionSheetDialogViewController"]) self.backgroundColor = [UIColor backColor];
+    if ([NSStringFromClass([closestViewController class]) isEqualToString:@"YTActionSheetDialogViewController"]) self.backgroundColor = [UIColor blackColor];
 }
 %end
 
@@ -73,7 +73,7 @@ static BOOL isDarkMode(UIView *view) {
 - (void)didMoveToWindow {
     %orig;
     if (localPageStyle == 1) {
-        self.backgroundColor = [UIColor clearColor];
+        self.backgroundColor = [UIColor blackColor];
     }
 }
 %end
