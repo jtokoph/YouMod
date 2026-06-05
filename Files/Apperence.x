@@ -2,7 +2,7 @@
 
 static int localPageStyle;
 
-@interface YTStartupAnimationViewController : UIViewController
+@interface LOTAnimationView : UIView
 @end
 
 // OLEDKeyboard (https://github.com/dayanch96/OledKeyboard)
@@ -108,8 +108,8 @@ static BOOL isDarkMode(UIView *view) {
 }
 %end
 
-%hook YTStartupAnimationViewController
-- (void)viewDidLoad {
+%hook LOTAnimationView
+- (void)setAnimation:(id)arg {
     %orig;
     if (localPageStyle != 1) return;
     self.backgroundColor = [UIColor blackColor];
