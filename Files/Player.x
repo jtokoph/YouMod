@@ -50,9 +50,7 @@ static NSArray *getAllSystemLanguageValues() {
 
 static float playbackRate = 1.0;
 
-static BOOL isExternal = NO;
-
-// static BOOL canRunAutoActions = NO;
+// static BOOL isExternal = NO;
 
 static void YouModAddEndTime(YTPlayerViewController *self, YTSingleVideoController *video, YTSingleVideoTime *time) {
     if (!IS_ENABLED(ShowExtraTimeRemaining)) return;
