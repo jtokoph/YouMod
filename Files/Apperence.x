@@ -28,11 +28,15 @@ static BOOL isDarkMode(UIView *view) {
 - (UIColor *)raisedBackground { return self.pageStyle == 1 ? [UIColor blackColor] : %orig; }
 - (UIColor *)staticBrandBlack { return self.pageStyle == 1 ? [UIColor blackColor] : %orig; }
 - (UIColor *)generalBackgroundA { return self.pageStyle == 1 ? [UIColor blackColor] : %orig; }
+- (NSInteger)pageStyle {
+    int value = %orig;
+    localPageStyle = value;
+    return value;
+}
 %end
 
 %hook YTInnerTubeCollectionViewController
 - (UIColor *)backgroundColor:(NSInteger)pageStyle { 
-    localPageStyle = pageStyle;
     return pageStyle == 1 ? [UIColor blackColor] : %orig;
 }
 %end
@@ -65,23 +69,39 @@ static BOOL isDarkMode(UIView *view) {
         }
         responder = responder.nextResponder;
     }
-    if ([NSStringFromClass([closestViewController class]) isEqualToString:@"YTActionSheetDialogViewController"]) self.backgroundColor = [UIColor blackColor];
+    if ([NSStringFromClass([closestViewController class]) isEqualToString:@"YTActionSheetDialogViewController"]) self.backgroundColor = [UIColor clearColor];
+    if ([NSStringFromClass([closestViewController class]) isEqualToString:@"YTMySubsFilterHeaderViewController"] && ([NSStringFromClass([self.superview class]) isEqualToString:@"YTELMView"])) { 
+        self.backgroundColor = [UIColor clearColor]; 
+    }
 }
-%end
-
-%hook ASScrollView 
-- (void)didMoveToWindow {
+- (void)layoutSubviews {
     %orig;
     if (localPageStyle == 1) {
-        self.backgroundColor = [UIColor blackColor];
+        UIResponder *responder = [self nextResponder];
+        while (responder != nil) {
+            if ([responder isKindOfClass:NSClassFromString(@"YTActionSheetDialogViewController")]) {
+                self.backgroundColor = [UIColor blackColor];
+            }
+            responder = [responder nextResponder];
+        }
     }
 }
 %end
 
 %hook ASCollectionView
-- (void)collectionView:(id)arg1 willDisplayCell:(id)arg2 forItemAtIndexPath:(id)arg3 {
-    if (localPageStyle == 1 && self.backgroundColor != nil) self.backgroundColor = [UIColor blackColor];
+- (void)didMoveToWindow {
     %orig;
+    if (localPageStyle == 1 && self.backgroundColor != nil) {
+        if ([self.accessibilityIdentifier isEqualToString:@"eml.chip_bar_collection"]) self.backgroundColor = [UIColor blackColor];
+        if ([self.accessibilityIdentifier isEqualToString:@"subs_channel_bar.collection"]) self.backgroundColor = [UIColor blackColor];
+    }
+}
+- (void)layoutSubviews {
+    %orig;
+    if (localPageStyle == 1 && self.backgroundColor != nil) {
+        if ([self.accessibilityIdentifier isEqualToString:@"eml.chip_bar_collection"]) self.backgroundColor = [UIColor blackColor];
+        if ([self.accessibilityIdentifier isEqualToString:@"subs_channel_bar.collection"]) self.backgroundColor = [UIColor blackColor];
+    }
 }
 %end
 %end
