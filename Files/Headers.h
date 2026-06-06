@@ -296,6 +296,10 @@ typedef NS_ENUM(NSUInteger, GestureSection) {
 @interface SSOConfiguration : NSObject
 @end
 
+@interface _ASDisplayView (YouMod)
+- (BOOL)isInsideViewControllerOfClass:(NSString *)className;
+@end
+
 @interface YTVideoQualitySwitchOriginalController (YouMod)
 @property (retain, nonatomic) YTVideoQualitySwitchRedesignedController *redesignedController;
 @end
