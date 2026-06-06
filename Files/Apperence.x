@@ -99,15 +99,23 @@ static BOOL isDarkMode(UIView *view) {
 %hook ASCollectionView
 - (void)didMoveToWindow {
     %orig;
-    if (localPageStyle != 1) return;
-    if ([self.accessibilityIdentifier isEqualToString:@"eml.chip_bar_collection"]) self.backgroundColor = [UIColor blackColor];
-    if ([self.accessibilityIdentifier isEqualToString:@"subs_channel_bar.collection"]) self.backgroundColor = [UIColor blackColor];
+    if (localPageStyle == 1) {
+        if ([self.accessibilityIdentifier isEqualToString:@"eml.chip_bar_collection"]) self.backgroundColor = [UIColor blackColor];
+        if ([self.accessibilityIdentifier isEqualToString:@"subs_channel_bar.collection"]) self.backgroundColor = [UIColor blackColor];
+    } else {
+        if ([self.accessibilityIdentifier isEqualToString:@"eml.chip_bar_collection"]) self.backgroundColor = [UIColor clearColor];
+        if ([self.accessibilityIdentifier isEqualToString:@"subs_channel_bar.collection"]) self.backgroundColor = [UIColor clearColor];
+    }
 }
 - (void)layoutSubviews {
     %orig;
-    if (localPageStyle != 1) return;
-    if ([self.accessibilityIdentifier isEqualToString:@"eml.chip_bar_collection"]) self.backgroundColor = [UIColor blackColor];
-    if ([self.accessibilityIdentifier isEqualToString:@"subs_channel_bar.collection"]) self.backgroundColor = [UIColor blackColor];
+    if (localPageStyle == 1) {
+        if ([self.accessibilityIdentifier isEqualToString:@"eml.chip_bar_collection"]) self.backgroundColor = [UIColor blackColor];
+        if ([self.accessibilityIdentifier isEqualToString:@"subs_channel_bar.collection"]) self.backgroundColor = [UIColor blackColor];
+    } else {
+        if ([self.accessibilityIdentifier isEqualToString:@"eml.chip_bar_collection"]) self.backgroundColor = [UIColor clearColor];
+        if ([self.accessibilityIdentifier isEqualToString:@"subs_channel_bar.collection"]) self.backgroundColor = [UIColor clearColor];
+    }
 }
 %end
 %end
