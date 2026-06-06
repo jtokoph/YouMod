@@ -54,10 +54,6 @@ static BOOL isDarkMode(UIView *view) {
 }
 %end
 
-@interface _ASDisplayView (YouMod)
-- (BOOL)isInsideViewControllerOfClass:(NSString *)className;
-@end
-
 %hook _ASDisplayView
 %new
 - (BOOL)isInsideViewControllerOfClass:(NSString *)className {
@@ -92,13 +88,13 @@ static BOOL isDarkMode(UIView *view) {
 - (void)didMoveToWindow {
     %orig;
     if (localPageStyle != 1) return;
-    // if ([self.accessibilityIdentifier isEqualToString:@"eml.chip_bar_collection"]) self.backgroundColor = [UIColor blackColor];
+    if ([self.accessibilityIdentifier isEqualToString:@"eml.chip_bar_collection"]) self.backgroundColor = [UIColor blackColor];
     if ([self.accessibilityIdentifier isEqualToString:@"subs_channel_bar.collection"]) self.backgroundColor = [UIColor blackColor];
 }
 - (void)layoutSubviews {
     %orig;
     if (localPageStyle != 1) return;
-    // if ([self.accessibilityIdentifier isEqualToString:@"eml.chip_bar_collection"]) self.backgroundColor = [UIColor blackColor];
+    if ([self.accessibilityIdentifier isEqualToString:@"eml.chip_bar_collection"]) self.backgroundColor = [UIColor blackColor];
     if ([self.accessibilityIdentifier isEqualToString:@"subs_channel_bar.collection"]) self.backgroundColor = [UIColor blackColor];
 }
 %end
