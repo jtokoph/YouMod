@@ -41,8 +41,6 @@
 "DOWNLOAD_MANAGER_DESC" = "유튜브 기본 다운로더 대신 YouMod 전용 다운로더를 사용합니다. 동영상, 오디오, 자막, 썸네일을 다운로드할 수 있습니다.";
 "DOWNLOAD_SAVE_PHOTOS" = "사진 앱에 자동 저장";
 "DOWNLOAD_SAVE_PHOTOS_DESC" = "다운로드한 동영상과 이미지를 기기의 사진(갤러리) 앱에 바로 저장합니다.";
-"DOWNLOAD_DRC_AUDIO" = "DRC 오디오 우선 적용";
-"DOWNLOAD_DRC_AUDIO_DESC" = "볼륨을 일정하게 유지해 주는 DRC(동적 범위 압축) 오디오 트랙을 우선적으로 다운로드합니다.";
 "COPY_VID_INFO" = "Copy video information";
 "COPY_VID_INFO_DESC" = "Copy title and URL";
 "SAVE_THUMBNAIL" = "Save thumbnail";

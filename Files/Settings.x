@@ -204,7 +204,6 @@ static NSArray *getAllSystemLanguageTitles() {
         YMPushSubSettings(LOC(@"DOWNLOADING"), @[
             YMToggle(LOC(@"DOWNLOAD_MANAGER"), LOC(@"DOWNLOAD_MANAGER_DESC"), DownloadManager),
             YMToggle(LOC(@"DOWNLOAD_SAVE_PHOTOS"), LOC(@"DOWNLOAD_SAVE_PHOTOS_DESC"), DownloadSaveToPhotos),
-            YMToggle(LOC(@"DOWNLOAD_DRC_AUDIO"), LOC(@"DOWNLOAD_DRC_AUDIO_DESC"), DownloadPreferDRCAudio),
         ], settingsViewController, [self parentResponder]);
         return YES;
     }];

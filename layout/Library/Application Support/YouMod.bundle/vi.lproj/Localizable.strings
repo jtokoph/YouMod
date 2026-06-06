@@ -41,8 +41,6 @@
 "DOWNLOAD_MANAGER_DESC" = "Thay thế trình tải xuống của YouTube bằng YouMod. Với khả năng tải video, âm thanh, phụ đề, và ảnh thu nhỏ";
 "DOWNLOAD_SAVE_PHOTOS" = "Tự động lưu vào Thư viện ảnh";
 "DOWNLOAD_SAVE_PHOTOS_DESC" = "Tự động lưu video và ảnh trực tiếp vào ứng dụng Ảnh.";
-"DOWNLOAD_DRC_AUDIO" = "Ưu tiên DRC";
-"DOWNLOAD_DRC_AUDIO_DESC" = "Ưu tiên tải các bản âm thanh có nén dải động (Dynamic Range Compression) để có mức âm lượng ổn định hơn.";
 "COPY_VID_INFO" = "Copy video information";
 "COPY_VID_INFO_DESC" = "Copy title and URL";
 "SAVE_THUMBNAIL" = "Save thumbnail";

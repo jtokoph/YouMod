@@ -41,8 +41,6 @@
 "DOWNLOAD_MANAGER_DESC" = "Replaces YouTube's video downloader with YouMod one. With ablity to downloading videos, audios, captions, and thumbnails.";
 "DOWNLOAD_SAVE_PHOTOS" = "Automatically save to Photos";
 "DOWNLOAD_SAVE_PHOTOS_DESC" = "Automatically saves downloaded videos and images directly to your Photos app.";
-"DOWNLOAD_DRC_AUDIO" = "Prefer DRC Audio";
-"DOWNLOAD_DRC_AUDIO_DESC" = "Prioritizes downloading audio tracks with Dynamic Range Compression for more consistent volume levels.";
 "COPY_VID_INFO" = "Copy video information";
 "COPY_VID_INFO_DESC" = "Copy title and URL";
 "SAVE_THUMBNAIL" = "Save thumbnail";

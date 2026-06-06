@@ -41,8 +41,6 @@
 "DOWNLOAD_MANAGER_DESC" = "Remplace le téléchargeur vidéo de YouTube par celui de YouMod. Avec la possibilité de télécharger des vidéos, des audios, des sous-titres et des vignettes";
 "DOWNLOAD_SAVE_PHOTOS" = "Enregistrer automatiquement dans Photos";
 "DOWNLOAD_SAVE_PHOTOS_DESC" = "Enregistre automatiquement les vidéos et images téléchargées directement dans votre application Photos.";
-"DOWNLOAD_DRC_AUDIO" = "Préférer l'audio DRC";
-"DOWNLOAD_DRC_AUDIO_DESC" = "Préfère les flux audio avec Dynamic Range Compression (DRC) pour un niveau de volume plus consistant.";
 "COPY_VID_INFO" = "Copy video information";
 "COPY_VID_INFO_DESC" = "Copy title and URL";
 "SAVE_THUMBNAIL" = "Save thumbnail";

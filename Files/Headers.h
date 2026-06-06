@@ -76,7 +76,6 @@
 // Downloading
 #define DownloadManager @"YouModDownloadManager"
 #define DownloadSaveToPhotos @"YouModDownloadSaveToPhotos"
-#define DownloadPreferDRCAudio @"YouModDownloadPreferDRCAudio"
 // Cache
 #define AutoClearCache @"YouModAutoClearCache"
 // Appearance

@@ -22,7 +22,7 @@ static NSMutableArray <YTIItemSectionRenderer *> *filteredArray(NSArray <YTIItem
         }
         if ([sectionRenderer isKindOfClass:%c(YTIItemSectionRenderer)]) {
             NSString *description = [sectionRenderer description];
-            BOOL isShortsShelf = [description containsString:@"shorts_shelf.eml"];
+            BOOL isShortsShelf = [description containsString:@"shorts_shelf.eml"] || [description containsString:@"shorts_video_cell.eml"];
             BOOL isHistory = [description containsString:@"history-shorts-shelf-item"];
             if (IS_ENABLED(HideShortsShelf) && IS_ENABLED(KeepShortsSubscript)) {
                 if (isShortsShelf && ![description containsString:@"subscriptions-shorts-shelf-item"] && !isHistory) {
@@ -31,9 +31,12 @@ static NSMutableArray <YTIItemSectionRenderer *> *filteredArray(NSArray <YTIItem
             } else if (IS_ENABLED(HideShortsShelf)) {
                 if (isShortsShelf && !isHistory) {
                     return YES;
-                }   
+                }
             }
             if (IS_ENABLED(HideHoriShelf) && [description containsString:@"horizontal_shelf.eml"] && ![description containsString:@"UCYfdidRxbB8Qhf0Nx7ioOYw"] && ![description containsString:@"FElibrary"] && ![description containsString:@"FEplaylist_aggregation"]) {
+                return YES;
+            }
+            if (IS_ENABLED(HideFeedPost) && [description containsString:@"poll_post_root.eml"]) {
                 return YES;
             }
         }
@@ -68,7 +71,8 @@ static NSMutableArray <YTIItemSectionRenderer *> *filteredArray(NSArray <YTIItem
 - (void)layoutSubviews {
     if (self.superview && IS_ENABLED(HideSubbar)) {
         [self removeFromSuperview];
-    } %orig;
+    }
+    %orig;
 }
 %end
 

@@ -41,8 +41,6 @@
 "DOWNLOAD_MANAGER_DESC" = "Replaces YouTube's video downloader with YouMod one. With ablity to downloading videos, audios, captions, and thumbnails.";
 "DOWNLOAD_SAVE_PHOTOS" = "Automatically save to Photos";
 "DOWNLOAD_SAVE_PHOTOS_DESC" = "Automatically saves downloaded videos and images directly to your Photos app.";
-"DOWNLOAD_DRC_AUDIO" = "Prefer DRC Audio";
-"DOWNLOAD_DRC_AUDIO_DESC" = "Prioritizes downloading audio tracks with Dynamic Range Compression for more consistent volume levels.";
 "COPY_VID_INFO" = "Copy video information";
 "COPY_VID_INFO_DESC" = "Copy title and URL";
 "SAVE_THUMBNAIL" = "Save thumbnail";
@@ -130,6 +128,8 @@
 "QUALITY_WIFI_DESC" = "Automatically applies the selected quality when streaming over Wi-Fi.";
 "QUALITY_CELLULAR" = "Playback quality on Cellular";
 "QUALITY_CELLULAR_DESC" = "Automatically applies the selected quality when streaming over mobile data.";
+"DEFAULT" = "Default";
+"BEST" = "Best";
 "AUDIO_TRACK" = "Preferred audio track";
 "ORIGINAL" = "Original";
 "SELECT_MANUALLY" = "Select manually";
@@ -137,8 +137,6 @@
 "AUDIO_TRACK_SELECT_DESC" = "Specifies the preferred audio track language to use for playback, if available";
 "NO_AUTO_DUBBED" = "Ignore auto-dubbed tracks";
 "NO_AUTO_DUBBED_DESC" = "Skips manual selection if the preferred language track is auto-dubbed.";
-"DEFAULT" = "Default";
-"BEST" = "Best";
 "DEFAULT_SPEED" = "Default playback rate";
 "DEFAULT_SPEED_DESC" = "Overrides the default playback speed.";
 "HOLD_TO_SPEED" = "Hold to speed";
