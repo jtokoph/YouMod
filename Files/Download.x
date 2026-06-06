@@ -98,7 +98,7 @@ static UIImage *YouModIconImage(NSInteger iconType) {
 @property (nonatomic, assign) unsigned long long durationMs;
 @property (nonatomic, assign) NSInteger fps;
 @property (nonatomic, assign) BOOL video;
-@property (nonatomic, assign) BOOL audioTrack;
+@property (nonatomic, assign) id audioTrack;
 @end
 
 @implementation YouModMediaFormat
@@ -591,7 +591,7 @@ static UIViewController *YouModTopViewController(UIViewController *root) {
     return root;
 }
 
-static void YouModSendToast(NSString *message, id responder) {
+static void YouModSendToast(NSString *message) {
     UIView *parent = sbGetNotificationParent();
     [SBSkipNotificationView showInView:parent message:message buttonTitle:nil action:nil duration:3.0];
 }
@@ -944,7 +944,7 @@ static NSArray <YouModMediaFormat *> *YouModFormatsForPlayer(YTPlayerViewControl
         BOOL rightMP4 = YouModFormatLooksMP4Family(right);
         if (leftMP4 != rightMP4) return leftMP4 ? NSOrderedAscending : NSOrderedDescending;
         
-        if (!video) return audioTrack;
+        if (!video) return left.audioTrack;
         if (left.contentLength != right.contentLength)
             return left.contentLength > right.contentLength ? NSOrderedAscending : NSOrderedDescending;
         return NSOrderedSame;
@@ -1299,7 +1299,7 @@ static void YouModPresentMenu(NSString *title, NSArray <YouModMenuItem *> *items
 
 - (void)startVideoDownloadWithVideoFormat:(YouModMediaFormat *)videoFormat audioFormat:(YouModMediaFormat *)audioFormat fileName:(NSString *)fileName videoID:(NSString *)videoID presenter:(UIViewController *)presenter {
     if (self.active) {
-        YouModSendToast(LOC(@"ALREADY_DOWNLOADING"), presenter);
+        YouModSendToast(LOC(@"ALREADY_DOWNLOADING"));
         return;
     }
     [self startDirectVideoDownloadWithVideoFormat:videoFormat audioFormat:audioFormat fileName:fileName videoID:videoID presenter:presenter];
@@ -1385,7 +1385,7 @@ static void YouModPresentMenu(NSString *title, NSArray <YouModMenuItem *> *items
 
 - (void)startAudioDownloadWithAudioFormat:(YouModMediaFormat *)audioFormat fileName:(NSString *)fileName videoID:(NSString *)videoID outputFormat:(YouModAudioOutputFormat *)outputFormat presenter:(UIViewController *)presenter {
     if (self.active) {
-        YouModSendToast(LOC(@"ALREADY_DOWNLOADING"), presenter);
+        YouModSendToast(LOC(@"ALREADY_DOWNLOADING"));
         return;
     }
     [self startDirectAudioDownloadWithAudioFormat:audioFormat fileName:fileName videoID:videoID outputFormat:outputFormat presenter:presenter];
@@ -1403,7 +1403,7 @@ static void YouModPresentMenu(NSString *title, NSArray <YouModMenuItem *> *items
     }
     outputFormat = outputFormat ?: YouModDefaultAudioOutputFormat();
     if (!outputFormat.supported) {
-        YouModSendToast([NSString stringWithFormat:@"%@ not supported", outputFormat.title ?: @"Format"], presenter);
+        YouModSendError([NSString stringWithFormat:@"%@ not supported", outputFormat.title ?: @"Format"]);
         return;
     }
 
@@ -1413,15 +1413,15 @@ static void YouModPresentMenu(NSString *title, NSArray <YouModMenuItem *> *items
     self.totalBytes = audioFormat.contentLength;
     
     NSURL *finalURL = YouModUniqueFileURL(fileName, @"m4a");
-    NSURL *downloadURL = passthrough ? finalURL : YouModTemporaryFileURL(YouModFileExtensionForFormat(audioFormat));
-    self.audioTempURL = passthrough ? nil : downloadURL;
+    NSURL *downloadURL = finalURL;
+    self.audioTempURL = nil;
     [self showProgressWithTitle:LOC(@"DOWNLOADING_AUDIO") presenter:presenter];
 
     __weak typeof(self) weakSelf = self;
     [self downloadURL:audioURL toURL:downloadURL expectedBytes:audioFormat.contentLength headers:nil completion:^(NSURL *fileURL, NSError *error) {
         __strong typeof(weakSelf) self = weakSelf;
         if (!self || self.cancelled) return;
-        if (error || !passthrough) {
+        if (error) {
             [self failWithError:error ?: [NSError errorWithDomain:@"YouMod" code:4 userInfo:@{NSLocalizedDescriptionKey: @"Audio download failed"}]];
             return;
         }
@@ -1628,7 +1628,7 @@ static void YouModDownloadThumbnail(NSString *videoID, UIViewController *present
         return;
     }
 
-    YouModSendToast(LOC(@"DOWNLOADING_THUMBNAIL"), presenter);
+    YouModSendToast(LOC(@"DOWNLOADING_THUMBNAIL"));
     [[NSURLSession.sharedSession dataTaskWithURL:thumbnailURL completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         UIImage *image = data ? [UIImage imageWithData:data] : nil;
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -1668,7 +1668,7 @@ static void YouModShowVideoQualitySheet(YTPlayerViewController *player, UIViewCo
     NSString *videoID = YouModVideoIDForPlayer(player);
 
     if (videoFormats.count == 0 || !audioFormat) {
-        YouModSendError(LOC(@"NO_VID_AUDIO_STREAM_FOUND"), presenter);
+        YouModSendError(LOC(@"NO_VID_AUDIO_STREAM_FOUND"));
         return;
     }
 
@@ -1691,7 +1691,7 @@ static void YouModShowAudioSourceSheet(YTPlayerViewController *player, YouModAud
     NSString *videoID = YouModVideoIDForPlayer(player);
 
     if (audioFormats.count == 0) {
-        YouModSendError(LOC(@"NO_AUDIO_STREAM_FOUND"), presenter);
+        YouModSendError(LOC(@"NO_AUDIO_STREAM_FOUND"));
         return;
     }
 
@@ -1707,7 +1707,7 @@ static void YouModShowAudioSheet(YTPlayerViewController *player, UIViewControlle
 static void YouModShowCaptionsSheet(YTPlayerViewController *player, UIViewController *presenter, UIView *sender) {
     NSArray *tracks = YouModCaptionTracksForPlayer(player);
     if (tracks.count == 0) {
-        YouModSendError(LOC(@"NO_CAPTIONS"), presenter);
+        YouModSendError(LOC(@"NO_CAPTIONS"));
         return;
     }
     
@@ -1732,14 +1732,14 @@ static void YouModShowCaptionsSheet(YTPlayerViewController *player, UIViewContro
             NSString *vttURL = [baseURL stringByAppendingString:@"&fmt=vtt"];
             NSURL *url = [NSURL URLWithString:vttURL];
             if (!url) {
-                YouModSendToast(LOC(@"NO_CAPTIONS_URL"), presenter);
+                YouModSendError(LOC(@"NO_CAPTIONS_URL"));
                 return;
             }
             YouModSendToast(LOC(@"DOWNLOADING_CAPTIONS"), presenter);
             [[NSURLSession.sharedSession dataTaskWithURL:url completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     if (error || data.length == 0) {
-                        YouModSendToast(LOC(@"CAPTIONS_FAILED"), presenter);
+                        YouModSendError(LOC(@"CAPTIONS_FAILED"));
                         return;
                     }
                     NSString *videoID = YouModVideoIDForPlayer(player) ?: @"video";
@@ -1753,7 +1753,7 @@ static void YouModShowCaptionsSheet(YTPlayerViewController *player, UIViewContro
     }
     
     if (items.count == 0) {
-        YouModSendToast(LOC(@"NO_CAPTIONS_URL"), presenter);
+        YouModSendError(LOC(@"NO_CAPTIONS_URL"));
         return;
     }
     
@@ -1762,7 +1762,7 @@ static void YouModShowCaptionsSheet(YTPlayerViewController *player, UIViewContro
 
 static void YouModShowDownloadManager(YTPlayerViewController *player, UIViewController *presenter, UIView *sender) {
     if (!player) {
-        YouModSendToast(LOC(@"OPEN_VID_BEFORE"), presenter);
+        YouModSendError(LOC(@"OPEN_VID_BEFORE"));
         return;
     }
 
