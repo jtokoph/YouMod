@@ -943,8 +943,9 @@ static NSArray <YouModMediaFormat *> *YouModFormatsForPlayer(YTPlayerViewControl
         BOOL leftMP4 = YouModFormatLooksMP4Family(left);
         BOOL rightMP4 = YouModFormatLooksMP4Family(right);
         if (leftMP4 != rightMP4) return leftMP4 ? NSOrderedAscending : NSOrderedDescending;
-        
-        if (!video) return left.audioTrack;
+
+        if (!video && left.audioTrack != right.audioTrack)
+            return left.audioTrack ? NSOrderedAscending : NSOrderedDescending;
         if (left.contentLength != right.contentLength)
             return left.contentLength > right.contentLength ? NSOrderedAscending : NSOrderedDescending;
         return NSOrderedSame;
@@ -1735,7 +1736,7 @@ static void YouModShowCaptionsSheet(YTPlayerViewController *player, UIViewContro
                 YouModSendError(LOC(@"NO_CAPTIONS_URL"));
                 return;
             }
-            YouModSendToast(LOC(@"DOWNLOADING_CAPTIONS"), presenter);
+            YouModSendToast(LOC(@"DOWNLOADING_CAPTIONS"));
             [[NSURLSession.sharedSession dataTaskWithURL:url completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     if (error || data.length == 0) {
