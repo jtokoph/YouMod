@@ -59,6 +59,7 @@ static BOOL isDarkMode(UIView *view) {
     %orig;
     if (localPageStyle != 1) return;
     if ([self.accessibilityIdentifier isEqualToString:@"id.elements.components.comment_composer"]) self.backgroundColor = [UIColor blackColor];
+    if ([self.accessibilityIdentifier isEqualToString:@"eml.live_chat_text_message"]) self.backgroundColor = [UIColor blackColor];
     UIResponder *responder = self.nextResponder;
     UIViewController *closestViewController = nil;
     while (responder != nil) {
@@ -75,6 +76,7 @@ static BOOL isDarkMode(UIView *view) {
     %orig;
     if (localPageStyle != 1) return;
     if ([self.accessibilityIdentifier isEqualToString:@"id.elements.components.comment_composer"]) self.backgroundColor = [UIColor blackColor];
+    if ([self.accessibilityIdentifier isEqualToString:@"eml.live_chat_text_message"]) self.backgroundColor = [UIColor blackColor];
     UIResponder *responder = [self nextResponder];
     while (responder != nil) {
         if ([responder isKindOfClass:NSClassFromString(@"YTActionSheetDialogViewController")]) {
