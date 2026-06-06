@@ -90,6 +90,7 @@ static UIImage *YouModIconImage(NSInteger iconType) {
 @end
 
 @interface YouModMediaFormat : NSObject
+@property (nonatomic, strong) id source;
 @property (nonatomic, copy) NSString *urlString;
 @property (nonatomic, copy) NSString *qualityLabel;
 @property (nonatomic, copy) NSString *mimeType;
@@ -945,7 +946,7 @@ static YouModMediaFormat *YouModMediaFormatFromStream(id stream, BOOL video) {
         id audio = YouModObjectFromSelector(stream, @selector(audioTrack));
         if (audio) {
             NSString *audioidp = YouModStringFromSelector(audio, @selector(id_p)); 
-            if ([audioidp hasSuffix:@".4"]) [audioTraits addObject:value];
+            if ([audioidp hasSuffix:@".4"]) [audioTraits addObject:audioidp];
         }
         format.drcAudio = [[audioTraits componentsJoinedByString:@" "] localizedCaseInsensitiveContainsString:@"drc"];
     }
@@ -1021,7 +1022,7 @@ static NSArray <YouModMediaFormat *> *YouModFormatsForPlayer(YTPlayerViewControl
         NSInteger fps = format.fps ?: YouModFPSFromQuality(format.qualityLabel);
         NSString *key = video
             ? [NSString stringWithFormat:@"%@-%ld-%@", format.qualityLabel ?: @"", (long)fps, YouModMimeDetail(format.mimeType)]
-            : [NSString stringWithFormat:@"%@-%@-%@-%@", format.qualityLabel ?: @"", format.drcAudio ? @"drc" : @"std", YouModMimeDetail(format.mimeType)];
+            : [NSString stringWithFormat:@"%@-%@-%@", format.qualityLabel ?: @"", format.drcAudio ? @"drc" : @"std", YouModMimeDetail(format.mimeType)];
         if ([seen containsObject:key]) continue;
         [seen addObject:key];
         [unique addObject:format];
