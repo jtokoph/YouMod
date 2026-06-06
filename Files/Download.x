@@ -872,6 +872,7 @@ static NSString *YouModVideoIDForPlayer(YTPlayerViewController *player) {
 static NSArray *YouModPlayerResponsesForPlayer(YTPlayerViewController *player) {
     NSMutableArray *responses = [NSMutableArray array];
     id response = YouModObjectFromSelector(player, @selector(contentPlayerResponse));
+    if (response == nil) response = YouModObjectFromSelector(player, @selector(playerResponse));
     if (response) [responses addObject:response];
     return responses.copy;
 }
