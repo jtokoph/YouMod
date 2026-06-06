@@ -537,8 +537,8 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
 - (void)playerItem:(id)arg1 hasSelectableVideoFormats:(id)arg2 {
     %orig;
     if (!arg2) return;
-    BOOL multipleScreens = [UIScreen screens].count > 1;
-    if (multipleScreens) return; // Prevent the app crashes
+    // BOOL multipleScreens = [UIScreen screens].count > 1;
+    // if (multipleScreens) return; // Prevent the app crashes
     if (INTFORVAL(WifiQualityIndex) != 0 || INTFORVAL(CellQualityIndex) != 0) [self YouModAutoQuality];
 }
 
