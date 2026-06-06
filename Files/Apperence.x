@@ -54,36 +54,37 @@ static BOOL isDarkMode(UIView *view) {
 }
 %end
 
+@interface _ASDisplayView (YouMod)
+- (BOOL)isInsideViewControllerOfClass:(NSString *)className;
+@end
+
 %hook _ASDisplayView
+%new
+- (BOOL)isInsideViewControllerOfClass:(NSString *)className {
+    UIResponder *responder = self.nextResponder;
+    while (responder != nil) {
+        if ([responder isKindOfClass:NSClassFromString(className)]) {
+            return YES;
+        }
+        responder = responder.nextResponder;
+    }
+    return NO;
+}
 - (void)didMoveToWindow {
     %orig;
     if (localPageStyle != 1) return;
     if ([self.accessibilityIdentifier isEqualToString:@"id.elements.components.comment_composer"]) self.backgroundColor = [UIColor blackColor];
     if ([self.accessibilityIdentifier isEqualToString:@"eml.live_chat_text_message"]) self.backgroundColor = [UIColor blackColor];
-    UIResponder *responder = self.nextResponder;
-    UIViewController *closestViewController = nil;
-    while (responder != nil) {
-        if ([responder isKindOfClass:[UIViewController class]]) {
-            closestViewController = (UIViewController *)responder;
-            break;
-        }
-        responder = responder.nextResponder;
-    }
-    if ([NSStringFromClass([closestViewController class]) isEqualToString:@"YTActionSheetDialogViewController"]) self.backgroundColor = [UIColor clearColor];
-    if ([NSStringFromClass([closestViewController class]) isEqualToString:@"YTMySubsFilterHeaderViewController"]) self.backgroundColor = [UIColor clearColor]; 
+    if ([self.isInsideViewControllerOfClass:@"YTActionSheetDialogViewController"]) self.backgroundColor = [UIColor blackColor];
+    if ([self.isInsideViewControllerOfClass:@"YTMySubsFilterHeaderViewController"]) self.backgroundColor = [UIColor blackColor]; 
 }
 - (void)layoutSubviews {
     %orig;
     if (localPageStyle != 1) return;
     if ([self.accessibilityIdentifier isEqualToString:@"id.elements.components.comment_composer"]) self.backgroundColor = [UIColor blackColor];
     if ([self.accessibilityIdentifier isEqualToString:@"eml.live_chat_text_message"]) self.backgroundColor = [UIColor blackColor];
-    UIResponder *responder = [self nextResponder];
-    while (responder != nil) {
-        if ([responder isKindOfClass:NSClassFromString(@"YTActionSheetDialogViewController")]) {
-            self.backgroundColor = [UIColor blackColor];
-        }
-        responder = [responder nextResponder];
-    }
+    if ([self.isInsideViewControllerOfClass:@"YTActionSheetDialogViewController"]) self.backgroundColor = [UIColor blackColor];
+    if ([self.isInsideViewControllerOfClass:@"YTMySubsFilterHeaderViewController"]) self.backgroundColor = [UIColor blackColor];
 }
 %end
 
@@ -91,13 +92,13 @@ static BOOL isDarkMode(UIView *view) {
 - (void)didMoveToWindow {
     %orig;
     if (localPageStyle != 1) return;
-    if ([self.accessibilityIdentifier isEqualToString:@"eml.chip_bar_collection"]) self.backgroundColor = [UIColor blackColor];
+    // if ([self.accessibilityIdentifier isEqualToString:@"eml.chip_bar_collection"]) self.backgroundColor = [UIColor blackColor];
     if ([self.accessibilityIdentifier isEqualToString:@"subs_channel_bar.collection"]) self.backgroundColor = [UIColor blackColor];
 }
 - (void)layoutSubviews {
     %orig;
     if (localPageStyle != 1) return;
-    if ([self.accessibilityIdentifier isEqualToString:@"eml.chip_bar_collection"]) self.backgroundColor = [UIColor blackColor];
+    // if ([self.accessibilityIdentifier isEqualToString:@"eml.chip_bar_collection"]) self.backgroundColor = [UIColor blackColor];
     if ([self.accessibilityIdentifier isEqualToString:@"subs_channel_bar.collection"]) self.backgroundColor = [UIColor blackColor];
 }
 %end
