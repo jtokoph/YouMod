@@ -199,6 +199,7 @@ static void YouModAddEndTime(YTPlayerViewController *self, YTSingleVideoControll
 // Remove Watermarks
 %hook YTAnnotationsViewController
 - (void)loadFeaturedChannelWatermark { if (!IS_ENABLED(HideWaterMark)) %orig; }
+- (void)setWatermarkImage:(id)arg1 height:(unsigned long long)arg2 { if (!IS_ENABLED(HideWaterMark)) %orig; }
 %end
 
 // Exit Fullscreen on Finish
@@ -520,10 +521,14 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
 
 %end
 
-%hook YTPivotBarViewController
-- (void)setSelectedPivotIdentifier:(id)arg {
+// Check if it's Shorts tab
+%hook YTInlinePlayerBarContainerView
+- (void)setLayout:(int)arg {
     %orig;
-    NSString *pivotIdentifier = [self valueForKey:@"_pivotIdentifier"];
+    if (![self.superview isKindOfClass:NSClassFromString(@"YTPivotBarView")]) return;
+    YTPivotBarView *pivotView = (YTPivotBarView *)self.superview;
+    YTPivotBarViewController *pivotController = [pivotView valueForKey:@"_delegate"];
+    NSString *pivotIdentifier = [pivotController valueForKey:@"_pivotIdentifier"];
     if ([pivotIdentifier isEqualToString:@"FEshorts"]) {
         isShortsTab = YES;
     } else {
@@ -621,20 +626,16 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
     NSArray *availableTracks = [self valueForKey:@"_availableAudioTracks"];
     if (!availableTracks || availableTracks.count == 0) return;
     // Check if the current audio track is already the same as the user perferences
-    YTIAudioTrack *currentTrack = [self valueForKey:@"_lastSelectedAudioTrack"];
+    // YTIAudioTrack *currentTrack = [self valueForKey:@"_lastSelectedAudioTrack"]; Doesn't work for some reasons
     YTIAudioTrack *matchedTrack = nil;
 
     if (INTFORVAL(AudioTrack) == 1) {
         // Loop for all tracks
         for (YTIAudioTrack *track in availableTracks) {
-            if ([track.id_p hasSuffix:@"4"]) {
+            if ([track.id_p hasSuffix:@".4"]) {
                 matchedTrack = track;
                 break;
             }
-        }
-        if (matchedTrack && matchedTrack == currentTrack) {
-            matchedTrack = nil;
-            return;
         }
     } else if (INTFORVAL(AudioTrack) == 2) {
         // Loop for all tracks
@@ -647,9 +648,6 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
 
         // Check if it's dubbed
         if (matchedTrack && [matchedTrack isAutoDubbed] && IS_ENABLED(NoDubbedAudioTrack)) {
-            matchedTrack = nil;
-            return;
-        } else if (matchedTrack && matchedTrack == currentTrack) {
             matchedTrack = nil;
             return;
         }
