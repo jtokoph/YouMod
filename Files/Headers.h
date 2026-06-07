@@ -253,6 +253,9 @@ typedef NS_ENUM(NSUInteger, GestureSection) {
 - (void)setOverlayVisible:(BOOL)visible;
 @end
 
+@interface YTPivotBarView : UIView
+@end
+
 @interface YTNavigationBarTitleView : UIView
 @end
 
