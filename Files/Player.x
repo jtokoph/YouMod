@@ -552,11 +552,9 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
     BOOL isWifi = [[%c(GCKNNetworkReachability) sharedInstance] currentStatus] == 1;
     NSInteger kQualityIndex = isWifi ? INTFORVAL(WifiQualityIndex) : INTFORVAL(CellQualityIndex);
 
-    MLHAMPlayerItem *hamItem = self.playerItem;
-
     NSString *bestQualityLabel;
     int highestResolution = 0;
-    for (MLFormat *format in self.hamItem.selectableVideoFormats) {
+    for (MLFormat *format in self.playerItem.selectableVideoFormats) {
         int reso = format.singleDimensionResolution;
         if (reso > highestResolution) {
             highestResolution = reso;
@@ -571,7 +569,7 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
         BOOL exactMatch = NO;
         NSString *closestQualityLabel = qualityLabel;
 
-        for (MLFormat *format in self.hamItem.selectableVideoFormats) {
+        for (MLFormat *format in self.playerItem.selectableVideoFormats) {
             if ([format.qualityLabel isEqualToString:qualityLabel]) {
                 exactMatch = YES;
                 break;
@@ -581,7 +579,7 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
         if (!exactMatch) {
             NSInteger bestQualityDifference = NSIntegerMax;
 
-            for (MLFormat *format in self.hamItem.selectableVideoFormats) {
+            for (MLFormat *format in self.playerItem.selectableVideoFormats) {
                 NSArray *formatСomponents = [format.qualityLabel componentsSeparatedByString:@"p"];
                 NSArray *targetComponents = [qualityLabel componentsSeparatedByString:@"p"];
                 if (formatСomponents.count == 2) {
