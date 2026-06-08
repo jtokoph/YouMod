@@ -1,16 +1,33 @@
 #import "Headers.h"
-#import <Network/Network.h>
+#import <SystemConfiguration/SystemConfiguration.h>
+#import <netinet/in.h>
 
 BOOL isWiFiConnected(void) {
-    nw_path_evaluator_t evaluator = nw_path_evaluator_create();
-    nw_path_t path = nw_path_evaluator_copy_path(evaluator);
+    struct sockaddr_in zeroAddress;
+    bzero(&zeroAddress, sizeof(zeroAddress));
+    zeroAddress.sin_len = sizeof(zeroAddress);
+    zeroAddress.sin_family = AF_INET;
     
-    // เช็กว่ามีอินเทอร์เน็ตผ่าน Interface Wifi หรือไม่
-    BOOL hasWifi = nw_path_uses_interface_type(path, nw_interface_type_wifi);
+    SCNetworkReachabilityRef reachability = SCNetworkReachabilityCreateWithAddress(kCFAllocatorDefault, (const struct sockaddr *)&zeroAddress);
+    if (!reachability) return NO;
     
-    // ปล่อย Memory
-    // Note: ใน ARC nw_path_t อาจไม่ต้อง release เอง แต่ปลอดภัยไว้ก่อนถ้าใช้ใน tweak
-    return hasWifi;
+    SCNetworkReachabilityFlags flags;
+    BOOL retrievedFlags = SCNetworkReachabilityGetFlags(reachability, &flags);
+    CFRelease(reachability);
+    
+    if (!retrievedFlags) return NO;
+    
+    BOOL isReachable = (flags & kSCNetworkReachabilityFlagsReachable) != 0;
+    BOOL needsConnection = (flags & kSCNetworkReachabilityFlagsConnectionRequired) != 0;
+    BOOL canConnect = isReachable && !needsConnection;
+    
+    if (!canConnect) return NO;
+    
+    // เช็กว่าเป็น Cellular (เน็ตมือถือ) หรือไม่
+    BOOL isCellular = (flags & kSCNetworkReachabilityFlagsIsWWAN) != 0;
+    
+    // ถ้าต่อเน็ตได้ และไม่ใช่ Cellular ก็แปลว่าเป็น WiFi
+    return !isCellular;
 }
 
 extern void YouModDownloadSetCurrentPlayer(YTPlayerViewController *player);
