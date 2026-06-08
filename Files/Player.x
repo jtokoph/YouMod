@@ -1,4 +1,17 @@
 #import "Headers.h"
+#import <Network/Network.h>
+
+BOOL isWiFiConnected(void) {
+    nw_path_evaluator_t evaluator = nw_path_evaluator_create();
+    nw_path_t path = nw_path_evaluator_copy_path(evaluator);
+    
+    // เช็กว่ามีอินเทอร์เน็ตผ่าน Interface Wifi หรือไม่
+    BOOL hasWifi = nw_path_uses_interface_type(path, nw_interface_type_wifi);
+    
+    // ปล่อย Memory
+    // Note: ใน ARC nw_path_t อาจไม่ต้อง release เอง แต่ปลอดภัยไว้ก่อนถ้าใช้ใน tweak
+    return hasWifi;
+}
 
 extern void YouModDownloadSetCurrentPlayer(YTPlayerViewController *player);
 
@@ -549,12 +562,11 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
 
 %new
 - (void)YouModAutoQuality {
-    BOOL isWifi = [[%c(GCKNNetworkReachability) sharedInstance] currentStatus] == 1;
-    NSInteger kQualityIndex = isWifi ? INTFORVAL(WifiQualityIndex) : INTFORVAL(CellQualityIndex);
+    NSInteger kQualityIndex = isWiFiConnected() ? INTFORVAL(WifiQualityIndex) : INTFORVAL(CellQualityIndex);
 
     NSString *bestQualityLabel;
     int highestResolution = 0;
-    for (MLFormat *format in self.playerItem.selectableVideoFormats) {
+    for (MLFormat *format in self.selectableVideoFormats) {
         int reso = format.singleDimensionResolution;
         if (reso > highestResolution) {
             highestResolution = reso;
@@ -569,7 +581,7 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
         BOOL exactMatch = NO;
         NSString *closestQualityLabel = qualityLabel;
 
-        for (MLFormat *format in self.playerItem.selectableVideoFormats) {
+        for (MLFormat *format in self.selectableVideoFormats) {
             if ([format.qualityLabel isEqualToString:qualityLabel]) {
                 exactMatch = YES;
                 break;
@@ -579,7 +591,7 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
         if (!exactMatch) {
             NSInteger bestQualityDifference = NSIntegerMax;
 
-            for (MLFormat *format in self.playerItem.selectableVideoFormats) {
+            for (MLFormat *format in self.selectableVideoFormats) {
                 NSArray *formatСomponents = [format.qualityLabel componentsSeparatedByString:@"p"];
                 NSArray *targetComponents = [qualityLabel componentsSeparatedByString:@"p"];
                 if (formatСomponents.count == 2) {
