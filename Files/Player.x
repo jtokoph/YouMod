@@ -23,10 +23,7 @@ BOOL isWiFiConnected(void) {
     
     if (!canConnect) return NO;
     
-    // เช็กว่าเป็น Cellular (เน็ตมือถือ) หรือไม่
     BOOL isCellular = (flags & kSCNetworkReachabilityFlagsIsWWAN) != 0;
-    
-    // ถ้าต่อเน็ตได้ และไม่ใช่ Cellular ก็แปลว่าเป็น WiFi
     return !isCellular;
 }
 
@@ -509,12 +506,9 @@ static CGFloat YouModSpeedForHoldIndex(NSInteger index) {
 static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMainAppVideoPlayerOverlayViewController *delegate) {
     NSInteger speedIndex = INTFORVAL(HoldToSpeedIndex);
     CGFloat speed = YouModSpeedForHoldIndex(speedIndex);
-    YTMainAppVideoPlayerOverlayView *vidOverlay = delegate.videoPlayerOverlayView;
-    YTMainAppControlsOverlayView *controlsOverlay = vidOverlay.controlsOverlayView;
 
     if (gesture.state == UIGestureRecognizerStateBegan) {
         YouModRateBeforeHoldToSpeed = [delegate currentPlaybackRate];
-        [controlsOverlay setOverlayVisible:NO];
         [delegate setPlaybackRate:speed];
     } else if (gesture.state == UIGestureRecognizerStateEnded || gesture.state == UIGestureRecognizerStateCancelled || gesture.state == UIGestureRecognizerStateFailed) {
         [delegate setPlaybackRate:YouModRateBeforeHoldToSpeed];

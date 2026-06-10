@@ -57,12 +57,12 @@ static NSString *ymPivotIDForTabID(NSString *tabID) {
     if ([tabID isEqualToString:@"music"]) return @"UC-9-kyTW8ZkZNDHQJ6FgpwQ";
     if ([tabID isEqualToString:@"watchlater"]) return @"VLWL";
     if ([tabID isEqualToString:@"playlist"]) return @"FEplaylist_aggregation";
-    if ([tabID isEqualToString:@"like"]) return @"VLLL"; // later
-    if ([tabID isEqualToString:@"live"]) return @"VLLL";
-    if ([tabID isEqualToString:@"post"]) return @"VLLL";
-    if ([tabID isEqualToString:@"video"]) return @"VLLL";
-    if ([tabID isEqualToString:@"movie"]) return @"VLLL";
-    if ([tabID isEqualToString:@"course"]) return @"VLLL";
+    if ([tabID isEqualToString:@"like"]) return @"VLLL";
+    if ([tabID isEqualToString:@"live"]) return @"UC4R8DWoMoI7CAwX8_LjQHig";
+    if ([tabID isEqualToString:@"post"]) return @"FEpost_home";
+    if ([tabID isEqualToString:@"video"]) return @"UC3qapbGAd2-S75NkBY3XWww";
+    if ([tabID isEqualToString:@"movie"]) return @"FEstorefront";
+    if ([tabID isEqualToString:@"course"]) return @"FEcourses";
     return nil;
 }
 

@@ -305,6 +305,11 @@
 "WATCH_LATER_TAB" = "Watch later";
 "PLAYLIST_TAB" = "Playlists";
 "LIKE_TAB" = "Liked videos";
+"LIVE_TAB" = "Live";
+"POST_TAB" = "Posts";
+"VIDEO_TAB" = "Your videos";
+"MOVIE_TAB" = "Movies";
+"COURSE_TAB" = "Courses";
 "MANAGE_TABS" = "Manage tabs";
 "MANAGE_TABS_DESC" = "Reorder and toggle tabs";
 "TAB_REORDER_HINT" = "Drag to reorder. Toggle to show/hide.";

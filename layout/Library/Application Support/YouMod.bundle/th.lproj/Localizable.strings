@@ -304,6 +304,11 @@
 "WATCH_LATER_TAB" = "ดูภายหลัง";
 "PLAYLIST_TAB" = "เพลย์ลิสต์";
 "LIKE_TAB" = "วิดีโอที่ชอบ";
+"LIVE_TAB" = "สด";
+"POST_TAB" = "โพสต์";
+"VIDEO_TAB" = "วิดีโอของคุณ";
+"MOVIE_TAB" = "ภาพยนตร์";
+"COURSE_TAB" = "หลักสูตร";
 "MANAGE_TABS" = "จัดการแท็บ";
 "MANAGE_TABS_DESC" = "จัดเรียงและเปิด/ปิดใช้งานแท็บ";
 "TAB_REORDER_HINT" = "ลากเพื่อจัดเรียงใหม่ เปิด/ปิดเพื่อแสดง/ซ่อน";
