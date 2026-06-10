@@ -597,9 +597,9 @@ YMSettingsItem *YMImageSegment(NSString *title, NSString *key, NSArray<UIImage *
 #pragma mark - YMTabOrderViewController
 
 static NSString * const kYMTabIDs[] = {
-    @"home", @"shorts", @"create", @"subscriptions",  @"library", @"history", @"gaming", @"sports", @"notifications", @"news", @"music", @"watchlater", @"playlist", @"like"
+    @"home", @"shorts", @"create", @"subscriptions",  @"library", @"history", @"gaming", @"sports", @"notifications", @"news", @"music", @"watchlater", @"playlist", @"like", @"live", @"post", @"video", @"movie", @"course"
 };
-static const NSInteger kYMTabCount = 14;
+static const NSInteger kYMTabCount = 19;
 static const NSInteger kYMTabMaxEnabled = 6;
 
 @interface YMTabOrderViewController : UIViewController <UITableViewDelegate, UITableViewDataSource>
@@ -639,6 +639,11 @@ static const void *kYMTabSnapshotKey = &kYMTabSnapshotKey;
     if ([tabID isEqualToString:@"watchlater"]) return YMLOC(@"WATCH_LATER_TAB");
     if ([tabID isEqualToString:@"playlist"]) return YMLOC(@"PLAYLIST_TAB");
     if ([tabID isEqualToString:@"like"]) return YMLOC(@"LIKE_TAB");
+    if ([tabID isEqualToString:@"live"]) return YMLOC(@"LIVE_TAB");
+    if ([tabID isEqualToString:@"post"]) return YMLOC(@"POST_TAB");
+    if ([tabID isEqualToString:@"video"]) return YMLOC(@"VIDEO_TAB");
+    if ([tabID isEqualToString:@"movie"]) return YMLOC(@"MOVIE_TAB");
+    if ([tabID isEqualToString:@"course"]) return YMLOC(@"COURSE_TAB");
     return tabID;
 }
 
@@ -654,7 +659,7 @@ static const void *kYMTabSnapshotKey = &kYMTabSnapshotKey;
         return [[UIImage systemImageNamed:@"plus" withConfiguration:config] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
     }
     NSDictionary *ytIconTypes = @{@"home": @(65), @"shorts": @(769), @"subscriptions": @(66), @"library": @(61)};
-    NSDictionary *bundleIcons = @{@"history": @"icons/history", @"gaming": @"icons/gaming", @"sports": @"icons/sports", @"notifications": @"icons/noti", @"news": @"icons/news", @"music": @"icons/music", @"watchlater": @"icons/watchlater", @"playlist": @"icons/playlist", @"like": @"icons/like"};
+    NSDictionary *bundleIcons = @{@"history": @"icons/history", @"gaming": @"icons/gaming", @"sports": @"icons/sports", @"notifications": @"icons/noti", @"news": @"icons/news", @"music": @"icons/music", @"watchlater": @"icons/watchlater", @"playlist": @"icons/playlist", @"like": @"icons/like", @"live": @"icons/live", @"post": @"icons/post", @"video": @"icons/video", @"movie": @"icons/movie", @"course": @"icons/course"};
 
     NSNumber *iconType = ytIconTypes[tabID];
     if (iconType) {

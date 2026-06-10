@@ -830,6 +830,13 @@ static NSString *YouModTitleForPlayer(YTPlayerViewController *player) {
     return [NSString stringWithFormat:@"%@ - %@", author, title];
 }
 
+static NSString *YouModDescriptionForPlayer(YTPlayerViewController *player) {
+    id playerData = YouModPlayerDataForPlayer(player);
+    id details = YouModObjectFromSelector(playerData, @selector(videoDetails));
+    NSString *description = YouModStringFromSelector(details, @selector(shortDescription));
+    return description;
+}
+
 static NSArray *YouModAdaptiveFormatObjectsForPlayer(YTPlayerViewController *player) {
     NSMutableArray *formats = [NSMutableArray array];
     NSMutableSet *seenPointers = [NSMutableSet set];
@@ -1657,8 +1664,9 @@ static void YouModDownloadThumbnail(NSString *videoID, UIViewController *present
 static void YouModCopyVideoInfo(YTPlayerViewController *player, UIViewController *presenter) {
     NSString *videoID = YouModVideoIDForPlayer(player);
     NSString *title = YouModTitleForPlayer(player);
-    NSString *url = videoID.length ? [NSString stringWithFormat:@"https://youtu.be/%@", videoID] : @"";
-    UIPasteboard.generalPasteboard.string = url.length ? [NSString stringWithFormat:@"%@\n%@", title, url] : title;
+    NSString *url = [NSString stringWithFormat:@"https://www.youtube.com/watch?v=%@", videoID];
+    NSString *description = YouModDescriptionForPlayer(player);
+    UIPasteboard.generalPasteboard.string = [NSString stringWithFormat:@"%@\n%@\n%@", title, description, url];
     YouModSendSuccess(LOC(@"COPIED_VID_INFO"));
 }
 
