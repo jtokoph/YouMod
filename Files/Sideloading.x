@@ -59,6 +59,11 @@ static NSString *accessGroupID() {
     if (IS_ENABLED(HideMemberButton) && [self.accessibilityIdentifier isEqualToString:@"id.sponsor_button"]) self.hidden = YES;
 }
 
+- (void)layoutSubviews {
+    %orig;
+    YouModConfigureDownloadButton(self);
+}
+
 %end
 
 // IAmYouTube (https://github.com/PoomSmart/IAmYouTube)
