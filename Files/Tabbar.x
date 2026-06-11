@@ -148,11 +148,12 @@ static NSString *ymTitleForTabID(NSString *tabID) {
 }
 // Tab settings gesture register
 // Replace the selector with the actual settings UI
+// %new void selector in YTPivotBarItemView
 /*
 - (void)setItemView1:(id)arg {
     %orig;
     YTPivotBarItemView *itemview = [self valueForKey:@"_itemView1"];
-    UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(YouModHoldToSpeed:)];
+    UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:itemview action:@selector(YouModHoldToSpeed:)];
     longPress.minimumPressDuration = 0.4;
     [itemview setValue:longPress forKey:@"_longGesture"];
 }
