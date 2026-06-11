@@ -154,7 +154,7 @@ static NSString *ymTitleForTabID(NSString *tabID) {
     YTPivotBarItemView *itemview = [self valueForKey:@"_itemView1"];
     UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(YouModHoldToSpeed:)];
     longPress.minimumPressDuration = 0.5;
-    [itemview setValue:longpress forKey:@"_longGesture"];
+    [itemview setValue:longPress forKey:@"_longGesture"];
 }
 */
 %end
