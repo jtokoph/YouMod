@@ -146,6 +146,17 @@ static NSString *ymTitleForTabID(NSString *tabID) {
     }
     %orig(renderer);
 }
+// Tab settings gesture register
+// Replace the selector with the actual settings UI
+/*
+- (void)setItemView1:(id)arg {
+    %orig;
+    YTPivotBarItemView *itemview = [self valueForKey:@"_itemView1"];
+    UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(YouModHoldToSpeed:)];
+    longPress.minimumPressDuration = 0.5;
+    [itemview setValue:longpress forKey:@"_longGesture"];
+}
+*/
 %end
 
 // Hide Tab Bar Indicators
