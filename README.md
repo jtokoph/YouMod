@@ -19,7 +19,7 @@
 
 A tweak that's try to recreate features like in YTLite as much as possible. Contributors are welcome! ^^
 
-Thanks for 200 stars and 300 forks! This might be the best project I've done.
+Thanks for 300 stars and 400 forks! This might be the best project I've done.
 
 If you want to contribute this project, scroll down below for how to do it.
 
