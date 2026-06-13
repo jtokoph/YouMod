@@ -343,7 +343,7 @@ static NSArray *getAllSystemLanguageTitles() {
             YMToggle(LOC(@"HIDE_SHORTS_HEADER"), LOC(@"HIDE_SHORTS_HEADER_DESC"), HideShortsHeader),
             YMToggle(LOC(@"ENABLES_SHORTS_QUALITY"), LOC(@"ENABLES_SHORTS_QUALITY_DESC"), EnablesShortsQuality),
             YMToggle(LOC(@"SHOW_SHORTS_SEEKBAR"), LOC(@"SHOW_SHORTS_SEEKBAR_DESC"), ShowShortsSeekbar),
-            YMToggle(LOC(@"REMOVE_LIVE_SHORTS"), LOC(@"REMOVE_LIVE_SHORTS_DESC"), RemoveLiveShorts),
+            YMToggle(LOC(@"REMOVE_LIVE_SHORTS"), LOC(@"REMOVE_LIVE_SHORTS_DESC"), RemoveShortsLive),
             YMToggle(LOC(@"SHORTS_TO_REGULAR"), LOC(@"SHORTS_TO_REGULAR_DESC"), ShortsToRegular),
             YMHeader(LOC(@"INTERFACE")),
             YMToggle(LOC(@"HIDE_SHORTS_LIKE_BUTTON"), LOC(@"HIDE_SHORTS_LIKE_BUTTON_DESC"), HideShortsLikeButton),
