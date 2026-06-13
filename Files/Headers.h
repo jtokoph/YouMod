@@ -281,6 +281,13 @@ typedef NS_ENUM(NSUInteger, GestureSection) {
 
 @interface YTPivotBarViewController : UIViewController
 - (void)selectItemWithPivotIdentifier:(id)pivotIndentifier;
+- (YTPivotBarView *)pivotBarView;
+@end
+
+@interface YTAppViewController : UIViewController
+@property (nonatomic, assign, readonly) YTPivotBarViewController *pivotBarViewController;
+- (void)hidePivotBar;
+- (void)showPivotBar;
 @end
 
 @interface YTPlayerViewController (YouMod) <UIGestureRecognizerDelegate>
@@ -450,6 +457,8 @@ typedef NS_ENUM(NSInteger, SBSegmentAction) {
 @end
 
 extern UIView *sbGetNotificationParent(void);
+extern void sbUpdateOverlayInsetForPivotBar(void);
+extern void YMPresentTabOrderModally(id parentResponder);
 
 @interface YMDownloadProgressView : UIView
 @property (nonatomic, strong) UILabel *titleLabel;

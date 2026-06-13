@@ -951,6 +951,32 @@ void YMPushTabOrder(id settingsVC, id parentResponder) {
     [settingsVC pushViewController:vc];
 }
 
+// Modal entry point for opening Manage Tabs without a YTSettingsViewController nav stack
+// (used by the long-press gesture on the Home tab). Wraps the standard tab-order VC in
+// a UINavigationController with a Done button and presents from the topmost VC.
+void YMPresentTabOrderModally(id parentResponder) {
+    Class styledClass = objc_getClass("YMTabOrderViewControllerStyled");
+    if (!styledClass) styledClass = [YMTabOrderViewController class];
+
+    YMTabOrderViewController *vc = (YMTabOrderViewController *)((id (*)(id, SEL, id))objc_msgSend)([styledClass alloc], @selector(initWithParentResponder:), parentResponder);
+    if (!vc) vc = [[styledClass alloc] init];
+
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+    nav.modalPresentationStyle = UIModalPresentationFormSheet;
+
+    __weak UINavigationController *weakNav = nav;
+    UIAction *doneAction = [UIAction actionWithTitle:@"" image:nil identifier:nil handler:^(__unused UIAction *action) {
+        [weakNav dismissViewControllerAnimated:YES completion:nil];
+    }];
+    vc.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]
+        initWithBarButtonSystemItem:UIBarButtonSystemItemDone
+        primaryAction:doneAction];
+
+    UIViewController *presenter = [%c(YTUIUtils) topViewControllerForPresenting];
+    if (!presenter) return;
+    [presenter presentViewController:nav animated:YES completion:nil];
+}
+
 #pragma mark - Entry Point
 
 void YMPushSubSettings(NSString *title, NSArray<YMSettingsItem *> *items, id settingsVC, id parentResponder) {

@@ -1,4 +1,5 @@
 #import "Headers.h"
+#import <objc/runtime.h>
 
 #define TweakName @"YouMod"
 
@@ -150,18 +151,6 @@ static NSString *ymTitleForTabID(NSString *tabID) {
     }
     %orig(renderer);
 }
-// Tab settings gesture register
-// Replace the selector with the actual settings UI
-// %new void selector in YTPivotBarItemView
-/*
-- (void)setItemView1:(id)arg {
-    %orig;
-    YTPivotBarItemView *itemview = [self valueForKey:@"_itemView1"];
-    UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:itemview action:@selector(YouModHoldToSpeed:)];
-    longPress.minimumPressDuration = 0.4;
-    [itemview setValue:longPress forKey:@"_longGesture"];
-}
-*/
 %end
 
 // Hide Tab Bar Indicators
@@ -170,7 +159,7 @@ static NSString *ymTitleForTabID(NSString *tabID) {
 - (void)setBorderColor:(id)arg1  { IS_ENABLED(HideTabIndi) ? %orig([UIColor clearColor]) : %orig; }
 %end
 
-// Hide Tab Labels
+// Hide Tab Labels + long-press on Home tab to open Manage Tabs
 %hook YTPivotBarItemView
 - (void)setRenderer:(YTIPivotBarRenderer *)renderer {
     %orig;
@@ -178,6 +167,25 @@ static NSString *ymTitleForTabID(NSString *tabID) {
         [self.navigationButton setTitle:@"" forState:UIControlStateNormal];
         [self.navigationButton setSizeWithPaddingAndInsets:NO];
     }
+
+    // Attach long-press gesture once per view; the action handler checks the
+    // current pivotIdentifier at fire time, so cell reuse / pivot bar refresh
+    // can rebind the same view to a different tab safely.
+    static const void *kYMLongPressKey = &kYMLongPressKey;
+    if (!objc_getAssociatedObject(self, kYMLongPressKey)) {
+        UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc]
+            initWithTarget:self action:@selector(ymOpenManageTabs:)];
+        longPress.minimumPressDuration = 0.4;
+        [self addGestureRecognizer:longPress];
+        objc_setAssociatedObject(self, kYMLongPressKey, longPress, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    }
+}
+
+%new
+- (void)ymOpenManageTabs:(UILongPressGestureRecognizer *)gesture {
+    if (gesture.state != UIGestureRecognizerStateBegan) return;
+    if (![self.renderer.pivotIdentifier isEqualToString:@"FEwhat_to_watch"]) return;
+    YMPresentTabOrderModally(nil);
 }
 %end
 
@@ -186,6 +194,7 @@ BOOL isTabSelected = NO;
 %hook YTPivotBarViewController
 - (void)viewDidAppear:(BOOL)animated {
     %orig;
+    sbUpdateOverlayInsetForPivotBar();
     if (!isTabSelected) {
         // Build pivot identifiers from enabled tabs (skip Create — matches Settings.x segment logic)
         NSMutableArray *pivotIdentifiers = [NSMutableArray array];
@@ -218,5 +227,20 @@ BOOL isTabSelected = NO;
         return NO;
     }
     return %orig;
+}
+%end
+
+// Recompute SB overlay safe-area inset whenever YouTube shows or hides the pivot bar
+// (e.g. entering/exiting fullscreen player). This keeps the SponsorBlock skip pill
+// and download progress pill anchored above the tabbar when visible, and at the
+// device safe-area bottom when the tabbar is hidden.
+%hook YTAppViewController
+- (void)hidePivotBar {
+    %orig;
+    sbUpdateOverlayInsetForPivotBar();
+}
+- (void)showPivotBar {
+    %orig;
+    sbUpdateOverlayInsetForPivotBar();
 }
 %end

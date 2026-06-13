@@ -29,6 +29,82 @@ BOOL useBackwardIconForButton;
 
 static SBPassthroughWindow *sbOverlayWindow = nil;
 
+void sbUpdateOverlayInsetForPivotBar(void) {
+    if (!sbOverlayWindow) return;
+    UIViewController *rootVC = sbOverlayWindow.rootViewController;
+    if (!rootVC) return;
+
+    // Look up YouTube's root view controller in the SAME scene as our overlay
+    // window — on iPad multi-window the app delegate's window may belong to a
+    // different scene, so [delegate window] is not safe here.
+    UIWindow *ytWindow = nil;
+    for (UIWindow *win in sbOverlayWindow.windowScene.windows) {
+        if ([win.rootViewController isKindOfClass:NSClassFromString(@"YTAppViewController")]) {
+            ytWindow = win;
+            break;
+        }
+    }
+    YTAppViewController *appVC = (YTAppViewController *)ytWindow.rootViewController;
+    YTPivotBarViewController *pivotVC = appVC ? appVC.pivotBarViewController : nil;
+    YTPivotBarView *pivot = pivotVC ? [pivotVC pivotBarView] : nil;
+
+    CGFloat tabH = 0.0;
+    if (pivot && pivot.window != nil && !pivot.hidden && pivot.alpha > 0.01) {
+        tabH = pivot.bounds.size.height;
+    }
+    UIEdgeInsets current = rootVC.additionalSafeAreaInsets;
+    if (current.bottom != tabH) {
+        rootVC.additionalSafeAreaInsets = UIEdgeInsetsMake(0, 0, tabH, 0);
+    }
+}
+
+// Tracks which scene's lifecycle is currently observed. When sbOverlayWindow is
+// recreated for a different scene (after the original goes Unattached), we
+// re-bind observers to the new scene rather than leaving stale registrations.
+static UIWindowScene *sbObservedScene = nil;
+static id sbBackgroundObserver = nil;
+static id sbForegroundObserver = nil;
+static id sbAppBackgroundObserver = nil;
+static id sbAppForegroundObserver = nil;
+static id sbOrientationObserver = nil;
+
+static void sbRegisterOverlayLifecycleObservers(UIWindowScene *targetScene) {
+    if (!targetScene || sbObservedScene == targetScene) return;
+    NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
+
+    if (sbBackgroundObserver) [nc removeObserver:sbBackgroundObserver];
+    if (sbForegroundObserver) [nc removeObserver:sbForegroundObserver];
+    if (sbAppBackgroundObserver) [nc removeObserver:sbAppBackgroundObserver];
+    if (sbAppForegroundObserver) [nc removeObserver:sbAppForegroundObserver];
+    if (sbOrientationObserver) [nc removeObserver:sbOrientationObserver];
+
+    sbObservedScene = targetScene;
+
+    // Hide on background — synchronous change before the app-switcher snapshot
+    // is captured (Apple QA1838). queue:nil delivers on the posting thread
+    // without enqueuing, so the hide happens before iOS captures the snapshot.
+    sbBackgroundObserver = [nc addObserverForName:UISceneDidEnterBackgroundNotification object:targetScene queue:nil usingBlock:^(__unused NSNotification *note) {
+        if (sbOverlayWindow) sbOverlayWindow.hidden = YES;
+    }];
+    sbForegroundObserver = [nc addObserverForName:UISceneWillEnterForegroundNotification object:targetScene queue:nil usingBlock:^(__unused NSNotification *note) {
+        if (sbOverlayWindow) sbOverlayWindow.hidden = NO;
+    }];
+    sbAppBackgroundObserver = [nc addObserverForName:UIApplicationDidEnterBackgroundNotification object:nil queue:nil usingBlock:^(__unused NSNotification *note) {
+        if (sbOverlayWindow) sbOverlayWindow.hidden = YES;
+    }];
+    sbAppForegroundObserver = [nc addObserverForName:UIApplicationWillEnterForegroundNotification object:nil queue:nil usingBlock:^(__unused NSNotification *note) {
+        if (sbOverlayWindow) sbOverlayWindow.hidden = NO;
+    }];
+
+    // Recompute pivot-bar inset on rotation / dynamic tabbar height changes.
+    // UIDeviceOrientationDidChangeNotification only fires when device-orientation
+    // generation is enabled; this call is idempotent.
+    [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
+    sbOrientationObserver = [nc addObserverForName:UIDeviceOrientationDidChangeNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(__unused NSNotification *note) {
+        sbUpdateOverlayInsetForPivotBar();
+    }];
+}
+
 UIView *sbGetNotificationParent(void) {
     if (sbOverlayWindow && sbOverlayWindow.windowScene.activationState == UISceneActivationStateUnattached) {
         sbOverlayWindow = nil;
@@ -57,6 +133,9 @@ UIView *sbGetNotificationParent(void) {
         rootVC.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         rootVC.view.backgroundColor = [UIColor clearColor];
         sbOverlayWindow.rootViewController = rootVC;
+
+        sbRegisterOverlayLifecycleObservers(activeScene);
+        sbUpdateOverlayInsetForPivotBar();
     }
     return sbOverlayWindow.rootViewController.view;
 }
