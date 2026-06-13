@@ -1,5 +1,6 @@
 "NOTE" = "NOTA: Alcune funzioni potrebbero lasciare un riquadro vuoto.";
 "SETTINGS" = "Impostazioni";
+"INTERFACE" = "Interface";
 
 "NEW_ISSUES" = "Segnala un problema o richiedi una funzione";
 "NEW_ISSUES_DESC" = "Hai trovato un bug o vuoi una nuova funzione? Clicca qui!";
@@ -88,6 +89,8 @@
 "OLED_KEYBOARD_DESC" = "La tastiera usa un nero puro (OLED) per la modalità scura.";
 
 "NAVBAR" = "Barra di navigazione";
+"STICKY_NAVBAR" = "Sticky Navigation bar";
+"STICKY_NAVBAR_DESC" = "Pins the Navigation bar so that it remains visible when scrolling down.";
 "HIDE_YT_LOGO" = "Nascondi logo YouTube";
 "HIDE_YT_LOGO_DESC" = "Nasconde il logo YouTube nella barra di navigazione.";
 "PREMIUM_LOGO" = "Usa il logo YouTube Premium";
@@ -165,6 +168,10 @@
 "HIDE_WATERMARK_DESC" = "Nasconde la filigrana del canale in basso nel player.";
 "PAUSE_ON_OVERLAY" = "Pause on overlay";
 "PAUSE_ON_OVERLAY_DESC" = "Sets playback on pause if overlay appears.";
+"DISABLES_SNAP_TO_CHAPTER" = "Disable snap to chapter";
+"DISABLES_SNAP_TO_CHAPTER_DESC" = "Disables skipping to the next episode by double-tap gesture.";
+"DISABLES_ENGAGE_PANEL" = "Disables engagement panel in fullscreen";
+"DISABLES_ENGAGE_PANEL_DESC" = "Prevent engagement panel showing in fullscreen.";
 "GESTURES" = "Abilita gestures";
 "GESTURES_DESC" = "Swipe up or down on the left/right edges of the video screen to adjust brightness, volume, or playback speed.";
 "GESTURE_AREA" = "Gesture activation area";
@@ -245,6 +252,8 @@
 "LOOP" = "Loop video";
 "SKIP_TO_NEXT_SHORTS" = "Skip to next video";
 "PAUSE_SHORTS" = "Stop video";
+"REMOVE_LIVE_SHORTS" = "Remove live videos";
+"REMOVE_LIVE_SHORTS_DESC" = "Removes live videos from the feed.";
 "HIDE_SHORTS_HEADER" = "Hide Shorts header";
 "HIDE_SHORTS_HEADER_DESC" = "Hide Shorts header that is on top of the Shorts player.";
 "HIDE_SHORTS_LIKE_BUTTON" = "Nascondi pulsante Mi piace";
@@ -309,6 +318,7 @@
 "VIDEO_TAB" = "Your videos";
 "MOVIE_TAB" = "Movies";
 "COURSE_TAB" = "Courses";
+"MINIGAME_TAB" = "Playables";
 "MANAGE_TABS" = "Manage tabs";
 "MANAGE_TABS_DESC" = "Reorder and toggle tabs";
 "TAB_REORDER_HINT" = "Drag to reorder. Toggle to show/hide.";
@@ -321,8 +331,6 @@
 "MISCELLANEOUS" = "Varie";
 "BACKGROUND_PLAYBACK" = "Riproduzione in background";
 "BACKGROUND_PLAYBACK_DESC" = "Abilita la riproduzione in background per i video.";
-"DISABLES_PIP" = "Disables PiP";
-"DISABLES_PIP_DESC" = "Disables PiP (Picture-In-Picture) in all videos.";
 "DISABLES_SHORTS_PIP" = "Disabilita PiP negli Shorts";
 "DISABLES_SHORTS_PIP_DESC" = "Tenta di disabilitare il PiP negli Shorts, potrebbe non funzionare al 100%.";
 "DISABLE_HINTS" = "Disable hints";

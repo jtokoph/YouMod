@@ -1,5 +1,6 @@
 "NOTE" = "หมายเหตุ: ฟีเจอร์การซ่อนบางอย่างอาจทำให้เกิดช่องว่างเปล่า";
 "SETTINGS" = "การตั้งค่า";
+"INTERFACE" = "ลักษณะ";
 
 "NEW_ISSUES" = "รายงานปัญหาหรือขอฟีเจอร์ใหม่";
 "NEW_ISSUES_DESC" = "พบบัคหรืออยากได้ฟีเจอร์ใหม่? แตะที่นี่";
@@ -88,6 +89,8 @@
 "OLED_KEYBOARD_DESC" = "ใช้สีดำสนิท (OLED) กับคีย์บอร์ดในโหมดมืด";
 
 "NAVBAR" = "แถบนำทาง";
+"STICKY_NAVBAR" = "ยึดแถบนำทาง";
+"STICKY_NAVBAR_DESC" = "ล็อกแถบนำทางให้ยังเห็นอยู่เมื่อเลื่อนลง";
 "HIDE_YT_LOGO" = "ซ่อนโลโก้ YouTube";
 "HIDE_YT_LOGO_DESC" = "ซ่อนโลโก้ YouTube ในแถบนำทาง";
 "PREMIUM_LOGO" = "ใช้โลโก้ YouTube Premium";
@@ -124,6 +127,8 @@
 "HIDE_MEMBER_BUTTON_DESC" = "ซ่อนปุ่ม 'สมัคร' ในช่องและคำอธิบายวิดีโอ";
 
 "PLAYER" = "เครื่องเล่น";
+"PLAYER_ACTIONS" = "การกระทำของเครื่องเล่น";
+"GESTURE_HEADER" = "ท่าทาง";
 "QUALITY_WIFI" = "คุณภาพวิดีโอเมื่อเล่นบน WiFi";
 "QUALITY_WIFI_DESC" = "เลือกคุณภาพวิดีโออัตโนมัติจากตัวเลือกเมื่อเล่นบน Wi-Fi";
 "QUALITY_CELLULAR" = "คุณภาพวิดีโอเมื่อเล่นบนเซลลูลาร์";
@@ -165,6 +170,10 @@
 "HIDE_WATERMARK_DESC" = "ซ่อนลายน้ำช่องในโอเวอร์เลย์วิดีโอ";
 "PAUSE_ON_OVERLAY" = "หยุดวิดีโอบนโอเวอร์เลย์";
 "PAUSE_ON_OVERLAY_DESC" = "หยุดวิดีโอเมื่อเห็นโอเวอร์เลย์";
+"DISABLES_SNAP_TO_CHAPTER" = "ปิดใช้งานการเลื่อนไปยังตอนถัดไป";
+"DISABLES_SNAP_TO_CHAPTER_DESC" = "ปิดใช้งานการแตะสองครั้งเพื่อข้ามไปยังตอนถัดไป";
+"DISABLES_ENGAGE_PANEL" = "ปิดใช้งานแผงควบคุมในโหมดเต็มจอ";
+"DISABLES_ENGAGE_PANEL_DESC" = "ป้องกันไม่ให้แผงควบคุมแสดงขึ้นมาในโหมดเต็มหน้าจอ";
 "GESTURES" = "เปิดใช้งานการควบคุมด้วยท่าทาง";
 "GESTURES_DESC" = "ปัดขึ้นหรือลงบริเวณขอบซ้ายหรือขวาของหน้าจอวิดีโอ เพื่อปรับความสว่าง ระดับเสียง หรือความเร็ววิดีโอ";
 "GESTURE_AREA" = "พื้นที่เปิดใช้งานท่าทาง";
@@ -245,6 +254,8 @@
 "LOOP" = "ลูปวิดีโอ";
 "SKIP_TO_NEXT_SHORTS" = "ข้ามไปยังวิดีโอถัดไป";
 "PAUSE_SHORTS" = "หยุดวิดีโอ";
+"REMOVE_LIVE_SHORTS" = "ลบวิดีโอสด";
+"REMOVE_LIVE_SHORTS_DESC" = "นำวิดีโอสดออกจากฟีด";
 "HIDE_SHORTS_HEADER" = "ซ่อนส่วนหัวของ Shorts";
 "HIDE_SHORTS_HEADER_DESC" = "ซ่อนส่วนหัวของ Shorts ที่อยู่ด้านบนเครื่องเล่น Shorts";
 "HIDE_SHORTS_LIKE_BUTTON" = "ซ่อนปุ่มถูกใจ";
@@ -309,6 +320,7 @@
 "VIDEO_TAB" = "วิดีโอของคุณ";
 "MOVIE_TAB" = "ภาพยนตร์";
 "COURSE_TAB" = "หลักสูตร";
+"MINIGAME_TAB" = "เล่นเกม";
 "MANAGE_TABS" = "จัดการแท็บ";
 "MANAGE_TABS_DESC" = "จัดเรียงและเปิด/ปิดใช้งานแท็บ";
 "TAB_REORDER_HINT" = "ลากเพื่อจัดเรียงใหม่ เปิด/ปิดเพื่อแสดง/ซ่อน";
@@ -321,8 +333,6 @@
 "MISCELLANEOUS" = "อื่นๆ";
 "BACKGROUND_PLAYBACK" = "เล่นภายในเบื้องหลัง";
 "BACKGROUND_PLAYBACK_DESC" = "เปิดใช้งานการเล่นวิดีโอภายในเบื้องหลัง";
-"DISABLES_PIP" = "ปิดใช้งาน PiP";
-"DISABLES_PIP_DESC" = "ปิดใช้งาน PiP (เล่นวิดีโอในหน้าต่างอื่น) สำหรับทุกวิดีโอ";
 "DISABLES_SHORTS_PIP" = "ปิด PiP ของ Shorts";
 "DISABLES_SHORTS_PIP_DESC" = "พยายามปิด PiP ของ Shorts อาจไม่สามารถปิดได้ 100%";
 "DISABLE_HINTS" = "ปิดคำแนะนำ";

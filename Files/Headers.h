@@ -56,7 +56,10 @@
 #import <YouTubeHeader/ASCollectionView.h>
 #import <YouTubeHeader/MLHAMPlayerItem.h>
 #import <YouTubeHeader/YTColor.h>
+#import <YouTubeHeader/YTModularPlayerBarController.h>
 #import <dlfcn.h>
+#import <SystemConfiguration/SystemConfiguration.h>
+#import <netinet/in.h>
 
 // For Settings.x and SponsorBlockSettings.x
 #import <YouTubeHeader/YTDefaultSheetController.h>
@@ -84,6 +87,7 @@
 // Navigation bar
 #define HideYTLogo @"YouModHideYTLogo"
 #define YTPremiumLogo @"YouModYTPremiumLogo"
+#define StickyNavBar @"YouModStickyNavBar"
 #define HideNoti @"YouModHideNotificationButton"
 #define HideSearch @"YouModHideSearchButton"
 #define HideVoiceSearch @"YouModHideVoiceSearchButton"
@@ -118,6 +122,8 @@
 #define HideSuggestedVideo @"YouModHideSuggestedVideoOnFinish"
 #define HidePaidPromoOverlay @"YouModHidePaidPromoOverlay"
 #define HideWaterMark @"YouModHideWaterMark"
+#define DisablesEngagementPanel @"YouModDisablesEngagementPanel"
+#define DontSnapToChapter @"YouModDontSnapToChapter"
 #define PauseOnOverlay @"YouModPauseOnOverlay"
 #define GestureControls @"YouModEnableGesturesControls"
 #define GestureActivationArea @"YouModGestureActivationArea"
@@ -152,6 +158,7 @@
 #define HideRemixButton @"YouModHideRemixButton"
 #define HideSaveButton @"YouModHideSaveButton"
 // Shorts
+#define RemoveShortsLive @"YouModRemoveShortsLive"
 #define ShortsToRegular @"YouModShortsToRegular"
 #define HideShortsHeader @"YouModHideShortsHeader"
 #define HideShortsLikeButton @"YouModHideShortsLikeButton"
@@ -179,7 +186,6 @@
 #define UseFrostedTabBar @"YouModUseFrostedTabBar"
 // Miscellaneous
 #define BackgroundPlayback @"YouModEnablesBackgroundPlayback"
-#define DisablesPiP @"YouModDisablesPiP"
 #define DisablesShortsPiP @"YouModTrytoDisablesShortsPiP"
 #define DisableHints @"YouModDisableHints"
 #define BlockUpgradeDialogs @"YouModBlockUpgradeDialogs"
@@ -470,10 +476,15 @@ extern UIView *sbGetNotificationParent(void);
 @end
 
 @interface YTSegmentableInlinePlayerBarView : UIView
+@property (nonatomic, assign, readwrite) BOOL enableSnapToChapter;
 @end
 
 @interface YTSegmentableInlinePlayerBarView (SponsorBlock)
 @property (nonatomic, strong) NSArray<UIView *> *sbMarkerViews;
 - (void)sbRenderSegments:(NSArray<SBSegment *> *)segments;
 - (void)sbClearSegments;
+@end
+
+@interface YTModularPlayerBarController (YouMod)
+- (void)setEnableSnapToChapter:(BOOL)arg;
 @end

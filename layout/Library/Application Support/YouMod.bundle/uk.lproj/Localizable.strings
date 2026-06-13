@@ -1,5 +1,6 @@
 "NOTE" = "NOTE: Some hiding features may leave a blank box.";
 "SETTINGS" = "Settings";
+"INTERFACE" = "Interface";
 
 "NEW_ISSUES" = "Report issues or request new features";
 "NEW_ISSUES_DESC" = "Found bugs or want to request new features? Tap here.";
@@ -88,6 +89,8 @@
 "OLED_KEYBOARD_DESC" = "Make the keyboard uses a pure black (OLED) color for dark theme.";
 
 "NAVBAR" = "Navigation bar";
+"STICKY_NAVBAR" = "Sticky Navigation bar";
+"STICKY_NAVBAR_DESC" = "Pins the Navigation bar so that it remains visible when scrolling down.";
 "HIDE_YT_LOGO" = "Hide YouTube logo";
 "HIDE_YT_LOGO_DESC" = "Hide YouTube logo in the navigation bar.";
 "PREMIUM_LOGO" = "Use YouTube Premium logo";
@@ -124,6 +127,8 @@
 "HIDE_MEMBER_BUTTON_DESC" = "Hides the 'Join' button in channels and video descriptions.";
 
 "PLAYER" = "Player";
+"PLAYER_ACTIONS" = "Player actions";
+"GESTURE_HEADER" = "Gestures";
 "QUALITY_WIFI" = "Playback quality on WiFi";
 "QUALITY_WIFI_DESC" = "Automatically applies the selected quality when streaming over Wi-Fi.";
 "QUALITY_CELLULAR" = "Playback quality on Cellular";
@@ -165,6 +170,10 @@
 "HIDE_WATERMARK_DESC" = "Hide channel watermark at the bottom of the video overlay.";
 "PAUSE_ON_OVERLAY" = "Pause on overlay";
 "PAUSE_ON_OVERLAY_DESC" = "Sets playback on pause if overlay appears.";
+"DISABLES_SNAP_TO_CHAPTER" = "Disable snap to chapter";
+"DISABLES_SNAP_TO_CHAPTER_DESC" = "Disables skipping to the next episode by double-tap gesture.";
+"DISABLES_ENGAGE_PANEL" = "Disables engagement panel in fullscreen";
+"DISABLES_ENGAGE_PANEL_DESC" = "Prevent engagement panel showing in fullscreen.";
 "GESTURES" = "Enable gestures controls";
 "GESTURES_DESC" = "Swipe up or down on the left/right edges of the video screen to adjust brightness, volume, or playback speed.";
 "GESTURE_AREA" = "Gesture activation area";
@@ -245,6 +254,8 @@
 "LOOP" = "Loop video";
 "SKIP_TO_NEXT_SHORTS" = "Skip to next video";
 "PAUSE_SHORTS" = "Stop video";
+"REMOVE_LIVE_SHORTS" = "Remove live videos";
+"REMOVE_LIVE_SHORTS_DESC" = "Removes live videos from the feed.";
 "HIDE_SHORTS_HEADER" = "Hide Shorts header";
 "HIDE_SHORTS_HEADER_DESC" = "Hide Shorts header that is on top of the Shorts player.";
 "HIDE_SHORTS_LIKE_BUTTON" = "Hide Like button";
@@ -309,6 +320,7 @@
 "VIDEO_TAB" = "Your videos";
 "MOVIE_TAB" = "Movies";
 "COURSE_TAB" = "Courses";
+"MINIGAME_TAB" = "Playables";
 "MANAGE_TABS" = "Manage tabs";
 "MANAGE_TABS_DESC" = "Reorder and toggle tabs";
 "TAB_REORDER_HINT" = "Drag to reorder. Toggle to show/hide.";
@@ -321,8 +333,6 @@
 "MISCELLANEOUS" = "Miscellaneous";
 "BACKGROUND_PLAYBACK" = "Background playback";
 "BACKGROUND_PLAYBACK_DESC" = "Enables background playback for videos.";
-"DISABLES_PIP" = "Disables PiP";
-"DISABLES_PIP_DESC" = "Disables PiP (Picture-In-Picture) in all videos.";
 "DISABLES_SHORTS_PIP" = "Disables Shorts PiP";
 "DISABLES_SHORTS_PIP_DESC" = "Try to disables Shorts PiP, this might not 100% disables it.";
 "DISABLE_HINTS" = "Disable hints";

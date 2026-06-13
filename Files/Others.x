@@ -26,15 +26,6 @@ Class YTILikeResponseClass, YTIDislikeResponseClass, YTIRemoveLikeResponseClass;
 - (BOOL)isPlayableInBackground { return IS_ENABLED(BackgroundPlayback) ? YES : %orig; }
 %end
 
-// Disables PiP
-%hook YTIPlayabilityStatus
-- (BOOL)isPlayableInPictureInPicture { return IS_ENABLED(DisablesPiP) ? NO : %orig; }
-%end
-
-%hook YTPlayerResponse
-- (BOOL)isPlayableInPictureInPicture { return IS_ENABLED(DisablesPiP) ? NO : %orig; }
-%end
-
 // Try to disable Shorts PiP
 %hook YTColdConfig
 - (BOOL)shortsPlayerGlobalConfigEnableReelsPictureInPicture { return IS_ENABLED(DisablesShortsPiP) ? NO : %orig; }

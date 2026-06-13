@@ -1,6 +1,4 @@
 #import "Headers.h"
-#import <SystemConfiguration/SystemConfiguration.h>
-#import <netinet/in.h>
 
 BOOL isWiFiConnected(void) {
     struct sockaddr_in zeroAddress;
@@ -154,18 +152,9 @@ static void YouModAddEndTime(YTPlayerViewController *self, YTSingleVideoControll
 - (BOOL)isAutoplayEnabled { return IS_ENABLED(HideAutoPlayToggle) ? NO : %orig; }
 %end
 
-/* idk what is this thing does
 %hook YTColdConfig
-- (BOOL)isLandscapeEngagementPanelEnabled {
-    return NO;
-}
+- (BOOL)isLandscapeEngagementPanelEnabled { return IS_ENABLED(DisablesEngagementPanel) ? NO : %orig; }
 %end
-
-%hook YTHeaderView
-- (BOOL)stickyNavHeaderEnabled { return IS_ENABLED(YTPremiumLogo) ? YES : NO; } // idk what is this does, the nav is already sticky... Or this thing only happens in iPhone?
-- (void)setStickyNavHeaderEnabled:(BOOL)arg { IS_ENABLED(YTPremiumLogo) ? %orig(YES) : %orig(NO); }
-%end
-*/
 
 // Remove Dark Background in Overlay
 %hook YTMainAppVideoPlayerOverlayView
@@ -268,88 +257,6 @@ static void YouModAddEndTime(YTPlayerViewController *self, YTSingleVideoControll
 }
 %end
 
-/*
-
-static NSString *getQualityLabel(NSArray <MLFormat *> *formats) {
-    BOOL isWifi = [[%c(GCKNNetworkReachability) sharedInstance] currentStatus] == 1;
-    NSInteger kQualityIndex = isWifi ? INTFORVAL(WifiQualityIndex) : INTFORVAL(CellQualityIndex);
-
-    NSString *bestQualityLabel;
-    int highestResolution = 0;
-    for (MLFormat *format in formats) {
-        int reso = format.singleDimensionResolution;
-        if (reso > highestResolution) {
-            highestResolution = reso;
-            bestQualityLabel = format.qualityLabel;
-        }
-    }
-
-    NSArray *qualityLabels = @[@"Default", bestQualityLabel, @"2160p60", @"2160p", @"1440p60", @"1440p", @"1080p60", @"1080p", @"720p60", @"720p", @"480p", @"360p", @"240p", @"144p"];
-    NSString *qualityLabel = qualityLabels[kQualityIndex];
-
-    if (![qualityLabel isEqualToString:bestQualityLabel]) {
-        BOOL exactMatch = NO;
-        NSString *closestQualityLabel = qualityLabel;
-
-        for (MLFormat *format in formats) {
-            if ([format.qualityLabel isEqualToString:qualityLabel]) {
-                exactMatch = YES;
-                break;
-            }
-        }
-
-        if (!exactMatch) {
-            NSInteger bestQualityDifference = NSIntegerMax;
-
-            for (MLFormat *format in formats) {
-                NSArray *formatСomponents = [format.qualityLabel componentsSeparatedByString:@"p"];
-                NSArray *targetComponents = [qualityLabel componentsSeparatedByString:@"p"];
-                if (formatСomponents.count == 2) {
-                    NSInteger formatQuality = [formatСomponents.firstObject integerValue];
-                    NSInteger targetQuality = [targetComponents.firstObject integerValue];
-                    NSInteger difference = labs(formatQuality - targetQuality);
-                    if (difference < bestQualityDifference) {
-                        bestQualityDifference = difference;
-                        closestQualityLabel = format.qualityLabel;
-                    }
-                }
-            }
-
-            qualityLabel = closestQualityLabel;
-        }
-    }
-    return qualityLabel;
-}
-
-static MLQuickMenuVideoQualitySettingFormatConstraint *getConstraint(NSString *qualityLabel) {
-    MLQuickMenuVideoQualitySettingFormatConstraint *constraint;
-    @try {
-        constraint = [[%c(MLQuickMenuVideoQualitySettingFormatConstraint) alloc] initWithVideoQualitySetting:3 formatSelectionReason:2 qualityLabel:qualityLabel];
-    } @catch (id ex) {
-        constraint = [[%c(MLQuickMenuVideoQualitySettingFormatConstraint) alloc] initWithVideoQualitySetting:3 formatSelectionReason:2 qualityLabel:qualityLabel resolutionCap:0];
-    }
-    return constraint;
-}
-
-%hook MLAVAssetPlayer
-
-// The changed value is not reliable but this method gets called whenever AirPlay session is started or stopped
-- (void)playerExternalPlaybackActiveDidChange:(NSDictionary *)change {
-    %orig;
-    if (INTFORVAL(WifiQualityIndex) == 0 && INTFORVAL(CellQualityIndex) == 0) return;
-    BOOL multipleScreens = [UIScreen screens].count > 1;
-    if (isExternal != multipleScreens) {
-        isExternal = multipleScreens;
-        MLAVPlayer *player = (MLAVPlayer *)self.delegate;
-        NSString *qualityLabel = getQualityLabel([player selectableVideoFormats]);
-        player.videoFormatConstraint = getConstraint(qualityLabel);
-    }
-}
-
-%end
-
-*/
-
 // Disable Fullscreen Actions
 %hook YTFullscreenActionsView
 - (CGSize)sizeThatFits:(CGSize)size { return IS_ENABLED(HideFullAction) ? CGSizeMake(1, 35) : %orig; }
@@ -386,15 +293,20 @@ static MLQuickMenuVideoQualitySettingFormatConstraint *getConstraint(NSString *q
 - (unsigned long long)allowedFullScreenOrientations { return IS_ENABLED(PortFull) ? UIInterfaceOrientationMaskAllButUpsideDown : %orig; }
 %end
 
-/* Disable Snap To Chapter (https://github.com/qnblackcat/uYouPlus/blob/main/uYouPlus.xm#L457-464) - GOT REMOVED
+// Disable Snap To Chapter (https://github.com/qnblackcat/uYouPlus/blob/main/uYouPlus.xm#L457-464) - GOT REMOVED
 %hook YTSegmentableInlinePlayerBarView
-- (void)didMoveToWindow { %orig; if (ytlBool(@"dontSnapToChapter")) self.enableSnapToChapter = NO; }
+- (void)didMoveToWindow { 
+    %orig; 
+    if (IS_ENABLED(DontSnapToChapter)) self.enableSnapToChapter = NO;
+}
 %end
 
 %hook YTModularPlayerBarController
-- (void)setEnableSnapToChapter:(BOOL)arg { %orig(NO); } // idk this works or not
+- (void)setView:(id)arg { 
+    %orig;
+    if (IS_ENABLED(DontSnapToChapter)) [self setEnableSnapToChapter:NO]; 
+}
 %end
-*/
 
 // Replace previous/next buttons with back and forward
 %hook YTColdConfig
@@ -566,8 +478,6 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
 - (void)playerItem:(id)arg1 hasSelectableVideoFormats:(id)arg2 {
     %orig;
     if (!arg2) return;
-    // BOOL multipleScreens = [UIScreen screens].count > 1;
-    // if (multipleScreens) return; // Prevent the app crashes
     if (INTFORVAL(WifiQualityIndex) != 0 || INTFORVAL(CellQualityIndex) != 0) [self YouModAutoQuality];
 }
 

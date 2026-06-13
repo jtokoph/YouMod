@@ -1,5 +1,6 @@
 "NOTE" = "REMARQUE : Certaines fonctionnalités de masquage peuvent laisser une case vide.";
 "SETTINGS" = "Paramètres";
+"INTERFACE" = "Interface";
 
 "NEW_ISSUES" = "Signaler des problèmes ou demander de nouvelles fonctionnalités";
 "NEW_ISSUES_DESC" = "Des bugs ou des demandes de nouvelles fonctionnalités ? Appuie ici.";
@@ -88,6 +89,8 @@
 "OLED_KEYBOARD_DESC" = "Applique un effet noir (OLED) au clavier pour le thème sombre.";
 
 "NAVBAR" = "Bar de navigation";
+"STICKY_NAVBAR" = "Sticky Navigation bar";
+"STICKY_NAVBAR_DESC" = "Pins the Navigation bar so that it remains visible when scrolling down.";
 "HIDE_YT_LOGO" = "Cacher le logo YouTube";
 "HIDE_YT_LOGO_DESC" = "Cache le logo YouTube dans la bar de navigation.";
 "PREMIUM_LOGO" = "Utiliser le logo YouTube Premium";
@@ -124,6 +127,8 @@
 "HIDE_MEMBER_BUTTON_DESC" = "Cache le bouton 'Rejoindre' dans les chaînes et les descriptions de vidéos.";
 
 "PLAYER" = "Lecteur";
+"PLAYER_ACTIONS" = "Player actions";
+"GESTURE_HEADER" = "Gestures";
 "QUALITY_WIFI" = "Playback quality on WiFi";
 "QUALITY_WIFI_DESC" = "Automatically applies the selected quality when streaming over Wi-Fi.";
 "QUALITY_CELLULAR" = "Playback quality on Cellular";
@@ -165,6 +170,10 @@
 "HIDE_WATERMARK_DESC" = "Cache le filigrane de la chaîne en bas de l'interface vidéo.";
 "PAUSE_ON_OVERLAY" = "Pause on overlay";
 "PAUSE_ON_OVERLAY_DESC" = "Sets playback on pause if overlay appears.";
+"DISABLES_SNAP_TO_CHAPTER" = "Disable snap to chapter";
+"DISABLES_SNAP_TO_CHAPTER_DESC" = "Disables skipping to the next episode by double-tap gesture.";
+"DISABLES_ENGAGE_PANEL" = "Disables engagement panel in fullscreen";
+"DISABLES_ENGAGE_PANEL_DESC" = "Prevent engagement panel showing in fullscreen.";
 "GESTURES" = "Activer le contrôle par gestes";
 "GESTURES_DESC" = "Faites glisser vers le haut ou le bas sur les bords gauche/droit de l'écran vidéo pour régler la luminosité, le volume ou la vitesse de lecture.";
 "GESTURE_AREA" = "Zone d'activation des gestes";
@@ -245,6 +254,8 @@
 "LOOP" = "Loop video";
 "SKIP_TO_NEXT_SHORTS" = "Skip to next video";
 "PAUSE_SHORTS" = "Stop video";
+"REMOVE_LIVE_SHORTS" = "Remove live videos";
+"REMOVE_LIVE_SHORTS_DESC" = "Removes live videos from the feed.";
 "HIDE_SHORTS_HEADER" = "Hide Shorts header";
 "HIDE_SHORTS_HEADER_DESC" = "Hide Shorts header that is on top of the Shorts player.";
 "HIDE_SHORTS_LIKE_BUTTON" = "Cacher le bouton J'aime";
@@ -309,6 +320,7 @@
 "VIDEO_TAB" = "Your videos";
 "MOVIE_TAB" = "Movies";
 "COURSE_TAB" = "Courses";
+"MINIGAME_TAB" = "Playables";
 "MANAGE_TABS" = "Manage tabs";
 "MANAGE_TABS_DESC" = "Reorder and toggle tabs";
 "TAB_REORDER_HINT" = "Drag to reorder. Toggle to show/hide.";
@@ -321,8 +333,6 @@
 "MISCELLANEOUS" = "Autres";
 "BACKGROUND_PLAYBACK" = "Lecture en arrière-plan";
 "BACKGROUND_PLAYBACK_DESC" = "Active la lecture en arrière-plan pour les vidéos.";
-"DISABLES_PIP" = "Disables PiP";
-"DISABLES_PIP_DESC" = "Disables PiP (Picture-In-Picture) in all videos.";
 "DISABLES_SHORTS_PIP" = "Désactiver le PiP des Shorts";
 "DISABLES_SHORTS_PIP_DESC" = "Tente de désactiver le PiP des Shorts, cela peut ne pas fonctionner à 100%.";
 "DISABLE_HINTS" = "Désactiver les conseils";

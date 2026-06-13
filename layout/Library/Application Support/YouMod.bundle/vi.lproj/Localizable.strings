@@ -1,5 +1,6 @@
 "NOTE" = "LƯU Ý : Một số tính năng ẩn sẽ để lại khoảng trống.";
 "SETTINGS" = "Cài đặt";
+"INTERFACE" = "Interface";
 
 "NEW_ISSUES" = "Báo lỗi hoặc yêu cầu tính năng mới.";
 "NEW_ISSUES_DESC" = "Bạn tìm thấy lỗi hoặc muốn yêu cầu thêm tính năng mới? Nhấn vào đây.";
@@ -88,6 +89,8 @@
 "OLED_KEYBOARD_DESC" = "Làm cho bàn phím sử dụng giao diện OLED.";
 
 "NAVBAR" = "Thanh điều hướng";
+"STICKY_NAVBAR" = "Sticky Navigation bar";
+"STICKY_NAVBAR_DESC" = "Pins the Navigation bar so that it remains visible when scrolling down.";
 "HIDE_YT_LOGO" = "Ẩn logo YouTube";
 "HIDE_YT_LOGO_DESC" = "Ẩn logo của YouTube khỏi thanh điều hướng.";
 "PREMIUM_LOGO" = "Sử dụng logo Youtube Premium";
@@ -124,6 +127,8 @@
 "HIDE_MEMBER_BUTTON_DESC" = "Ẩn nút 'Tham gia' hội viên trong kênh và phần mô tả video.";
 
 "PLAYER" = "Trình phát video";
+"PLAYER_ACTIONS" = "Player actions";
+"GESTURE_HEADER" = "Gestures";
 "QUALITY_WIFI" = "Playback quality on WiFi";
 "QUALITY_WIFI_DESC" = "Automatically applies the selected quality when streaming over Wi-Fi.";
 "QUALITY_CELLULAR" = "Playback quality on Cellular";
@@ -165,6 +170,10 @@
 "HIDE_WATERMARK_DESC" = "Ẩn hình mờ của các kênh trong trình phát video.";
 "PAUSE_ON_OVERLAY" = "Pause on overlay";
 "PAUSE_ON_OVERLAY_DESC" = "Sets playback on pause if overlay appears.";
+"DISABLES_SNAP_TO_CHAPTER" = "Disable snap to chapter";
+"DISABLES_SNAP_TO_CHAPTER_DESC" = "Disables skipping to the next episode by double-tap gesture.";
+"DISABLES_ENGAGE_PANEL" = "Disables engagement panel in fullscreen";
+"DISABLES_ENGAGE_PANEL_DESC" = "Prevent engagement panel showing in fullscreen.";
 "GESTURES" = "Bật điều khiển bằng cử chỉ";
 "GESTURES_DESC" = "Vuốt lên hoặc xuống ở cạnh trái/phải của màn hình video để điều chỉnh độ sáng, âm lượng hoặc tốc độ phát.";
 "GESTURE_AREA" = "Khu vực cử chỉ";
@@ -245,6 +254,8 @@
 "LOOP" = "Loop video";
 "SKIP_TO_NEXT_SHORTS" = "Skip to next video";
 "PAUSE_SHORTS" = "Stop video";
+"REMOVE_LIVE_SHORTS" = "Remove live videos";
+"REMOVE_LIVE_SHORTS_DESC" = "Removes live videos from the feed.";
 "HIDE_SHORTS_HEADER" = "Hide Shorts header";
 "HIDE_SHORTS_HEADER_DESC" = "Hide Shorts header that is on top of the Shorts player.";
 "HIDE_SHORTS_LIKE_BUTTON" = "Ẩn nút Thích";
@@ -309,6 +320,7 @@
 "VIDEO_TAB" = "Your videos";
 "MOVIE_TAB" = "Movies";
 "COURSE_TAB" = "Courses";
+"MINIGAME_TAB" = "Playables";
 "MANAGE_TABS" = "Manage tabs";
 "MANAGE_TABS_DESC" = "Reorder and toggle tabs";
 "TAB_REORDER_HINT" = "Drag to reorder. Toggle to show/hide.";
@@ -321,8 +333,6 @@
 "MISCELLANEOUS" = "Khác";
 "BACKGROUND_PLAYBACK" = "Phát trong nền";
 "BACKGROUND_PLAYBACK_DESC" = "Cho phép video phát dưới nền";
-"DISABLES_PIP" = "Disables PiP";
-"DISABLES_PIP_DESC" = "Disables PiP (Picture-In-Picture) in all videos.";
 "DISABLES_SHORTS_PIP" = "Tắt PiP của Shorts";
 "DISABLES_SHORTS_PIP_DESC" = "Thử tắt tính năng Hình-trong-hình (PiP) của Shorts, có thể không hoạt động 100%.";
 "DISABLE_HINTS" = "Tắt gợi ý";

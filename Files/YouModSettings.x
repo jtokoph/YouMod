@@ -597,9 +597,9 @@ YMSettingsItem *YMImageSegment(NSString *title, NSString *key, NSArray<UIImage *
 #pragma mark - YMTabOrderViewController
 
 static NSString * const kYMTabIDs[] = {
-    @"home", @"shorts", @"create", @"subscriptions",  @"library", @"history", @"gaming", @"sports", @"notifications", @"news", @"music", @"watchlater", @"playlist", @"like", @"live", @"post", @"video", @"movie", @"course"
+    @"home", @"shorts", @"create", @"subscriptions",  @"library", @"history", @"gaming", @"sports", @"notifications", @"news", @"music", @"watchlater", @"playlist", @"like", @"live", @"post", @"video", @"movie", @"course", @"minigame"
 };
-static const NSInteger kYMTabCount = 19;
+static const NSInteger kYMTabCount = 20;
 static const NSInteger kYMTabMaxEnabled = 6;
 
 @interface YMTabOrderViewController : UIViewController <UITableViewDelegate, UITableViewDataSource>
@@ -644,6 +644,7 @@ static const void *kYMTabSnapshotKey = &kYMTabSnapshotKey;
     if ([tabID isEqualToString:@"video"]) return YMLOC(@"VIDEO_TAB");
     if ([tabID isEqualToString:@"movie"]) return YMLOC(@"MOVIE_TAB");
     if ([tabID isEqualToString:@"course"]) return YMLOC(@"COURSE_TAB");
+    if ([tabID isEqualToString:@"minigame"]) return YMLOC(@"MINIGAME_TAB");
     return tabID;
 }
 
@@ -659,7 +660,7 @@ static const void *kYMTabSnapshotKey = &kYMTabSnapshotKey;
         return [[UIImage systemImageNamed:@"plus" withConfiguration:config] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
     }
     NSDictionary *ytIconTypes = @{@"home": @(65), @"shorts": @(769), @"subscriptions": @(66), @"library": @(61)};
-    NSDictionary *bundleIcons = @{@"history": @"icons/history", @"gaming": @"icons/gaming", @"sports": @"icons/sports", @"notifications": @"icons/noti", @"news": @"icons/news", @"music": @"icons/music", @"watchlater": @"icons/watchlater", @"playlist": @"icons/playlist", @"like": @"icons/like", @"live": @"icons/live", @"post": @"icons/post", @"video": @"icons/video", @"movie": @"icons/movie", @"course": @"icons/course"};
+    NSDictionary *bundleIcons = @{@"history": @"icons/history", @"gaming": @"icons/gaming", @"sports": @"icons/sports", @"notifications": @"icons/noti", @"news": @"icons/news", @"music": @"icons/music", @"watchlater": @"icons/watchlater", @"playlist": @"icons/playlist", @"like": @"icons/like", @"live": @"icons/live", @"post": @"icons/post", @"video": @"icons/video", @"movie": @"icons/movie", @"course": @"icons/course", @"minigame": @"icons/minigame"};
 
     NSNumber *iconType = ytIconTypes[tabID];
     if (iconType) {

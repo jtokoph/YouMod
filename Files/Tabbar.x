@@ -20,7 +20,7 @@ static NSBundle *YouModBundle() {
 // Tab icons
 %hook YTAppPivotBarItemStyle
 - (UIImage *)pivotBarItemIconImageWithIconType:(int)type color:(UIColor *)color useNewIcons:(BOOL)isNew selected:(BOOL)isSelected {
-    if (type == 1 || type == 2 || type == 3 || type == 4 || type == 5 || type == 6 || type == 7 || type == 8 || type == 9 || type == 10 || type == 11 || type == 12 || type == 13 || type == 14) {
+    if (type == 1 || type == 2 || type == 3 || type == 4 || type == 5 || type == 6 || type == 7 || type == 8 || type == 9 || type == 10 || type == 11 || type == 12 || type == 13 || type == 14 || type == 15) {
         NSString *imageName;
         if (type == 1) imageName = isSelected ? @"icons/history_selected" : @"icons/history";
         else if (type == 2) imageName = isSelected ? @"icons/gaming_selected" : @"icons/gaming";
@@ -36,6 +36,7 @@ static NSBundle *YouModBundle() {
         else if (type == 12) imageName = isSelected ? @"icons/video_selected" : @"icons/video";
         else if (type == 13) imageName = isSelected ? @"icons/movie_selected" : @"icons/movie";
         else if (type == 14) imageName = isSelected ? @"icons/course_selected" : @"icons/course";
+        else if (type == 15) imageName = isSelected ? @"icons/minigame_selected" : @"icons/minigame";
         YTAssetLoader *al = [[%c(YTAssetLoader) alloc] initWithBundle:YouModBundle()];
         return [al imageNamed:imageName];
     }
@@ -63,6 +64,7 @@ static NSString *ymPivotIDForTabID(NSString *tabID) {
     if ([tabID isEqualToString:@"video"]) return @"UC3qapbGAd2-S75NkBY3XWww";
     if ([tabID isEqualToString:@"movie"]) return @"FEstorefront";
     if ([tabID isEqualToString:@"course"]) return @"FEcourses";
+    if ([tabID isEqualToString:@"minigame"]) return @"FEmini_app_destination";
     return nil;
 }
 
@@ -81,6 +83,7 @@ static NSInteger ymIconTypeForTabID(NSString *tabID) {
     if ([tabID isEqualToString:@"video"]) return 12;
     if ([tabID isEqualToString:@"movie"]) return 13;
     if ([tabID isEqualToString:@"course"]) return 14;
+    if ([tabID isEqualToString:@"minigame"]) return 15;
     return 0;
 }
 
@@ -99,6 +102,7 @@ static NSString *ymTitleForTabID(NSString *tabID) {
     if ([tabID isEqualToString:@"video"]) return LOC(@"VIDEO_TAB");
     if ([tabID isEqualToString:@"movie"]) return LOC(@"MOVIE_TAB");
     if ([tabID isEqualToString:@"course"]) return LOC(@"COURSE_TAB");
+    if ([tabID isEqualToString:@"minigame"]) return LOC(@"MINIGAME_TAB");
     return nil;
 }
 

@@ -1,5 +1,6 @@
 "NOTE" = "참고: 일부 숨기기 기능을 사용하면 화면에 빈 공간이 남을 수 있습니다.";
 "SETTINGS" = "설정";
+"INTERFACE" = "Interface";
 
 "NEW_ISSUES" = "버그 신고 및 새 기능 요청";
 "NEW_ISSUES_DESC" = "버그를 발견했거나 새로운 기능을 원하시나요? 여기를 눌러주세요.";
@@ -88,6 +89,8 @@
 "OLED_KEYBOARD_DESC" = "다크 모드 사용 시 키보드 배경을 완전한 검은색(OLED 블랙)으로 바꿉니다.";
 
 "NAVBAR" = "상단 메뉴 바";
+"STICKY_NAVBAR" = "Sticky Navigation bar";
+"STICKY_NAVBAR_DESC" = "Pins the Navigation bar so that it remains visible when scrolling down.";
 "HIDE_YT_LOGO" = "유튜브 로고 숨기기";
 "HIDE_YT_LOGO_DESC" = "화면 맨 위 상단 바에서 유튜브 로고를 보이지 않게 숨깁니다.";
 "PREMIUM_LOGO" = "유튜브 프리미엄 로고 사용";
@@ -124,6 +127,8 @@
 "HIDE_MEMBER_BUTTON_DESC" = "채널 홈이나 영상 설명창에서 멤버십 '가입' 버튼을 숨깁니다.";
 
 "PLAYER" = "동영상 플레이어";
+"PLAYER_ACTIONS" = "Player actions";
+"GESTURE_HEADER" = "Gestures";
 "QUALITY_WIFI" = "Playback quality on WiFi";
 "QUALITY_WIFI_DESC" = "Automatically applies the selected quality when streaming over Wi-Fi.";
 "QUALITY_CELLULAR" = "Playback quality on Cellular";
@@ -165,6 +170,10 @@
 "HIDE_WATERMARK_DESC" = "영상 오른쪽 아래 구석에 작게 떠 있는 채널 로고(워터마크)를 숨깁니다.";
 "PAUSE_ON_OVERLAY" = "Pause on overlay";
 "PAUSE_ON_OVERLAY_DESC" = "Sets playback on pause if overlay appears.";
+"DISABLES_SNAP_TO_CHAPTER" = "Disable snap to chapter";
+"DISABLES_SNAP_TO_CHAPTER_DESC" = "Disables skipping to the next episode by double-tap gesture.";
+"DISABLES_ENGAGE_PANEL" = "Disables engagement panel in fullscreen";
+"DISABLES_ENGAGE_PANEL_DESC" = "Prevent engagement panel showing in fullscreen.";
 "GESTURES" = "제스처 제어 켜기";
 "GESTURES_DESC" = "화면을 스와이프하여 조작하는 제스처 기능을 켭니다.\n상단: 밝기 조절, 하단: 볼륨 조절";
 "GESTURE_AREA" = "제스처 작동 영역 범위";
@@ -246,6 +255,8 @@
 "LOOP" = "Loop video";
 "SKIP_TO_NEXT_SHORTS" = "Skip to next video";
 "PAUSE_SHORTS" = "Stop video";
+"REMOVE_LIVE_SHORTS" = "Remove live videos";
+"REMOVE_LIVE_SHORTS_DESC" = "Removes live videos from the feed.";
 "HIDE_SHORTS_HEADER" = "Hide Shorts header";
 "HIDE_SHORTS_HEADER_DESC" = "Hide Shorts header that is on top of the Shorts player.";
 "HIDE_SHORTS_LIKE_BUTTON" = "좋아요 버튼 숨기기";
@@ -310,6 +321,7 @@
 "VIDEO_TAB" = "Your videos";
 "MOVIE_TAB" = "Movies";
 "COURSE_TAB" = "Courses";
+"MINIGAME_TAB" = "Playables";
 "MANAGE_TABS" = "Manage tabs";
 "MANAGE_TABS_DESC" = "Reorder and toggle tabs";
 "TAB_REORDER_HINT" = "Drag to reorder. Toggle to show/hide.";
@@ -322,8 +334,6 @@
 "MISCELLANEOUS" = "기타 설정";
 "BACKGROUND_PLAYBACK" = "백그라운드 재생";
 "BACKGROUND_PLAYBACK_DESC" = "유튜브 앱을 닫거나 스마트폰 화면을 꺼도 소리가 계속 끊기지 않고 나오게 해줍니다.";
-"DISABLES_PIP" = "Disables PiP";
-"DISABLES_PIP_DESC" = "Disables PiP (Picture-In-Picture) in all videos.";
 "DISABLES_SHORTS_PIP" = "Shorts PIP 모드 끄기";
 "DISABLES_SHORTS_PIP_DESC" = "Shorts PIP 화면을 작은 팝업창으로 띄우는 기능을 끕니다. (완벽하게 꺼지지 않을 수도 있습니다.)";
 "DISABLE_HINTS" = "도움말 힌트 끄기";

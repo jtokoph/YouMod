@@ -70,3 +70,8 @@
     }
 }
 %end
+
+%hook YTHeaderView
+- (BOOL)stickyNavHeaderEnabled { return IS_ENABLED(StickyNavBar) ? YES : %orig; }
+- (void)setStickyNavHeaderEnabled:(BOOL)arg { IS_ENABLED(StickyNavBar) ? %orig(YES) : %orig; }
+%end
