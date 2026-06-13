@@ -1795,18 +1795,36 @@ static void YouModShowDownloadManager(YTPlayerViewController *player, UIViewCont
     YouModPresentMenu(LOC(@"DOWNLOAD_MANAGER"), items, presenter, sender);
 }
 
+static BOOL canInjectDownloadActions = NO;
+
 void YouModConfigureDownloadButton(_ASDisplayView *view) {
-    if (![view.accessibilityIdentifier isEqualToString:@"id.ui.add_to.offline.button"]) return;
     if (!IS_ENABLED(DownloadManager) || IS_ENABLED(HideDownloadButton)) return;
     if (objc_getAssociatedObject(view, @selector(YouModDownloadButtonTapped:))) return;
+    // For iPhone, YouTube moves the buttons under the player to a dialog.
+    // Because Save has accessibilityLabel and the next one is Download, we will add the download action from this.
+    if ([view.accessibilityIdentifier isEqualToString:@"id.elements.list_item"] && accessibilityLabel != nil && [view isInsideViewControllerOfClass:@"YTActionSheetDialogViewController"]) {
+        canInjectDownloadActions = YES;
+    }
 
-    view.userInteractionEnabled = YES;
-    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:view action:@selector(YouModDownloadButtonTapped:)];
-    tap.cancelsTouchesInView = YES;
-    tap.delaysTouchesBegan = YES;
-    tap.delaysTouchesEnded = YES;
-    [view addGestureRecognizer:tap];
-    objc_setAssociatedObject(view, @selector(YouModDownloadButtonTapped:), @YES, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    // For iPad (Old ID)
+    if ([view.accessibilityIdentifier isEqualToString:@"id.ui.add_to.offline.button"]) {
+        view.userInteractionEnabled = YES;
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:view action:@selector(YouModDownloadButtonTapped:)];
+        tap.cancelsTouchesInView = YES;
+        tap.delaysTouchesBegan = YES;
+        tap.delaysTouchesEnded = YES;
+        [view addGestureRecognizer:tap];
+        objc_setAssociatedObject(view, @selector(YouModDownloadButtonTapped:), @YES, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    } else if ([view.accessibilityIdentifier isEqualToString:@"id.elements.list_item"] && accessibilityLabel == nil && [view isInsideViewControllerOfClass:@"YTActionSheetDialogViewController"] && canInjectDownloadActions) {
+        view.userInteractionEnabled = YES;
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:view action:@selector(YouModDownloadButtonTapped:)];
+        tap.cancelsTouchesInView = YES;
+        tap.delaysTouchesBegan = YES;
+        tap.delaysTouchesEnded = YES;
+        [view addGestureRecognizer:tap];
+        objc_setAssociatedObject(view, @selector(YouModDownloadButtonTapped:), @YES, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        canInjectDownloadActions = NO;
+    }
 }
 
 %hook _ASDisplayView
