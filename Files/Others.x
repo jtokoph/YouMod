@@ -3,13 +3,6 @@
 Class YTILikeResponseClass, YTIDislikeResponseClass, YTIRemoveLikeResponseClass;
 
 // Background playback
-%group BackgroundPlayback
-%hook YTIBackgroundOfflineSettingCategoryEntryRenderer
-%new(B@:)
-- (BOOL)isBackgroundEnabled { return YES; }
-%end
-%end
-
 %hook MLVideo
 - (BOOL)playableInBackground { return IS_ENABLED(BackgroundPlayback) ? YES : %orig; }
 %end
@@ -116,19 +109,22 @@ Class YTILikeResponseClass, YTIDislikeResponseClass, YTIRemoveLikeResponseClass;
 - (BOOL)shouldShowServiceItemRenderer:(YTIMenuConditionalServiceItemRenderer *)renderer {
     if (renderer.icon.iconType == 251 && IS_ENABLED(HidePlayInNextQueue)) {
         return NO;
-    } return %orig;
+    }
+    return %orig;
 }
 %end
 
 %hook YTMenuItemVisibilityHandlerImpl
 - (BOOL)shouldShowServiceItemRenderer:(YTIMenuConditionalServiceItemRenderer *)renderer {
+    NSLog(@"[YouMod] Icon debug - ID is %@", renderer.icon.iconType);
     if (renderer.icon.iconType == 251 && IS_ENABLED(HidePlayInNextQueue)) {
         return NO;
-    } return %orig;
+    }
+    return %orig;
 }
 %end
 
-/* untested
+/* Will add this soon
 // Remove Download button from the menu
 %hook YTDefaultSheetController
 - (void)addAction:(YTActionSheetAction *)action {
@@ -170,8 +166,5 @@ Class YTILikeResponseClass, YTIDislikeResponseClass, YTIRemoveLikeResponseClass;
     %init;
     if (IS_ENABLED(HideLikeDislikeVotes)) {
         %init(SlientVote);
-    }
-    if (IS_ENABLED(BackgroundPlayback)) {
-        %init(BackgroundPlayback);
     }
 }

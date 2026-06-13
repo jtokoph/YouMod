@@ -198,18 +198,12 @@ static void YouModAddEndTime(YTPlayerViewController *self, YTSingleVideoControll
 %end
 
 // YTNoPaidPromo (https://github.com/PoomSmart/YTNoPaidPromo)
-%group PaidPromoOverlay
 %hook YTMainAppVideoPlayerOverlayViewController
-- (void)setPaidContentWithPlayerData:(id)data {}
-- (void)playerOverlayProvider:(YTPlayerOverlayProvider *)provider didInsertPlayerOverlay:(YTPlayerOverlay *)overlay {
-    if ([[overlay overlayIdentifier] isEqualToString:@"player_overlay_paid_content"]) return;
-    %orig;
-}
+- (void)setPaidContentWithPlayerData:(id)data { if (!IS_ENABLED(HidePaidPromoOverlay)) %orig; }
 %end
 
 %hook YTInlineMutedPlaybackPlayerOverlayViewController
-- (void)setPaidContentWithPlayerData:(id)data {}
-%end
+- (void)setPaidContentWithPlayerData:(id)data { if (!IS_ENABLED(HidePaidPromoOverlay)) %orig; }
 %end
 
 // Remove Watermarks
@@ -944,9 +938,6 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
     }
     if (IS_ENABLED(ExtraSpeed) || IS_ENABLED(GestureControls) || INTFORVAL(HoldToSpeedIndex) >= 9 || INTFORVAL(AutoSpeedIndex) >= 9) {
         %init(Speed);
-    }
-    if (IS_ENABLED(HidePaidPromoOverlay)) {
-        %init(PaidPromoOverlay);
     }
     if (IS_ENABLED(GestureControls)) {
         %init(Gestures);

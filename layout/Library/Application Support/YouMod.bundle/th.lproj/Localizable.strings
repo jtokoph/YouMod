@@ -90,7 +90,7 @@
 
 "NAVBAR" = "แถบนำทาง";
 "STICKY_NAVBAR" = "ยึดแถบนำทาง";
-"STICKY_NAVBAR_DESC" = "ล็อกแถบนำทางให้ยังเห็นอยู่เมื่อเลื่อนลง";
+"STICKY_NAVBAR_DESC" = "ล็อกแถบนำทางให้คงเห็นอยู่เมื่อเลื่อนลง";
 "HIDE_YT_LOGO" = "ซ่อนโลโก้ YouTube";
 "HIDE_YT_LOGO_DESC" = "ซ่อนโลโก้ YouTube ในแถบนำทาง";
 "PREMIUM_LOGO" = "ใช้โลโก้ YouTube Premium";

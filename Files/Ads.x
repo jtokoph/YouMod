@@ -79,7 +79,7 @@ static NSMutableArray <YTIItemSectionRenderer *> *filteredArray(NSArray <YTIItem
         BOOL isShortsShelf = [description containsString:@"shorts_shelf.eml"] || [description containsString:@"shorts_video_cell.eml"];
         BOOL isHistory = [description containsString:@"history-shorts-shelf-item"];
         if (IS_ENABLED(HideShortsShelf) && IS_ENABLED(KeepShortsSubscript)) {
-            if (isShortsShelf && ![description containsString:@"subscriptions-shorts-shelf-item"] && !isHistory) {
+            if (isShortsShelf && ![description containsString:@"FEsubscriptions_shorts"] && !isHistory) {
                 return YES;
             }
         } else if (IS_ENABLED(HideShortsShelf)) {
@@ -212,6 +212,7 @@ static NSMutableArray <YTIItemSectionRenderer *> *filteredArray(NSArray <YTIItem
 %hook YTMainAppVideoPlayerOverlayViewController
 - (void)playerOverlayProvider:(YTPlayerOverlayProvider *)provider didInsertPlayerOverlay:(YTPlayerOverlay *)overlay {
     if ([[overlay overlayIdentifier] isEqualToString:@"player_overlay_product_in_video"]) return;
+    if ([[overlay overlayIdentifier] isEqualToString:@"player_overlay_paid_content"] && IS_ENABLED(HidePaidPromoOverlay)) return;
     %orig;
 }
 %end
