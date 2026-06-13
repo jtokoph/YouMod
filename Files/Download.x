@@ -1802,7 +1802,7 @@ void YouModConfigureDownloadButton(_ASDisplayView *view) {
     if (objc_getAssociatedObject(view, @selector(YouModDownloadButtonTapped:))) return;
     // For iPhone, YouTube moves the buttons under the player to a dialog.
     // Because Save has accessibilityLabel and the next one is Download, we will add the download action from this.
-    if ([view.accessibilityIdentifier isEqualToString:@"id.elements.list_item"] && accessibilityLabel != nil && [view isInsideViewControllerOfClass:@"YTActionSheetDialogViewController"]) {
+    if ([view.accessibilityIdentifier isEqualToString:@"id.elements.list_item"] && view.accessibilityLabel != nil && [view isInsideViewControllerOfClass:@"YTActionSheetDialogViewController"]) {
         canInjectDownloadActions = YES;
     }
 
@@ -1815,7 +1815,7 @@ void YouModConfigureDownloadButton(_ASDisplayView *view) {
         tap.delaysTouchesEnded = YES;
         [view addGestureRecognizer:tap];
         objc_setAssociatedObject(view, @selector(YouModDownloadButtonTapped:), @YES, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-    } else if ([view.accessibilityIdentifier isEqualToString:@"id.elements.list_item"] && accessibilityLabel == nil && [view isInsideViewControllerOfClass:@"YTActionSheetDialogViewController"] && canInjectDownloadActions) {
+    } else if ([view.accessibilityIdentifier isEqualToString:@"id.elements.list_item"] && view.accessibilityLabel == nil && [view isInsideViewControllerOfClass:@"YTActionSheetDialogViewController"] && canInjectDownloadActions) {
         view.userInteractionEnabled = YES;
         UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:view action:@selector(YouModDownloadButtonTapped:)];
         tap.cancelsTouchesInView = YES;
