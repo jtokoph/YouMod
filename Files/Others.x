@@ -127,18 +127,19 @@ Class YTILikeResponseClass, YTIDislikeResponseClass, YTIRemoveLikeResponseClass;
 // Remove Download button from the menu
 %hook YTDefaultSheetController
 - (void)addAction:(YTActionSheetAction *)action {
-    NSString *identifier = [action valueForKey:@"_accessibilityIdentifier"];
-
+    if (![action.button isKindOfClass:NSClassFromString(@"YTMenuItemMDCButton")]) {
+        %orig;
+        return;
+    }
     NSDictionary *actionsToRemove = @{
-        @"7": @(ytlBool(@"removeDownloadMenu")),
-        @"1": @(ytlBool(@"removeWatchLaterMenu")),
-        @"3": @(ytlBool(@"removeSaveToPlaylistMenu")),
-        @"5": @(ytlBool(@"removeShareMenu")),
-        @"12": @(ytlBool(@"removeNotInterestedMenu")),
-        @"31": @(ytlBool(@"removeDontRecommendMenu")),
-        @"58": @(ytlBool(@"removeReportMenu"))
+        @"7": @(IS_ENABLED(RemoveDownloadOption)),
+        @"1": @(IS_ENABLED(RemoveWatchLaterOption)),
+        @"3": @(IS_ENABLED(RemoveSaveToPlaylistOption)),
+        @"5": @(IS_ENABLED(RemoveShareOption)),
+        @"12": @(IS_ENABLED(RemoveNotInterestedOption)),
+        @"31": @(IS_ENABLED(RemoveDontRecommendOption)),
+        @"58": @(IS_ENABLED(RemoveReportOption))
     };
-
     if (![actionsToRemove[identifier] boolValue]) {
         %orig;
     }
