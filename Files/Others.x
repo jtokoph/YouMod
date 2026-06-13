@@ -116,7 +116,7 @@ Class YTILikeResponseClass, YTIDislikeResponseClass, YTIRemoveLikeResponseClass;
 
 %hook YTMenuItemVisibilityHandlerImpl
 - (BOOL)shouldShowServiceItemRenderer:(YTIMenuConditionalServiceItemRenderer *)renderer {
-    NSLog(@"[YouMod] Icon debug - ID is %@", renderer.icon.iconType);
+    NSLog(@"[YouMod] Icon debug - ID is %u", renderer.icon.iconType);
     if (renderer.icon.iconType == 251 && IS_ENABLED(HidePlayInNextQueue)) {
         return NO;
     }
