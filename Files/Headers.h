@@ -260,6 +260,7 @@ typedef NS_ENUM(NSUInteger, GestureSection) {
 @end
 
 @interface YTPivotBarView : UIView
+- (YTPivotBarItemView *)itemView1;
 @end
 
 @interface YTNavigationBarTitleView : UIView
