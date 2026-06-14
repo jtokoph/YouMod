@@ -1,21 +1,15 @@
 #import "Headers.h"
 
 // Hide Subbar
-%hook YTMySubsFilterHeaderView
-- (void)setChipFilterView:(id)arg1 { if (!IS_ENABLED(HideSubbar)) %orig; }
-%end
-
 %hook YTHeaderContentComboView
 - (void)enableSubheaderBarWithView:(id)arg1 { if (!IS_ENABLED(HideSubbar)) %orig; }
 - (void)setFeedHeaderScrollMode:(int)arg1 { IS_ENABLED(HideSubbar) ? %orig(0) : %orig; }
 %end
 
 %hook YTChipCloudCell
-- (void)layoutSubviews {
-    if (self.superview && IS_ENABLED(HideSubbar)) {
-        [self removeFromSuperview];
-    }
+- (void)didMoveToWindow {
     %orig;
+    if (self.superview && IS_ENABLED(HideSubbar)) [self removeFromSuperview];
 }
 %end
 

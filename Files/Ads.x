@@ -12,6 +12,7 @@ static BOOL isProductList(YTICommand *command) {
 NSString *getAdString(NSString *description) {
     for (NSString *str in @[
         @"brand_promo",
+        @"brand_video_singleton",
         @"carousel_footered_layout",
         @"carousel_headered_layout",
         @"eml.expandable_metadata",
@@ -79,7 +80,7 @@ static NSMutableArray <YTIItemSectionRenderer *> *filteredArray(NSArray <YTIItem
         BOOL isShortsShelf = [description containsString:@"shorts_shelf.eml"] || [description containsString:@"shorts_video_cell.eml"];
         BOOL isHistory = [description containsString:@"history-shorts-shelf-item"];
         if (IS_ENABLED(HideShortsShelf) && IS_ENABLED(KeepShortsSubscript)) {
-            if (isShortsShelf && ![description containsString:@"FEsubscriptions_shorts*"] && !isHistory) {
+            if (isShortsShelf && ![description containsString:@"FEsubscriptions"] && !isHistory) {
                 return YES;
             }
         } else if (IS_ENABLED(HideShortsShelf)) {
