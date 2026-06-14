@@ -201,8 +201,8 @@
 // Flyout menu
 #define RemovePlayInNextQueueOption @"YouModRemovePlayInNextQueueOption"
 #define RemoveDownloadOption @"YouModRemoveDownloadOption"
-#define RemoveRemoveWatchLaterOption @"YouModRemoveWatchLaterOption"
-#define RemoveRemoveSaveOption @"YouModRemoveSaveOption"
+#define RemoveWatchLaterOption @"YouModRemoveWatchLaterOption"
+#define RemoveSaveOption @"YouModRemoveSaveOption"
 #define RemoveRemoveFromPlaylistOption @"YouModRemoveRemoveFromPlaylistOption"
 #define RemoveShareOption @"YouModRemoveShareOption"
 #define RemoveNotInterestedOption @"YouModRemoveNotInterestedOption"
