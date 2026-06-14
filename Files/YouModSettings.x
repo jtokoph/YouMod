@@ -960,6 +960,10 @@ static const void *kYMTabSnapshotKey = &kYMTabSnapshotKey;
     return UITableViewAutomaticDimension;
 }
 
+- (UIColor *)ymSecondaryColor {
+    return [UIColor colorWithWhite:0.55 alpha:1.0];
+}
+
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
     UIView *headerView = [[UIView alloc] init];
     headerView.backgroundColor = [UIColor clearColor];
