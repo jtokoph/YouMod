@@ -151,20 +151,6 @@ static NSString *ymTitleForTabID(NSString *tabID) {
     }
     %orig(renderer);
 }
-- (void)setItemView1:(id)arg {
-    %orig;
-    // Attach long-press gesture once per view; the action handler checks the
-    // current pivotIdentifier at fire time, so cell reuse / pivot bar refresh
-    // can rebind the same view to a different tab safely.
-    static const void *kYMLongPressKey = &kYMLongPressKey;
-    if (!objc_getAssociatedObject(self.itemView1, kYMLongPressKey)) {
-        UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc]
-            initWithTarget:self.itemView1 action:@selector(ymOpenManageTabs:)];
-        longPress.minimumPressDuration = 0.4;
-        [self.itemView1 addGestureRecognizer:longPress];
-        objc_setAssociatedObject(self.itemView1, kYMLongPressKey, longPress, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-    }
-}
 %end
 
 // Hide Tab Bar Indicators
@@ -173,6 +159,7 @@ static NSString *ymTitleForTabID(NSString *tabID) {
 - (void)setBorderColor:(id)arg1  { IS_ENABLED(HideTabIndi) ? %orig([UIColor clearColor]) : %orig; }
 %end
 
+static BOOL isGestureRegistered = NO;
 // Hide Tab Labels + long-press on Home tab to open Manage Tabs
 %hook YTPivotBarItemView
 - (void)setRenderer:(YTIPivotBarRenderer *)renderer {
@@ -180,6 +167,18 @@ static NSString *ymTitleForTabID(NSString *tabID) {
     if (IS_ENABLED(HideTabLabels)) {
         [self.navigationButton setTitle:@"" forState:UIControlStateNormal];
         [self.navigationButton setSizeWithPaddingAndInsets:NO];
+    }
+    // Attach long-press gesture once per view; the action handler checks the
+    // current pivotIdentifier at fire time, so cell reuse / pivot bar refresh
+    // can rebind the same view to a different tab safely.
+    static const void *kYMLongPressKey = &kYMLongPressKey;
+    if (!objc_getAssociatedObject(self, kYMLongPressKey) && !isGestureRegistered) {
+        UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc]
+            initWithTarget:self action:@selector(ymOpenManageTabs:)];
+        longPress.minimumPressDuration = 0.4;
+        [self addGestureRecognizer:longPress];
+        objc_setAssociatedObject(self, kYMLongPressKey, longPress, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        isGestureRegistered = YES;
     }
 }
 
