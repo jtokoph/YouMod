@@ -79,7 +79,7 @@ static NSMutableArray <YTIItemSectionRenderer *> *filteredArray(NSArray <YTIItem
         BOOL isShortsShelf = [description containsString:@"shorts_shelf.eml"] || [description containsString:@"shorts_video_cell.eml"];
         BOOL isHistory = [description containsString:@"history-shorts-shelf-item"];
         if (IS_ENABLED(HideShortsShelf) && IS_ENABLED(KeepShortsSubscript)) {
-            if (isShortsShelf && ![description containsString:@"FEsubscriptions_shorts"] && !isHistory) {
+            if (isShortsShelf && ![description containsString:@"FEsubscriptions_shorts*"] && !isHistory) {
                 return YES;
             }
         } else if (IS_ENABLED(HideShortsShelf)) {
