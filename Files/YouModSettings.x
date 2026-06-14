@@ -956,8 +956,30 @@ static const void *kYMTabSnapshotKey = &kYMTabSnapshotKey;
 
 #pragma mark - Section Header/Footer
 
-- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
-    return YMLOC(@"TAB_REORDER_HINT");
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
+    return UITableViewAutomaticDimension;
+}
+
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
+    UIView *headerView = [[UIView alloc] init];
+    headerView.backgroundColor = [UIColor clearColor];
+    
+    UILabel *hintLabel = [[UILabel alloc] init];
+    hintLabel.text = YMLOC(@"TAB_REORDER_HINT");
+    hintLabel.textColor = [self ymSecondaryColor];
+    hintLabel.font = [UIFont systemFontOfSize:13];
+    hintLabel.numberOfLines = 0;
+    hintLabel.translatesAutoresizingMaskIntoConstraints = NO;
+    [headerView addSubview:hintLabel];
+    
+    [NSLayoutConstraint activateConstraints:@[
+        [hintLabel.leadingAnchor constraintEqualToAnchor:headerView.leadingAnchor constant:16],
+        [hintLabel.trailingAnchor constraintEqualToAnchor:headerView.trailingAnchor constant:-16],
+        [hintLabel.topAnchor constraintEqualToAnchor:headerView.topAnchor constant:12],
+        [hintLabel.bottomAnchor constraintEqualToAnchor:headerView.bottomAnchor constant:-12]
+    ]];
+    
+    return headerView;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section { return 0; }
