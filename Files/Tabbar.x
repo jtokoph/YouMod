@@ -160,7 +160,7 @@ static NSString *ymTitleForTabID(NSString *tabID) {
 %end
 
 static BOOL isGestureRegistered = NO;
-// Hide Tab Labels + long-press on Home tab to open Manage Tabs
+// Hide Tab Labels + long-press on the first tab to open Manage Tabs
 %hook YTPivotBarItemView
 - (void)setRenderer:(YTIPivotBarRenderer *)renderer {
     %orig;
@@ -235,6 +235,17 @@ BOOL isTabSelected = NO;
 // and download progress pill anchored above the tabbar when visible, and at the
 // device safe-area bottom when the tabbar is hidden.
 %hook YTAppViewController
+- (void)hidePivotBar {
+    %orig;
+    sbUpdateOverlayInsetForPivotBar();
+}
+- (void)showPivotBar {
+    %orig;
+    sbUpdateOverlayInsetForPivotBar();
+}
+%end
+
+%hook YTAppViewControllerImpl
 - (void)hidePivotBar {
     %orig;
     sbUpdateOverlayInsetForPivotBar();

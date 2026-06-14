@@ -60,6 +60,8 @@
 #import <dlfcn.h>
 #import <SystemConfiguration/SystemConfiguration.h>
 #import <netinet/in.h>
+#import <YouTubeHeader/YTAppViewControllerImpl.h>
+#import <YouTubeHeader/YTAppViewController.h>
 
 // For Settings.x and SponsorBlockSettings.x
 #import <YouTubeHeader/YTDefaultSheetController.h>
@@ -217,6 +219,9 @@
 #define YT_BUNDLE_ID @"com.google.ios.youtube"
 #define YT_NAME @"YouTube"
 
+@interface YTMenuItemMDCButton : UIButton
+@end
+
 @interface YTDefaultSheetController (YouMod)
 + (instancetype)sheetControllerWithParentResponder:(id)responder;
 - (void)addAction:(YTActionSheetAction *)action;
@@ -285,7 +290,13 @@ typedef NS_ENUM(NSUInteger, GestureSection) {
 - (YTPivotBarView *)pivotBarView;
 @end
 
-@interface YTAppViewController : UIViewController
+@interface YTAppViewController (YouMod)
+@property (nonatomic, assign, readonly) YTPivotBarViewController *pivotBarViewController;
+- (void)hidePivotBar;
+- (void)showPivotBar;
+@end
+
+@interface YTAppViewControllerImpl (YouMod)
 @property (nonatomic, assign, readonly) YTPivotBarViewController *pivotBarViewController;
 - (void)hidePivotBar;
 - (void)showPivotBar;

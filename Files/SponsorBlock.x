@@ -28,6 +28,7 @@ BOOL useBackwardIconForButton;
 @end
 
 static SBPassthroughWindow *sbOverlayWindow = nil;
+static BOOL isNewAppViewClass = NO;
 
 void sbUpdateOverlayInsetForPivotBar(void) {
     if (!sbOverlayWindow) return;
@@ -39,14 +40,19 @@ void sbUpdateOverlayInsetForPivotBar(void) {
     // different scene, so [delegate window] is not safe here.
     UIWindow *ytWindow = nil;
     for (UIWindow *win in sbOverlayWindow.windowScene.windows) {
-        if ([win.rootViewController isKindOfClass:NSClassFromString(@"YTAppViewController")]) {
+        if ([win.rootViewController isKindOfClass:NSClassFromString(@"YTAppViewController")] || [win.rootViewController isKindOfClass:NSClassFromString(@"YTAppViewControllerImpl")]) {
             ytWindow = win;
+            if ([ytWindow isKindOfClass:NSClassFromString(@"YTAppViewControllerImpl")]) isNewAppViewClass = YES;
             break;
         }
     }
-    YTAppViewController *appVC = (YTAppViewController *)ytWindow.rootViewController;
-    YTPivotBarViewController *pivotVC = appVC ? appVC.pivotBarViewController : nil;
-    YTPivotBarView *pivot = pivotVC ? [pivotVC pivotBarView] : nil;
+    if (isNewAppViewClass) {
+        YTAppViewControllerImpl *appVC = (YTAppViewControllerImpl *)ytWindow.rootViewController;
+    } else {
+        YTAppViewController *appVC = (YTAppViewController *)ytWindow.rootViewController;
+    }
+    YTPivotBarViewController *pivotVC = appVC.pivotBarViewController;
+    YTPivotBarView *pivot = (YTPivotBarView *)pivotVC.viewIfLoaded;
 
     CGFloat tabH = 0.0;
     if (pivot && pivot.window != nil && !pivot.hidden && pivot.alpha > 0.01) {

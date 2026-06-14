@@ -123,29 +123,36 @@ Class YTILikeResponseClass, YTIDislikeResponseClass, YTIRemoveLikeResponseClass;
 }
 %end
 
-/* Will add this soon
-// Remove Download button from the menu
+// Will add this soon - In test
 %hook YTDefaultSheetController
 - (void)addAction:(YTActionSheetAction *)action {
     if (![action.button isKindOfClass:NSClassFromString(@"YTMenuItemMDCButton")]) {
         %orig;
         return;
     }
+    YTMenuItemMDCButton *button = (YTMenuItemMDCButton *)action.button;
+    // NSString *iden = button.accessibilityIdentifier;
+    NSString *imageName = [button.currentImage description];
+
+    /*
+    // Method 1: Filter from accessibilityIdentifier
     NSDictionary *actionsToRemove = @{
         @"7": @(IS_ENABLED(RemoveDownloadOption)),
         @"1": @(IS_ENABLED(RemoveWatchLaterOption)),
         @"3": @(IS_ENABLED(RemoveSaveToPlaylistOption)),
         @"5": @(IS_ENABLED(RemoveShareOption)),
         @"12": @(IS_ENABLED(RemoveNotInterestedOption)),
-        @"31": @(IS_ENABLED(RemoveDontRecommendOption)),
+        @"31": @(IS_ENABLED(RemoveDontRecommendOption)), // Needs more filtering logic
         @"58": @(IS_ENABLED(RemoveReportOption))
     };
-    if (![actionsToRemove[identifier] boolValue]) {
-        %orig;
-    }
+    if ([actionsToRemove[iden] boolValue]) return;
+    */
+    // Method 2: Filter from the imageName
+    // Use with YouTube Music icon
+    if ([imageName containsString:@"youtube_music"] || [imageName containsString:@"flag"] || [imageName containsString:@"alert_bubble"]) return;
+    %orig;
 }
 %end
-*/
 
 // YTSlientVote (https://github.com/PoomSmart/YTSilentVote)
 %group SlientVote
