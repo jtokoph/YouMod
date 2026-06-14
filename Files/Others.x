@@ -165,7 +165,7 @@ Class YTILikeResponseClass, YTIDislikeResponseClass, YTIRemoveLikeResponseClass;
         @"info_circle": @(IS_ENABLED(RemoveInfoOption))
     };
     for (NSString *key in imageNameToRemove) {
-        if ([imageDescription containsString:key]) {
+        if ([imageName containsString:key]) {
             if ([imageNameToRemove[key] boolValue]) {
                 return;
             }
