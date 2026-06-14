@@ -64,7 +64,11 @@ static NSMutableArray <YTIItemSectionRenderer *> *filteredArray(NSArray <YTIItem
                 // Filter shorts
                 if (IS_ENABLED(HideShortsShelf)) {
                     NSString *description = [elementRenderer description];
-                    if ([description containsString:@"shorts_video_cell"]) return YES;
+                    if (IS_ENABLED(KeepShortsSubscript)) {
+                        if ([description containsString:@"shorts_video_cell.eml"] && ![description containsString:@"subscriptions-shorts-shelf-item"]) return YES;
+                    } else {
+                        if ([description containsString:@"shorts_video_cell.eml"]) return YES;
+                    }
                     if ([description containsString:@"shorts_grid_shelf_footer.eml"]) return YES;
                 }
                 return NO;
@@ -78,10 +82,10 @@ static NSMutableArray <YTIItemSectionRenderer *> *filteredArray(NSArray <YTIItem
         NSString *description = [sectionRenderer description];
         
         // Filter shorts shelf
-        BOOL isShortsShelf = [description containsString:@"shorts_shelf.eml"] || [description containsString:@"shorts_video_cell.eml"];
+        BOOL isShortsShelf = [description containsString:@"shorts_shelf.eml"];
         BOOL isHistory = [description containsString:@"history-shorts-shelf-item"];
         if (IS_ENABLED(HideShortsShelf) && IS_ENABLED(KeepShortsSubscript)) {
-            if (isShortsShelf && ![description containsString:@"FEsubscriptions"] && !isHistory) {
+            if (isShortsShelf && ![description containsString:@"subscriptions-shorts-shelf-item"] && !isHistory) {
                 return YES;
             }
         } else if (IS_ENABLED(HideShortsShelf)) {
