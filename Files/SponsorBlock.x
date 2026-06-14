@@ -46,10 +46,11 @@ void sbUpdateOverlayInsetForPivotBar(void) {
             break;
         }
     }
+    id appVC;
     if (isNewAppViewClass) {
-        YTAppViewControllerImpl *appVC = (YTAppViewControllerImpl *)ytWindow.rootViewController;
+        appVC = (YTAppViewControllerImpl *)ytWindow.rootViewController;
     } else {
-        YTAppViewController *appVC = (YTAppViewController *)ytWindow.rootViewController;
+        appVC = (YTAppViewController *)ytWindow.rootViewController;
     }
     YTPivotBarViewController *pivotVC = appVC.pivotBarViewController;
     YTPivotBarView *pivot = (YTPivotBarView *)pivotVC.viewIfLoaded;
