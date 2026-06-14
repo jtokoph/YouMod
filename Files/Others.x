@@ -107,7 +107,7 @@ Class YTILikeResponseClass, YTIDislikeResponseClass, YTIRemoveLikeResponseClass;
 // Remove "Play next in queue" from the menu @PoomSmart (https://github.com/qnblackcat/uYouPlus/issues/1138#issuecomment-1606415080)
 %hook YTMenuItemVisibilityHandler
 - (BOOL)shouldShowServiceItemRenderer:(YTIMenuConditionalServiceItemRenderer *)renderer {
-    if (renderer.icon.iconType == 251 && IS_ENABLED(HidePlayInNextQueue)) {
+    if (renderer.icon.iconType == 251 && IS_ENABLED(RemovePlayInNextQueueOption)) {
         return NO;
     }
     return %orig;
@@ -116,14 +116,14 @@ Class YTILikeResponseClass, YTIDislikeResponseClass, YTIRemoveLikeResponseClass;
 
 %hook YTMenuItemVisibilityHandlerImpl
 - (BOOL)shouldShowServiceItemRenderer:(YTIMenuConditionalServiceItemRenderer *)renderer {
-    if (renderer.icon.iconType == 251 && IS_ENABLED(HidePlayInNextQueue)) {
+    if (renderer.icon.iconType == 251 && IS_ENABLED(RemovePlayInNextQueueOption)) {
         return NO;
     }
     return %orig;
 }
 %end
 
-// Will add this soon - In test
+// Remove flyout menu options
 %hook YTDefaultSheetController
 - (void)addAction:(YTActionSheetAction *)action {
     if (![action.button isKindOfClass:NSClassFromString(@"YTMenuItemMDCButton")]) {
@@ -131,25 +131,47 @@ Class YTILikeResponseClass, YTIDislikeResponseClass, YTIRemoveLikeResponseClass;
         return;
     }
     YTMenuItemMDCButton *button = (YTMenuItemMDCButton *)action.button;
-    // NSString *iden = button.accessibilityIdentifier;
+    NSString *iden = button.accessibilityIdentifier;
     NSString *imageName = [button.currentImage description];
 
-    /*
     // Method 1: Filter from accessibilityIdentifier
     NSDictionary *actionsToRemove = @{
         @"7": @(IS_ENABLED(RemoveDownloadOption)),
         @"1": @(IS_ENABLED(RemoveWatchLaterOption)),
-        @"3": @(IS_ENABLED(RemoveSaveToPlaylistOption)),
+        @"3": @(IS_ENABLED(RemoveSaveOption)),
+        @"4": @(IS_ENABLED(RemoveRemoveFromPlaylistOption)),
         @"5": @(IS_ENABLED(RemoveShareOption)),
+        @"6": @(IS_ENABLED(RemoveShareOption)),
         @"12": @(IS_ENABLED(RemoveNotInterestedOption)),
-        @"31": @(IS_ENABLED(RemoveDontRecommendOption)), // Needs more filtering logic
+        @"22": @(IS_ENABLED(RemoveInfoOption)),
+        @"36": @(IS_ENABLED(RemoveFilterOption)),
         @"58": @(IS_ENABLED(RemoveReportOption))
     };
     if ([actionsToRemove[iden] boolValue]) return;
-    */
-    // Method 2: Filter from the imageName
-    // Use with YouTube Music icon
-    if ([imageName containsString:@"youtube_music"] || [imageName containsString:@"flag"] || [imageName containsString:@"alert_bubble"]) return;
+
+    // Method 2: Filter from imageName
+    NSDictionary *imageNameToRemove = @{
+        @"youtube_music": @(IS_ENABLED(RemoveYouTubeMusicOption)),
+        @"flag": @(IS_ENABLED(RemoveReportOption)),
+        @"alert_bubble": @(IS_ENABLED(RemoveFeedBackOption)),
+        @"bookmark": @(IS_ENABLED(RemoveSaveOption)),
+        @"circle_slash": @(IS_ENABLED(RemoveNotInterestedOption)),
+        @"x_circle": @(IS_ENABLED(RemoveDontRecommendOption)),
+        @"chromecast": @(IS_ENABLED(RemoveCastOption)),
+        @"shuffle": @(IS_ENABLED(RemoveShuffleOption)),
+        @"person_x": @(IS_ENABLED(RemoveUnSubOption)),
+        @"help_circle": @(IS_ENABLED(RemoveHelpOption)),
+        @"eye_slash": @(IS_ENABLED(RemoveHideFromPlaylistOption)),
+        @"info_circle": @(IS_ENABLED(RemoveInfoOption))
+    };
+    for (NSString *key in imageNameToRemove) {
+        if ([imageDescription containsString:key]) {
+            if ([imageNameToRemove[key] boolValue]) {
+                return;
+            }
+            break;
+        }
+    }
     %orig;
 }
 %end

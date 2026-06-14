@@ -691,6 +691,17 @@ static const void *kYMTabSnapshotKey = &kYMTabSnapshotKey;
     [self loadTabData];
     [self takeSnapshot];
 
+    // Configure navigation bar appearance with solid color
+    UINavigationBarAppearance *appearance = [[UINavigationBarAppearance alloc] init];
+    [appearance configureWithDefaultBackground];
+    if (self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+        appearance.backgroundColor = [%c(YTColor) black3];
+    } else {
+        appearance.backgroundColor = [UIColor systemBackgroundColor];
+    }
+    self.navigationController.navigationBar.standardAppearance = appearance;
+    self.navigationController.navigationBar.scrollEdgeAppearance = appearance;
+
     self.tableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStyleGrouped];
     self.tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.tableView.delegate = self;
@@ -715,6 +726,18 @@ static const void *kYMTabSnapshotKey = &kYMTabSnapshotKey;
         self.tableView.backgroundColor = (self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark)
             ? [%c(YTColor) black3]
             : [UIColor systemBackgroundColor];
+        
+        // Update navigation bar appearance for dark/light mode
+        UINavigationBarAppearance *appearance = [[UINavigationBarAppearance alloc] init];
+        [appearance configureWithDefaultBackground];
+        if (self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+            appearance.backgroundColor = [%c(YTColor) black3];
+        } else {
+            appearance.backgroundColor = [UIColor systemBackgroundColor];
+        }
+        self.navigationController.navigationBar.standardAppearance = appearance;
+        self.navigationController.navigationBar.scrollEdgeAppearance = appearance;
+
         [self.tableView reloadData];
     }
 }
