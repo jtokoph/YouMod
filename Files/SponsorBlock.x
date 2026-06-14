@@ -52,7 +52,7 @@ void sbUpdateOverlayInsetForPivotBar(void) {
     } else {
         appVC = (YTAppViewController *)ytWindow.rootViewController;
     }
-    YTPivotBarViewController *pivotVC = appVC.pivotBarViewController;
+    YTPivotBarViewController *pivotVC = (YTPivotBarViewController *)appVC.pivotBarViewController;
     YTPivotBarView *pivot = (YTPivotBarView *)pivotVC.viewIfLoaded;
 
     CGFloat tabH = 0.0;
