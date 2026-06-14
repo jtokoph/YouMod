@@ -65,6 +65,7 @@ static NSMutableArray <YTIItemSectionRenderer *> *filteredArray(NSArray <YTIItem
                 if (IS_ENABLED(HideShortsShelf)) {
                     NSString *description = [elementRenderer description];
                     if ([description containsString:@"shorts_video_cell"]) return YES;
+                    if ([description containsString:@"shorts_grid_shelf_footer.eml"]) return YES;
                 }
                 return NO;
             }];
