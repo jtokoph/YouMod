@@ -114,7 +114,7 @@ static NSMutableArray <YTIItemSectionRenderer *> *filteredArray(NSArray <YTIItem
                 YTIElementRenderer *elementRenderer = sectionSupportedRenderers.elementRenderer;
                 if (isAdRenderer(elementRenderer, 3)) return YES;
                 // Try YouTube Premium in You tab
-                if ([[elementRenderer description] containString:@"SPunlimited"]) return YES;
+                if ([[elementRenderer description] containsString:@"SPunlimited"]) return YES;
                 return NO;
             }];
             [contentsArray removeObjectsAtIndexes:removeContentsArrayIndexes];
