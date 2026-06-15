@@ -112,9 +112,7 @@ static NSMutableArray <YTIItemSectionRenderer *> *filteredArray(NSArray <YTIItem
         if (contentsArray.count > 1) {
             NSIndexSet *removeContentsArrayIndexes = [contentsArray indexesOfObjectsPassingTest:^BOOL(YTIItemSectionSupportedRenderers *sectionSupportedRenderers, NSUInteger idx2, BOOL *stop2) {
                 YTIElementRenderer *elementRenderer = sectionSupportedRenderers.elementRenderer;
-                if (isAdRenderer(elementRenderer, 3)) return YES;
-                if ([[elementRenderer description] containString:@"SPunlimited"]) return YES;
-                return NO;
+                return isAdRenderer(elementRenderer, 3);
             }];
             [contentsArray removeObjectsAtIndexes:removeContentsArrayIndexes];
         }
