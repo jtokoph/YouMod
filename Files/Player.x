@@ -121,6 +121,150 @@ static void YouModAddEndTime(YTPlayerViewController *self, YTSingleVideoControll
     }
 }
 
+#import <UIKit/UIKit.h>
+
+// ประกาศคลาสเพื่อให้ Compiler รู้จัก
+@interface YTInlinePlayerBarContainerView : UIView
+@end
+
+@interface YTInlineScrubGestureView : UIView
+@end
+
+@interface YTMainAppVideoPlayerOverlayViewController : UIViewController
+- (double)totalDuration;
+- (void)scrubToTime:(double)time;
+@end
+
+
+%hook YTInlinePlayerBarContainerView
+
+- (void)layoutSubviews {
+    %orig; // ปล่อยให้แอปจัดหน้าตาตามปกติก่อน
+    
+    // เช็กค่า Preference สวิตช์เปิด/ปิด Tap to seek ของคุณก่อน
+    // if (!BOOLFORVAL(TapToSeekEnabled)) return;
+
+    // วนลูปหาเจ้าตัวแสบ YTInlineScrubGestureView ที่ซ่อนอยู่ใน subviews
+    for (UIView *subview in self.subviews) {
+        if ([subview isKindOfClass:%c(YTInlineScrubGestureView)]) {
+            
+            // ป้องกันไม่ให้แอปแอด Gesture ซ้ำซ้อนเวลา layoutSubviews ถูกเรียกถี่ๆ
+            BOOL hasCustomTap = NO;
+            for (UIGestureRecognizer *gesture in subview.gestureRecognizers) {
+                if ([gesture isKindOfClass:[UITapGestureRecognizer class]] && 
+                    [gesture.name isEqualToString:@"YouModTapToSeek"]) {
+                    hasCustomTap = YES;
+                    break;
+                }
+            }
+            
+            // ถ้ายังไม่มีของเรา ค่อยแอดเข้าไป
+            if (!hasCustomTap) {
+                UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleYouModScrubTap:)];
+                tap.name = @"YouModTapToSeek"; // ตั้งชื่อระบุตัวตนไว้ตรวจสอบซ้ำ
+                [subview addGestureRecognizer:tap];
+            }
+            break; // เจอแล้วออกลูปได้เลย
+        }
+    }
+}
+
+// เมธอดจัดการเมื่อเกิดการแตะบนจุด Scrubber
+%new
+- (void)handleYouModScrubTap:(UITapGestureRecognizer *)gesture {
+    if (gesture.state == UIGestureRecognizerStateEnded) {
+        // หาพิกัด X จากวิวที่โดนกด (ก็คือตัว YTInlineScrubGestureView)
+        CGPoint touchPoint = [gesture locationInView:gesture.view];
+        CGFloat width = gesture.view.bounds.size.width;
+        
+        if (width > 0) {
+            CGFloat percentage = touchPoint.x / width;
+            if (percentage < 0.0) percentage = 0.0;
+            if (percentage > 1.0) percentage = 1.0;
+            
+            // หาตำแหน่ง View Controller ปลายทางเพื่อสั่งการเลื่อนเวลา
+            UIResponder *responder = self.nextResponder;
+            while (responder && ![responder isKindOfClass:%c(YTMainAppVideoPlayerOverlayViewController)]) {
+                responder = responder.nextResponder;
+            }
+            
+            if (responder) {
+                YTMainAppVideoPlayerOverlayViewController *controller = (YTMainAppVideoPlayerOverlayViewController *)responder;
+                
+                if ([controller respondsToSelector:@selector(totalTime)] && 
+                    [controller respondsToSelector:@selector(scrubToTime:)]) {
+                    
+                    double totalDuration = [controller #import <UIKit/UIKit.h>
+
+// ประกาศคลาสเพื่อให้ Compiler รู้จัก
+@interface YTInlineScrubGestureView : UIView
+@end
+
+%hook YTInlinePlayerBarContainerView
+
+- (void)layoutSubviews {
+    %orig; // ปล่อยให้แอปจัดหน้าตาตามปกติก่อน
+    
+    // เช็กค่า Preference สวิตช์เปิด/ปิด Tap to seek ของคุณก่อน
+    // if (!BOOLFORVAL(TapToSeekEnabled)) return;
+
+    // วนลูปหาเจ้าตัวแสบ YTInlineScrubGestureView ที่ซ่อนอยู่ใน subviews
+    for (UIView *subview in self.subviews) {
+        if ([subview isKindOfClass:%c(YTInlineScrubGestureView)]) {
+            
+            // ป้องกันไม่ให้แอปแอด Gesture ซ้ำซ้อนเวลา layoutSubviews ถูกเรียกถี่ๆ
+            BOOL hasCustomTap = NO;
+            for (UIGestureRecognizer *gesture in subview.gestureRecognizers) {
+                if ([gesture isKindOfClass:[UITapGestureRecognizer class]] && 
+                    [gesture.name isEqualToString:@"YouModTapToSeek"]) {
+                    hasCustomTap = YES;
+                    break;
+                }
+            }
+            
+            // ถ้ายังไม่มีของเรา ค่อยแอดเข้าไป
+            if (!hasCustomTap) {
+                UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleYouModScrubTap:)];
+                tap.name = @"YouModTapToSeek"; // ตั้งชื่อระบุตัวตนไว้ตรวจสอบซ้ำ
+                [subview addGestureRecognizer:tap];
+            }
+            break; // เจอแล้วออกลูปได้เลย
+        }
+    }
+}
+
+// เมธอดจัดการเมื่อเกิดการแตะบนจุด Scrubber
+%new
+- (void)handleYouModScrubTap:(UITapGestureRecognizer *)gesture {
+    if (gesture.state == UIGestureRecognizerStateEnded) {
+        // หาพิกัด X จากวิวที่โดนกด (ก็คือตัว YTInlineScrubGestureView)
+        CGPoint touchPoint = [gesture locationInView:gesture.view];
+        CGFloat width = gesture.view.bounds.size.width;
+        
+        if (width > 0) {
+            CGFloat percentage = touchPoint.x / width;
+            if (percentage < 0.0) percentage = 0.0;
+            if (percentage > 1.0) percentage = 1.0;
+            
+            // หาตำแหน่ง View Controller ปลายทางเพื่อสั่งการเลื่อนเวลา
+            UIResponder *responder = self.nextResponder;
+            while (responder && ![responder isKindOfClass:%c(YTMainAppVideoPlayerOverlayViewController)]) {
+                responder = responder.nextResponder;
+            }
+            
+            if (responder) {
+                YTMainAppVideoPlayerOverlayViewController *controller = (YTMainAppVideoPlayerOverlayViewController *)responder;
+                YTPlayerViewController *controller2 = controller.parentViewController;
+                CGFloat totalDuration = [controller2 currentVideoTotalMediaTime];
+                CGFloat targetTime = totalDuration * percentage;    
+                [controller2 seekToTime:targetTime];
+            }
+        }
+    }
+}
+
+%end
+
 %hook YTMainAppControlsOverlayView
 // Hide autoplay Switch
 - (void)setAutoplaySwitchButtonRenderer:(id)arg1 { if (!IS_ENABLED(HideAutoPlayToggle)) %orig; }
