@@ -295,10 +295,9 @@ static void YouModAddEndTime(YTPlayerViewController *self, YTSingleVideoControll
 }
 %end
 
-%hook YTModularPlayerBarController
-- (void)setView:(id)arg { 
-    %orig;
-    if (IS_ENABLED(DontSnapToChapter)) [self setEnableSnapToChapter:NO]; 
+%hook YTInlinePlayerBarContainerView
+- (void)inlinePlayerBarView:(id)arg1 didScrubToChapteredTime:(CGFloat)arg2 shouldSnap:(BOOL)arg3 { 
+    IS_ENABLED(DontSnapToChapter) ? %orig(arg1, arg2, NO) : %orig;
 }
 %end
 
