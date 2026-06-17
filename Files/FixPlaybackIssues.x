@@ -1,12 +1,18 @@
 #import "Headers.h"
 
+static BOOL isReloaded = NO;
+
 %hook YTPlayerViewController
 - (int)state {
     int value = %orig;
     if (value == 7) {
-        __weak typeof(self) weakSelf = self;
-        YTWatchController *watchController = [weakSelf valueForKey:@"_UIDelegate"];
-        [watchController reload];
+        if (!isReloaded) {
+            YTWatchController *watchController = [self valueForKey:@"_UIDelegate"];
+            [watchController reload];
+            isReloaded = YES;
+        }
+    } else {
+        isReloaded = NO;
     }
     return %orig;
 }
