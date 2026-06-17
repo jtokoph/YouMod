@@ -121,7 +121,11 @@ static void YouModAddEndTime(YTPlayerViewController *self, YTSingleVideoControll
     }
 }
 
-%hook YTModularPlayerBarView
+// ประกาศคลาสเพื่อให้ Compiler รู้จัก
+@interface YTInlineScrubGestureView : UIView
+@end
+
+%hook YTInlinePlayerBarContainerView
 
 - (void)layoutSubviews {
     %orig; // ปล่อยให้แอปจัดหน้าตาตามปกติก่อน
@@ -129,9 +133,9 @@ static void YouModAddEndTime(YTPlayerViewController *self, YTSingleVideoControll
     // เช็กค่า Preference สวิตช์เปิด/ปิด Tap to seek ของคุณก่อน
     // if (!BOOLFORVAL(TapToSeekEnabled)) return;
 
-    // วนลูปหาเจ้าตัวแสบ YTPlayerBarProgressDecorationView ที่ซ่อนอยู่ใน subviews
+    // วนลูปหาเจ้าตัวแสบ YTInlineScrubGestureView ที่ซ่อนอยู่ใน subviews
     for (UIView *subview in self.subviews) {
-        if ([subview isKindOfClass:%c(YTPlayerBarProgressDecorationView)]) {
+        if ([subview isKindOfClass:%c(YTInlineScrubGestureView)]) {
             
             // ป้องกันไม่ให้แอปแอด Gesture ซ้ำซ้อนเวลา layoutSubviews ถูกเรียกถี่ๆ
             BOOL hasCustomTap = NO;
@@ -154,16 +158,68 @@ static void YouModAddEndTime(YTPlayerViewController *self, YTSingleVideoControll
     }
 }
 
+%new
+- (void)handleYouModScrubTap:(UITapGestureRecognizer *)gesture {
+    if (gesture.state == UIGestureRecognizerStateEnded) {
+        
+        
+            
+            // 5. หา View Controller และส่งคำสั่งข้ามเวลา
+            UIResponder *responder = self.nextResponder;
+            while (responder && ![responder isKindOfClass:%c(YTMainAppVideoPlayerOverlayViewController)]) {
+                responder = responder.nextResponder;
+            }
+            
+            if (responder) {
+                YTMainAppVideoPlayerOverlayViewController *controller = (YTMainAppVideoPlayerOverlayViewController *)responder;
+                
+                if ([controller respondsToSelector:@selector(totalDuration)] && 
+                    [controller respondsToSelector:@selector(scrubToTime:)]) {
+                    
+                    double totalDuration = [controller totalDuration];
+                    double targetTime = totalDuration * percentage;
+                    
+                    // ป้องกันความคลาดเคลื่อนช่วงเสี้ยววินาทีสุดท้าย
+                    if (targetTime < 0.3) targetTime = 0.0;
+                    if (targetTime > totalDuration) targetTime = totalDuration;
+                    
+                    [controller scrubToTime:targetTime];
+                }
+            }
+        }
+    }
+}
+
+
 // เมธอดจัดการเมื่อเกิดการแตะบนจุด Scrubber
 %new
 - (void)handleYouModScrubTap:(UITapGestureRecognizer *)gesture {
     if (gesture.state == UIGestureRecognizerStateEnded) {
-        // หาพิกัด X จากวิวที่โดนกด (ก็คือตัว YTInlineScrubGestureView)
+        // 1. ดึงพิกัดนิ้วจากตัววิวเดิม (Bounds)
         CGPoint touchPoint = [gesture locationInView:gesture.view];
-        CGFloat width = gesture.view.bounds.size.width;
+        CGFloat totalBoundsWidth = gesture.view.bounds.size.width;
         
-        if (width > 0) {
-            CGFloat percentage = touchPoint.x / width;
+        // 2. ดึงค่าพิกัด X จากเฟรมของวิวตัวมันเองมาดูสดๆ (เช่น ถ้าเต็มจอได้ -30, ถ้าแนวตั้งได้ 0)
+        CGFloat currentFrameX = gesture.view.frame.origin.x;
+        
+        CGFloat leftOffset = 0.0;
+        
+        if (currentFrameX < 0) {
+            // ถ้า X ติดลบ (เช่น -30) ให้ใช้ระยะเยื้องสัมบูรณ์เป็น 30 เพื่อชดเชยส่วนที่ยื่นนอกจอ
+            leftOffset = fabsf(currentFrameX);
+        }
+        
+        // 3. คำนวณหาความกว้างที่แท้จริงของแถบวิ่งที่ตาเราเห็น
+        CGFloat visibleWidth = totalBoundsWidth - leftOffset;
+        
+        if (visibleWidth > 0) {
+            // 4. หักลบพิกัดนิ้วด้วยระยะเยื้องที่คำนวณได้
+            CGFloat relativeX = touchPoint.x - leftOffset;
+            
+            // แปลงเป็นเปอร์เซ็นต์
+            CGFloat percentage = relativeX / visibleWidth;
+            
+            // 🔒 บังคับล็อกขอบเขต (Clamp) ป้องกันค่าติดลบหรือเกิน 1.0
             if (percentage < 0.0) percentage = 0.0;
             if (percentage > 1.0) percentage = 1.0;
             
