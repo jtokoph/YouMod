@@ -181,7 +181,23 @@ static void YouModAddEndTime(YTPlayerViewController *self, YTSingleVideoControll
         }
         
         // 2. ดึงพิกัดนิ้วที่กดสัมผัสเทียบกับหน้าจอหลัก (Window)
-        UIWindow *keyWindow = [UIApplication sharedApplication].keyWindow;
+        // ดึงหน้าต่างหลักแบบปลอดภัยสำหรับแอปยุคใหม่ (iOS 13+ และ Multiple Scenes Support)
+        UIWindow *keyWindow = nil;
+        if (@available(iOS 13.0, *)) {
+            for (UIWindowScene *scene in [UIApplication sharedApplication].connectedScenes) {
+                if (scene.activationState == UISceneActivationStateForegroundActive) {
+                    for (UIWindow *window in scene.windows) {
+                        if (window.isKeyWindow) {
+                            keyWindow = window;
+                            break;
+                        }
+                    }
+                }
+                if (keyWindow) break;
+            }
+        }
+
+
         CGPoint touchPointInWindow = [gesture locationInView:keyWindow];
         
         // 3. เริ่มลอจิกคำนวณพิกัดแบบไดนามิก
