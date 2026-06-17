@@ -158,39 +158,6 @@ static void YouModAddEndTime(YTPlayerViewController *self, YTSingleVideoControll
     }
 }
 
-%new
-- (void)handleYouModScrubTap:(UITapGestureRecognizer *)gesture {
-    if (gesture.state == UIGestureRecognizerStateEnded) {
-        
-        
-            
-            // 5. หา View Controller และส่งคำสั่งข้ามเวลา
-            UIResponder *responder = self.nextResponder;
-            while (responder && ![responder isKindOfClass:%c(YTMainAppVideoPlayerOverlayViewController)]) {
-                responder = responder.nextResponder;
-            }
-            
-            if (responder) {
-                YTMainAppVideoPlayerOverlayViewController *controller = (YTMainAppVideoPlayerOverlayViewController *)responder;
-                
-                if ([controller respondsToSelector:@selector(totalDuration)] && 
-                    [controller respondsToSelector:@selector(scrubToTime:)]) {
-                    
-                    double totalDuration = [controller totalDuration];
-                    double targetTime = totalDuration * percentage;
-                    
-                    // ป้องกันความคลาดเคลื่อนช่วงเสี้ยววินาทีสุดท้าย
-                    if (targetTime < 0.3) targetTime = 0.0;
-                    if (targetTime > totalDuration) targetTime = totalDuration;
-                    
-                    [controller scrubToTime:targetTime];
-                }
-            }
-        }
-    }
-}
-
-
 // เมธอดจัดการเมื่อเกิดการแตะบนจุด Scrubber
 %new
 - (void)handleYouModScrubTap:(UITapGestureRecognizer *)gesture {
