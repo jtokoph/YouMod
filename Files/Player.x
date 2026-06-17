@@ -173,7 +173,7 @@ static void YouModAddEndTime(YTPlayerViewController *self, YTSingleVideoControll
         
         if (currentFrameX < 0) {
             // ถ้า X ติดลบ (เช่น -30) ให้ใช้ระยะเยื้องสัมบูรณ์เป็น 30 เพื่อชดเชยส่วนที่ยื่นนอกจอ
-            leftOffset = fabsf(currentFrameX);
+            leftOffset = fabs(currentFrameX);
         }
         
         // 3. คำนวณหาความกว้างที่แท้จริงของแถบวิ่งที่ตาเราเห็น
