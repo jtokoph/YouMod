@@ -4,10 +4,9 @@
 - (int)state {
     int value = %orig;
     if (value == 7) {
-        YTWatchController *watchController = [self valueForKey:@"_UIDelegate"];
-        CGFloat oldTime = [self currentVideoMediaTime];
+        __weak typeof(self) weakSelf = self;
+        YTWatchController *watchController = [weakSelf valueForKey:@"_UIDelegate"];
         [watchController reload];
-        [self seekToTime:oldTime];
     }
     return %orig;
 }
