@@ -256,6 +256,10 @@ typedef NS_ENUM(NSUInteger, GestureSection) {
 @interface ASScrollView : UIScrollView
 @end
 
+@interface YTWatchController (YouMod)
+- (void)reload;
+@end
+
 @interface YTIBrowseRequest (YouMod)
 + (NSString *)browseIDForGamingDestination;
 + (NSString *)browseIDForSportsDestination;
