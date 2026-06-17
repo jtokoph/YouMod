@@ -162,35 +162,47 @@ static void YouModAddEndTime(YTPlayerViewController *self, YTSingleVideoControll
 %new
 - (void)handleYouModScrubTap:(UITapGestureRecognizer *)gesture {
     if (gesture.state == UIGestureRecognizerStateEnded) {
-        UIView *gestureView = gesture.view; // คลาส YTInlineScrubGestureView
+        UIView *gestureView = gesture.view; // คลาส YTInlineScrubGestureView (ตัวแม่)
+        UIView *progressBar;
+        UIView *playerBar;
         
-        // 1. ดึงพิกัดนิ้วที่จิ้มจากหน้าจอหลัก (Window) ตรงๆ เพื่อความแม่นยำ
-        UIWindow *keyWindow = [UIApplication sharedApplication].keyWindow;
-        CGPoint touchPoint = [gesture locationInView:keyWindow];
-        CGFloat screenWidth = keyWindow.bounds.size.width;
-        
-        // 2. ตั้งค่าตัวแปรเริ่มต้นสำหรับพิกัดขอบ
-        CGFloat leftPadding = 0.0;
-        CGFloat rightPadding = 0.0;
-        
-        // 🔍 [จุดเช็ก]: ดึงค่า X จริงของเฟรม ณ ตอนนั้นมาตรวจสอบว่าติดลบไหม
-        CGFloat currentFrameX = gestureView.frame.origin.x;
-        
-        if (currentFrameX < 0) {
-            // 🔹 เคสที่ 1: ถ้า X ติดลบ (เช่น -30 ตอนเต็มจอ) ให้ใช้ค่าสัมบูรณ์มาทำ Offset ซ้ายขวาตามที่คำนวณจาก FLEX
-            leftPadding = 30.0; // แปลง -30.0 เป็น 30.0
-            rightPadding = 66.0;               // ระยะห่างขอบขวาจากสถิติใน FLEX
+        for (UIView *subview in self.subviews) {
+            if ([subview isKindOfClass:%c(YTModularPlayerBarView)]) {
+                playerBar = subview;
+                break;
+            }
+        }
+
+        for (UIView *subview in playerBar.subviews) {
+            if ([subview isKindOfClass:%c(YTPlayerBarProgressDecorationView)]) {
+                progressBar = subview;
+                break;
+            }
         }
         
-        // 3. คำนวณหาความกว้างของเส้นบาร์หลังจากหักลบ Padding แล้ว
-        CGFloat progressBarWidth = screenWidth - leftPadding - rightPadding;
+        // 2. ดึงพิกัดนิ้วที่กดสัมผัสเทียบกับหน้าจอหลัก (Window)
+        UIWindow *keyWindow = [UIApplication sharedApplication].keyWindow;
+        CGPoint touchPointInWindow = [gesture locationInView:keyWindow];
         
-        if (progressBarWidth > 0) {
-            // หักลบพิกัดนิ้วด้วยระยะเริ่ม เพื่อล็อกให้ขอบซ้ายที่ตาเห็นคือ 0
-            CGFloat relativeX = touchPoint.x - leftPadding;
+        // 3. เริ่มลอจิกคำนวณพิกัดแบบไดนามิก
+        CGFloat barStartX = 0.0;
+        CGFloat barWidth = gestureView.bounds.size.width;
+        
+        if (progressBar) {
+            // 🔥 มหาเทพแห่งความแม่นยำ: แปลงพิกัดของเส้นสีแดงจริงๆ ออกมาเทียบกับหน้าจอหลัก Window
+            // ไม่ว่าเส้นสีแดงจะอยู่โหมดไหน เต็มจอ (ห่างขอบ 30) หรือแนวตั้ง (ห่างขอบเท่าไหร่ก็ช่าง)
+            // คำสั่งนี้จะดึงพิกัดพิกเซลจริงบนจอของเส้นสีแดงออกมาให้เลย
+            CGRect barFrameInWindow = [progressBar convertRect:progressBar.bounds toView:keyWindow];
             
-            // แปลงสัดส่วนเป็นเปอร์เซ็นต์ (0.0 ถึง 1.0)
-            CGFloat percentage = relativeX / progressBarWidth;
+            barStartX = barFrameInWindow.origin.x; // พิกัดขอบซ้ายสุดของเส้นแดงบนจอจริง
+            barWidth = barFrameInWindow.size.width;  // ความกว้างของเส้นแดงจริงๆ (อย่างตอนเต็มจอก็คือ 1144)
+        }
+        
+        // 4. คำนวณเปอร์เซ็นต์เวลาจากพิกัดจริง
+        if (barWidth > 0) {
+            // เอาจุดที่นิ้วกด ลบด้วย พิกัดเริ่มต้นของเส้นแดง
+            CGFloat relativeX = touchPointInWindow.x - barStartX;
+            CGFloat percentage = relativeX / barWidth;
             
             // 🔒 บังคับล็อกขอบเขต (Clamp) ป้องกันค่าติดลบหรือเกิน 1.0
             if (percentage < 0.0) percentage = 0.0;
