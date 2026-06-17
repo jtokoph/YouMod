@@ -158,33 +158,111 @@ static void YouModAddEndTime(YTPlayerViewController *self, YTSingleVideoControll
     }
 }
 
+%new
+- (void)handleYouModScrubTap:(UITapGestureRecognizer *)gesture {
+    if (gesture.state == UIGestureRecognizerStateEnded) {
+        
+        UIView *gestureView = gesture.view; // คลาส YTInlineScrubGestureView
+        
+        // 1. ดึงพิกัดนิ้วที่จิ้มจากหน้าจอหลัก (Window) ตรงๆ เพื่อความแม่นยำ
+        UIWindow *keyWindow = [UIApplication sharedApplication].keyWindow;
+        CGPoint touchPoint = [gesture locationInView:keyWindow];
+        CGFloat screenWidth = keyWindow.bounds.size.width;
+        
+        // 2. ตั้งค่าตัวแปรเริ่มต้นสำหรับพิกัดขอบ
+        CGFloat leftPadding = 0.0;
+        CGFloat rightPadding = 0.0;
+        
+        // 🔍 [จุดเช็ก]: ดึงค่า X จริงของเฟรม ณ ตอนนั้นมาตรวจสอบว่าติดลบไหม
+        CGFloat currentFrameX = gestureView.frame.origin.x;
+        
+        if (currentFrameX < 0) {
+            // 🔹 เคสที่ 1: ถ้า X ติดลบ (เช่น -30 ตอนเต็มจอ) ให้ใช้ค่าสัมบูรณ์มาทำ Offset ซ้ายขวาตามที่คำนวณจาก FLEX
+            leftPadding = fabsf(currentFrameX); // แปลง -30.0 เป็น 30.0
+            rightPadding = 66.0;               // ระยะห่างขอบขวาจากสถิติใน FLEX
+        } else {
+            // 🔹 เคสที่ 2: ถ้า X ไม่ติดลบ (เป็น 0.0 หรือค่าบวกปกติ เช่น ตอนแนวตั้ง หรือโหมดหน้าต่างลอย)
+            // ตัวเส้นวิดีโอแดงมักจะชิดขอบเกือบ 100% หรือมี Padding ด้านในตัวมันเองนิดหน่อย
+            // ให้ตั้งค่าเผื่อระยะเว้นวรรคภายในแถบแดงเดิมของ YouTube ไว้เล็กน้อย (ประมาณ 12 - 15 พิกเซล)
+            leftPadding = 15.0; 
+            rightPadding = 15.0;
+        }
+        
+        // 3. คำนวณหาความกว้างของเส้นบาร์หลังจากหักลบ Padding แล้ว
+        CGFloat progressBarWidth = screenWidth - leftPadding - rightPadding;
+        
+        if (progressBarWidth > 0) {
+            // หักลบพิกัดนิ้วด้วยระยะเริ่ม เพื่อล็อกให้ขอบซ้ายที่ตาเห็นคือ 0
+            CGFloat relativeX = touchPoint.x - leftPadding;
+            
+            // แปลงสัดส่วนเป็นเปอร์เซ็นต์ (0.0 ถึง 1.0)
+            CGFloat percentage = relativeX / progressBarWidth;
+            
+            // 🔒 บังคับล็อกขอบเขต (Clamp) กันหลุด
+            if (percentage < 0.0) percentage = 0.0;
+            if (percentage > 1.0) percentage = 1.0;
+            
+            // 4. วนลูปหา View Controller เพื่อส่งคำสั่งเลื่อนเวลา
+            UIResponder *responder = gestureView.nextResponder;
+            while (responder && ![responder isKindOfClass:%c(YTMainAppVideoPlayerOverlayViewController)]) {
+                responder = responder.nextResponder;
+            }
+            
+            if (responder) {
+                YTMainAppVideoPlayerOverlayViewController *controller = (YTMainAppVideoPlayerOverlayViewController *)responder;
+                
+                if ([controller respondsToSelector:@selector(totalDuration)] && 
+                    [controller respondsToSelector:@selector(scrubToTime:)]) {
+                    
+                    double totalDuration = [controller totalDuration];
+                    double targetTime = totalDuration * percentage;
+                    
+                    // ปรับเศษเสี้ยววินาทีสุดท้ายให้ลงล็อค 0:00 ได้ง่ายขึ้น
+                    if (targetTime < 0.2) targetTime = 0.0;
+                    if (targetTime > totalDuration) targetTime = totalDuration;
+                    
+                    [controller scrubToTime:targetTime];
+                }
+            }
+        }
+    }
+}
+
+
+
 // เมธอดจัดการเมื่อเกิดการแตะบนจุด Scrubber
 %new
 - (void)handleYouModScrubTap:(UITapGestureRecognizer *)gesture {
     if (gesture.state == UIGestureRecognizerStateEnded) {
-        // 1. ดึงพิกัดนิ้วจากตัววิวเดิม (Bounds)
-        CGPoint touchPoint = [gesture locationInView:gesture.view];
-        CGFloat totalBoundsWidth = gesture.view.bounds.size.width;
+        UIView *gestureView = gesture.view; // คลาส YTInlineScrubGestureView
         
-        // 2. ดึงค่าพิกัด X จากเฟรมของวิวตัวมันเองมาดูสดๆ (เช่น ถ้าเต็มจอได้ -30, ถ้าแนวตั้งได้ 0)
-        CGFloat currentFrameX = gesture.view.frame.origin.x;
+        // 1. ดึงพิกัดนิ้วที่จิ้มจากหน้าจอหลัก (Window) ตรงๆ เพื่อความแม่นยำ
+        UIWindow *keyWindow = [UIApplication sharedApplication].keyWindow;
+        CGPoint touchPoint = [gesture locationInView:keyWindow];
+        CGFloat screenWidth = keyWindow.bounds.size.width;
         
-        CGFloat leftOffset = 0.0;
+        // 2. ตั้งค่าตัวแปรเริ่มต้นสำหรับพิกัดขอบ
+        CGFloat leftPadding = 0.0;
+        CGFloat rightPadding = 0.0;
+        
+        // 🔍 [จุดเช็ก]: ดึงค่า X จริงของเฟรม ณ ตอนนั้นมาตรวจสอบว่าติดลบไหม
+        CGFloat currentFrameX = gestureView.frame.origin.x;
         
         if (currentFrameX < 0) {
-            // ถ้า X ติดลบ (เช่น -30) ให้ใช้ระยะเยื้องสัมบูรณ์เป็น 30 เพื่อชดเชยส่วนที่ยื่นนอกจอ
-            leftOffset = fabs(currentFrameX);
+            // 🔹 เคสที่ 1: ถ้า X ติดลบ (เช่น -30 ตอนเต็มจอ) ให้ใช้ค่าสัมบูรณ์มาทำ Offset ซ้ายขวาตามที่คำนวณจาก FLEX
+            leftPadding = 30.0; // แปลง -30.0 เป็น 30.0
+            rightPadding = 66.0;               // ระยะห่างขอบขวาจากสถิติใน FLEX
         }
         
-        // 3. คำนวณหาความกว้างที่แท้จริงของแถบวิ่งที่ตาเราเห็น
-        CGFloat visibleWidth = totalBoundsWidth - leftOffset;
+        // 3. คำนวณหาความกว้างของเส้นบาร์หลังจากหักลบ Padding แล้ว
+        CGFloat progressBarWidth = screenWidth - leftPadding - rightPadding;
         
-        if (visibleWidth > 0) {
-            // 4. หักลบพิกัดนิ้วด้วยระยะเยื้องที่คำนวณได้
-            CGFloat relativeX = touchPoint.x - leftOffset;
+        if (progressBarWidth > 0) {
+            // หักลบพิกัดนิ้วด้วยระยะเริ่ม เพื่อล็อกให้ขอบซ้ายที่ตาเห็นคือ 0
+            CGFloat relativeX = touchPoint.x - leftPadding;
             
-            // แปลงเป็นเปอร์เซ็นต์
-            CGFloat percentage = relativeX / visibleWidth;
+            // แปลงสัดส่วนเป็นเปอร์เซ็นต์ (0.0 ถึง 1.0)
+            CGFloat percentage = relativeX / progressBarWidth;
             
             // 🔒 บังคับล็อกขอบเขต (Clamp) ป้องกันค่าติดลบหรือเกิน 1.0
             if (percentage < 0.0) percentage = 0.0;
