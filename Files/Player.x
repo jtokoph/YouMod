@@ -121,11 +121,7 @@ static void YouModAddEndTime(YTPlayerViewController *self, YTSingleVideoControll
     }
 }
 
-// ประกาศคลาสเพื่อให้ Compiler รู้จัก
-@interface YTInlineScrubGestureView : UIView
-@end
-
-%hook YTInlinePlayerBarContainerView
+%hook YTModularPlayerBarView
 
 - (void)layoutSubviews {
     %orig; // ปล่อยให้แอปจัดหน้าตาตามปกติก่อน
@@ -133,9 +129,9 @@ static void YouModAddEndTime(YTPlayerViewController *self, YTSingleVideoControll
     // เช็กค่า Preference สวิตช์เปิด/ปิด Tap to seek ของคุณก่อน
     // if (!BOOLFORVAL(TapToSeekEnabled)) return;
 
-    // วนลูปหาเจ้าตัวแสบ YTInlineScrubGestureView ที่ซ่อนอยู่ใน subviews
+    // วนลูปหาเจ้าตัวแสบ YTPlayerBarProgressDecorationView ที่ซ่อนอยู่ใน subviews
     for (UIView *subview in self.subviews) {
-        if ([subview isKindOfClass:%c(YTInlineScrubGestureView)]) {
+        if ([subview isKindOfClass:%c(YTPlayerBarProgressDecorationView)]) {
             
             // ป้องกันไม่ให้แอปแอด Gesture ซ้ำซ้อนเวลา layoutSubviews ถูกเรียกถี่ๆ
             BOOL hasCustomTap = NO;
