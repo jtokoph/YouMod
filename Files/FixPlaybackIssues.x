@@ -7,7 +7,7 @@
         YTWatchController *watchController = [self valueForKey:@"_UIDelegate"];
         [watchController reload];
     }
-    return value;
+    return %orig;
 }
 
 %end
