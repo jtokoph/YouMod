@@ -164,17 +164,9 @@ static void YouModAddEndTime(YTPlayerViewController *self, YTSingleVideoControll
     if (gesture.state == UIGestureRecognizerStateEnded) {
         UIView *gestureView = gesture.view; // คลาส YTInlineScrubGestureView (ตัวแม่)
         UIView *progressBar;
-        UIView *playerBar;
         
         for (UIView *subview in self.subviews) {
             if ([subview isKindOfClass:%c(YTModularPlayerBarView)]) {
-                playerBar = subview;
-                break;
-            }
-        }
-
-        for (UIView *subview in playerBar.subviews) {
-            if ([subview isKindOfClass:%c(YTPlayerBarProgressDecorationView)]) {
                 progressBar = subview;
                 break;
             }
