@@ -9,7 +9,7 @@
 %hook YTChipCloudCell
 - (void)didMoveToWindow {
     %orig;
-    if (self.superview && IS_ENABLED(HideSubbar)) [self removeFromSuperview];
+    if (self.superview && IS_ENABLED(HideSubbar)) [self.superview removeFromSuperview];
 }
 %end
 
