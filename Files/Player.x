@@ -27,9 +27,9 @@ BOOL isWiFiConnected(void) {
 
 extern void YouModDownloadSetCurrentPlayer(YTPlayerViewController *player);
 
-static NSString *shortsVidID;
+// static NSString *shortsVidID;
 
-static BOOL isShortsTab;
+// static BOOL isShortsTab;
 
 // Audio track list
 static NSArray *getAllSystemLanguageTitles() {

@@ -1795,8 +1795,6 @@ static void YouModShowDownloadManager(YTPlayerViewController *player, UIViewCont
     YouModPresentMenu(LOC(@"DOWNLOAD_MANAGER"), items, presenter, sender);
 }
 
-static BOOL canInjectDownloadActions = NO;
-
 void YouModConfigureDownloadButton(_ASDisplayView *view) {
     if (!IS_ENABLED(DownloadManager) || IS_ENABLED(HideDownloadButton)) return;
     if (objc_getAssociatedObject(view, @selector(YouModDownloadButtonTapped:))) return;
