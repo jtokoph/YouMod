@@ -1,6 +1,6 @@
 #import "Headers.h"
 
-@interface YTLocalPlaybackController (YouMod)
+@interface YTLocalPlaybackController : NSObject
 - (void)seekToTime:(CGFloat)arg1 toleranceBefore:(CGFloat)arg2 toleranceAfter:(CGFloat)arg3;
 - (void)heartbeatControllerWantsToReloadLiveStream:(id)arg1 endpoint:(id)arg2;
 - (YTSingleVideoTime *)contentVideoCurrentTime;
