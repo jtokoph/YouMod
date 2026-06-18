@@ -550,6 +550,8 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
 }
 %end
 
+/*
+
 %hook YTReelPlayerViewController
 
 - (void)loadPlayerBar {
@@ -579,6 +581,8 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
     }
 }
 %end
+
+*/
 
 %hook YTSingleVideoController
 
