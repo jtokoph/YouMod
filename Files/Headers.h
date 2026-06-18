@@ -242,6 +242,9 @@ typedef NS_ENUM(NSUInteger, GestureSection) {
 - (void)reload;
 @end
 
+@interface YTPivotBarView : UIView
+@end
+
 @interface YTIBrowseRequest (YouMod)
 + (NSString *)browseIDForGamingDestination;
 + (NSString *)browseIDForSportsDestination;
