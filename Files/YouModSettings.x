@@ -187,14 +187,15 @@ static const void *kYMSwitchKeyAssoc = &kYMSwitchKeyAssoc;
     Class ytStyled = objc_getClass("YTStyledViewController");
     struct objc_super superStruct = { self, ytStyled ?: [UIViewController class] };
     ((void (*)(struct objc_super *, SEL))objc_msgSendSuper)(&superStruct, @selector(viewDidLayoutSubviews));
+    YTQTMButton *backButton = [self valueForKey:@"_backButton"];
+    YTQTMButton *titleButton = [self valueForKey:@"_titleButton"];
 
     if (self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
-        @try {
-            id backButton = [self valueForKey:@"_backButton"];
-            if ([backButton respondsToSelector:@selector(setTintColor:)]) {
-                [backButton performSelector:@selector(setTintColor:) withObject:[UIColor whiteColor]];
-            }
-        } @catch (NSException *e) {}
+        [backButton performSelector:@selector(setTintColor:) withObject:[UIColor whiteColor]];
+        [titleButton performSelector:@selector(setTintColor:) withObject:[UIColor whiteColor]];
+    } else {
+        [backButton performSelector:@selector(setTintColor:) withObject:[UIColor blackColor]];
+        [titleButton performSelector:@selector(setTintColor:) withObject:[UIColor blackColor]];
     }
 }
 
@@ -773,14 +774,15 @@ static const void *kYMTabSnapshotKey = &kYMTabSnapshotKey;
     Class ytStyled = objc_getClass("YTStyledViewController");
     struct objc_super superStruct = { self, ytStyled ?: [UIViewController class] };
     ((void (*)(struct objc_super *, SEL))objc_msgSendSuper)(&superStruct, @selector(viewDidLayoutSubviews));
+    YTQTMButton *backButton = [self valueForKey:@"_backButton"];
+    YTQTMButton *titleButton = [self valueForKey:@"_titleButton"];
 
     if (self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
-        @try {
-            id backButton = [self valueForKey:@"_backButton"];
-            if ([backButton respondsToSelector:@selector(setTintColor:)]) {
-                [backButton performSelector:@selector(setTintColor:) withObject:[UIColor whiteColor]];
-            }
-        } @catch (NSException *e) {}
+        [backButton performSelector:@selector(setTintColor:) withObject:[UIColor whiteColor]];
+        [titleButton performSelector:@selector(setTintColor:) withObject:[UIColor whiteColor]];
+    } else {
+        [backButton performSelector:@selector(setTintColor:) withObject:[UIColor blackColor]];
+        [titleButton performSelector:@selector(setTintColor:) withObject:[UIColor blackColor]];
     }
 }
 
