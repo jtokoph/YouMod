@@ -6,7 +6,6 @@
 
 @interface YTSingleVideoController ()
 - (void)play;
-- (YTLocalPlaybackController *)delegate;
 @end
 
 static BOOL isReloaded = NO;
@@ -15,7 +14,7 @@ static BOOL isReloaded = NO;
 
 - (void)stateDidChangeFromState:(NSInteger)arg1 toState:(NSInteger)arg2 playerInitiated:(BOOL)arg3 lastSeekSource:(int)arg4 stoppageReason:(int)arg5 {
     %orig;
-    int actualState = delegate.state;
+    int actualState = (YTLocalPlaybackController *)self.delegate.state;
 
     if (actualState == 7) {
         if (!isReloaded) {
