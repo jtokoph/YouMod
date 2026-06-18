@@ -107,6 +107,10 @@ static NSMutableArray <YTIItemSectionRenderer *> *filteredArray(NSArray <YTIItem
         if (IS_ENABLED(HideFeedPost) && [description containsString:@"poll_post_root.eml"]) {
             return YES;
         }
+
+        if (IS_ENABLED(HideGenMusicShelf) && [description containsString:@"feed_nudge.eml"]) {
+            return YES;
+        }
         
         NSMutableArray <YTIItemSectionSupportedRenderers *> *contentsArray = sectionRenderer.contentsArray;
         if (contentsArray.count > 1) {
