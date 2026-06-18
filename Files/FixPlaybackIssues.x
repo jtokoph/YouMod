@@ -1,21 +1,16 @@
 #import "Headers.h"
 
 @interface YTLocalPlaybackController : NSObject
-- (int)state;
-@end
-
-@interface YTSingleVideoController ()
 - (void)play;
+- (void)singleVideoController:(YTSingleVideoController *)arg1 requiresReloadWithContext:(id)arg2;
 @end
 
 static BOOL isReloaded = NO;
 
-%hook YTSingleVideoController
+%hook YTLocalPlaybackController
 
-- (void)stateDidChangeFromState:(NSInteger)arg1 toState:(NSInteger)arg2 playerInitiated:(BOOL)arg3 lastSeekSource:(int)arg4 stoppageReason:(int)arg5 {
-    %orig;
-    YTLocalPlaybackController *pb = (YTLocalPlaybackController *)self.delegate;
-    int actualState = pb.state;
+- (int)state {
+    int actualState = %orig;
 
     if (actualState == 7) {
         if (!isReloaded) {
@@ -28,7 +23,7 @@ static BOOL isReloaded = NO;
                 if (!weakSelf) return;
                 
                 @try {
-                    [weakSelf reloadPlayerWithContext:nil];
+                    [weakSelf singleVideoController:nil requiresReloadWithContext:nil];
                 } @catch (NSException *exception) {
                     NSLog(@"[YouMod] Failed to safely reload _UIDelegate: %@", exception.reason);
                 }
@@ -40,6 +35,7 @@ static BOOL isReloaded = NO;
         }
         isReloaded = NO;
     }
+    return actualState;
 }
 
 %end
