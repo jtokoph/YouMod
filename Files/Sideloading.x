@@ -30,7 +30,6 @@ static NSString *accessGroupID() {
 - (void)didMoveToWindow {
     %orig;
     YouModConfigureDownloadButton(self);
-    if (IS_ENABLED(HideGenMusicShelf) && [self.accessibilityIdentifier isEqualToString:@"feed_nudge.view"]) self.hidden = YES;
     if (IS_ENABLED(HideFeedPost) && [self.accessibilityIdentifier isEqualToString:@"id.ui.backstage.original_post"]) self.hidden = YES;
     if (IS_ENABLED(HideLikeButton) && [self.accessibilityIdentifier isEqualToString:@"id.video.like.button"]) self.hidden = YES;
     if (IS_ENABLED(HideDisLikeButton) && [self.accessibilityIdentifier isEqualToString:@"id.video.dislike.button"]) self.hidden = YES;
@@ -57,11 +56,6 @@ static NSString *accessGroupID() {
     if (IS_ENABLED(HideSubButton) && [self.accessibilityIdentifier isEqualToString:@"eml.animated_subscribe_button"]) self.hidden = YES;
     if (IS_ENABLED(HideShoppingButton) && [self.accessibilityIdentifier isEqualToString:@"eml.header_store_button"]) self.hidden = YES;
     if (IS_ENABLED(HideMemberButton) && [self.accessibilityIdentifier isEqualToString:@"id.sponsor_button"]) self.hidden = YES;
-}
-
-- (void)layoutSubviews {
-    %orig;
-    YouModConfigureDownloadButton(self);
 }
 
 %end
