@@ -58,7 +58,11 @@ static BOOL isDarkMode(UIView *view) {
 %hook _ASDisplayView
 - (void)didMoveToWindow {
     %orig;
-    if (localPageStyle != 1) return;
+    if (localPageStyle != 1) {
+        if ([self.accessibilityIdentifier isEqualToString:@"id.elements.components.text_field"]) self.superview.backgroundColor = [UIColor clearColor];
+        if ([self.accessibilityIdentifier isEqualToString:@"id.elements.components.comment_composer"]) self.superview.backgroundColor = [UIColor clearColor];
+        return;
+    }
     NSSet *blackViews = [NSSet setWithObjects:
         @"id.elements.components.comment_composer",
         @"eml.cvr",
@@ -76,61 +80,60 @@ static BOOL isDarkMode(UIView *view) {
         }
         responder = responder.nextResponder;
     }
-    /*
-    if ([self.accessibilityIdentifier isEqualToString:@"id.elements.components.filter_chip_bar"]) {
-        self.backgroundColor = [UIColor blackColor];
-        self.superview.backgroundColor = [UIColor blackColor];
-    }
-    if (localPageStyle == 1) {
-        if ([self.accessibilityIdentifier isEqualToString:@"id.elements.components.text_field"]) self.superview.backgroundColor = [UIColor blackColor];
-        if ([self.accessibilityIdentifier isEqualToString:@"id.elements.components.filter_chip_bar"]) {
-            self.backgroundColor = [UIColor blackColor];
-            self.superview.backgroundColor = [UIColor blackColor];
-        }
-        if ([self.accessibilityIdentifier isEqualToString:@"id.elements.components.comment_composer"]) self.backgroundColor = [UIColor blackColor];
-        if ([self.accessibilityIdentifier isEqualToString:@"brand_promo.view"]) self.backgroundColor = [UIColor blackColor];
-        if ([self.accessibilityIdentifier isEqualToString:@"eml.cvr"]) self.backgroundColor = [UIColor blackColor];
-        if ([self.accessibilityIdentifier isEqualToString:@"id.subs.subscriptions_channel_bar"]) self.backgroundColor = [UIColor blackColor];
-        if ([self.accessibilityIdentifier isEqualToString:@"eml.live_chat_text_message"]) self.backgroundColor = [UIColor blackColor];
-        if ([self isKindOfClass:NSClassFromString(@"_ASDisplayView")] && [self isInsideViewControllerOfClass:@"YTActionSheetDialogViewController"]) self.backgroundColor = [UIColor blackColor];
-    } else {
+}
+- (void)layoutSubviews {
+    %orig;
+    if (localPageStyle != 1) {
         if ([self.accessibilityIdentifier isEqualToString:@"id.elements.components.text_field"]) self.superview.backgroundColor = [UIColor clearColor];
-        if ([self.accessibilityIdentifier isEqualToString:@"id.elements.components.filter_chip_bar"]) {
-            self.backgroundColor = [UIColor clearColor];
-            self.superview.backgroundColor = [UIColor clearColor];
-        }
-        if ([self.accessibilityIdentifier isEqualToString:@"id.elements.components.comment_composer"]) self.backgroundColor = [UIColor clearColor];
-        if ([self.accessibilityIdentifier isEqualToString:@"brand_promo.view"]) self.backgroundColor = [UIColor clearColor];
-        if ([self.accessibilityIdentifier isEqualToString:@"eml.cvr"]) self.backgroundColor = [UIColor clearColor];
-        if ([self.accessibilityIdentifier isEqualToString:@"id.subs.subscriptions_channel_bar"]) self.backgroundColor = [UIColor clearColor];
-        if ([self.accessibilityIdentifier isEqualToString:@"eml.live_chat_text_message"]) self.backgroundColor = [UIColor clearColor];
-        if ([self isKindOfClass:NSClassFromString(@"_ASDisplayView")] && [self isInsideViewControllerOfClass:@"YTActionSheetDialogViewController"]) self.backgroundColor = [UIColor clearColor];
+        if ([self.accessibilityIdentifier isEqualToString:@"id.elements.components.comment_composer"]) self.superview.backgroundColor = [UIColor clearColor];
+        return;
     }
-    */
+    NSSet *blackViews = [NSSet setWithObjects:
+        @"id.elements.components.comment_composer",
+        @"eml.cvr",
+        @"id.subs.subscriptions_channel_bar",
+        @"eml.live_chat_text_message", nil
+    ];  
+    if ([blackViews containsObject:self.accessibilityIdentifier]) self.backgroundColor = [UIColor blackColor];       
+    if ([self.accessibilityIdentifier isEqualToString:@"id.elements.components.text_field"]) self.superview.backgroundColor = [UIColor blackColor];
+    // Action dialog
+    UIResponder *responder = self.nextResponder;
+    while (responder != nil) {
+        if ([responder isKindOfClass:%c(YTActionSheetDialogViewController)]) {
+            self.backgroundColor = [UIColor blackColor];
+            break;
+        }
+        responder = responder.nextResponder;
+    }
 }
 %end
 
 %hook ASCollectionView
 - (void)didMoveToWindow {
     %orig;
-    if (localPageStyle != 1) return;
+    if (localPageStyle != 1) {
+        if ([self.accessibilityIdentifier isEqualToString:@"eml.chip_bar_collection"]) self.superview.backgroundColor = [UIColor clearColor];
+        return;
+    }
     NSSet *blackViews = [NSSet setWithObjects:
         @"eml.chip_bar_collection",
         @"subs_channel_bar.collection", nil
     ];  
     if ([blackViews containsObject:self.accessibilityIdentifier]) self.backgroundColor = [UIColor blackColor];
     if ([self.accessibilityIdentifier isEqualToString:@"id.elements.components.more_drawer_collection"]) self.superview.backgroundColor = [UIColor blackColor];
-    /*
-    if (localPageStyle == 1) {
-        if ([self.accessibilityIdentifier isEqualToString:@"id.elements.components.more_drawer_collection"]) self.superview.backgroundColor = [UIColor blackColor];
-        if ([self.accessibilityIdentifier isEqualToString:@"eml.chip_bar_collection"]) self.backgroundColor = [UIColor blackColor];
-        if ([self.accessibilityIdentifier isEqualToString:@"subs_channel_bar.collection"]) self.backgroundColor = [UIColor blackColor];
-    } else {
-        if ([self.accessibilityIdentifier isEqualToString:@"id.elements.components.more_drawer_collection"]) self.superview.backgroundColor = [UIColor whiteColor];
-        if ([self.accessibilityIdentifier isEqualToString:@"eml.chip_bar_collection"]) self.backgroundColor = [UIColor clearColor];
-        if ([self.accessibilityIdentifier isEqualToString:@"subs_channel_bar.collection"]) self.backgroundColor = [UIColor clearColor];
+}
+- (void)layoutSubviews {
+    %orig;
+    if (localPageStyle != 1) {
+        if ([self.accessibilityIdentifier isEqualToString:@"eml.chip_bar_collection"]) self.superview.backgroundColor = [UIColor clearColor];
+        return;
     }
-    */
+    NSSet *blackViews = [NSSet setWithObjects:
+        @"eml.chip_bar_collection",
+        @"subs_channel_bar.collection", nil
+    ];  
+    if ([blackViews containsObject:self.accessibilityIdentifier]) self.backgroundColor = [UIColor blackColor];
+    if ([self.accessibilityIdentifier isEqualToString:@"id.elements.components.more_drawer_collection"]) self.superview.backgroundColor = [UIColor blackColor];
 }
 %end
 
