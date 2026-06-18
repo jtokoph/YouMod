@@ -1,8 +1,7 @@
 #import "Headers.h"
 
 @interface YTLocalPlaybackController : NSObject
-- (void)play;
-- (void)singleVideoController:(YTSingleVideoController *)arg1 requiresReloadWithContext:(id)arg2;
+- (void)heartbeatControllerWantsToReloadLiveStream:(id)arg1 endpoint:(id)arg2;
 @end
 
 static BOOL isReloaded = NO;
@@ -23,16 +22,13 @@ static BOOL isReloaded = NO;
                 if (!weakSelf) return;
                 
                 @try {
-                    [weakSelf singleVideoController:nil requiresReloadWithContext:nil];
+                    [weakSelf heartbeatControllerWantsToReloadLiveStream:nil endpoint:nil];
                 } @catch (NSException *exception) {
                     NSLog(@"[YouMod] Failed to safely reload _UIDelegate: %@", exception.reason);
                 }
             });
         }
     } else {
-        if (isReloaded) {
-            [self play];
-        }
         isReloaded = NO;
     }
     return actualState;
