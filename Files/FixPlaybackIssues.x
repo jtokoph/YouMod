@@ -1,18 +1,23 @@
 #import "Headers.h"
 
+@interface YTLocalPlaybackController : NSObject
+- (int)state;
+@end
+
 @interface YTSingleVideoController ()
 - (void)play;
+- (YTLocalPlaybackController *)delegate;
 @end
 
 static BOOL isReloaded = NO;
 
 %hook YTSingleVideoController
 
-- (int)playerPlaybackState {
-    // 1. เรียกใช้งานคำสั่งดั้งเดิมของ YouTube เพียง "ครั้งเดียว" และเซฟค่าไว้
-    int actualState = %orig;
+- (void)stateDidChangeFromState:(NSInteger)arg1 toState:(NSInteger)arg2 playerInitiated:(BOOL)arg3 lastSeekSource:(int)arg4 stoppageReason:(int)arg5 {
+    %orig;
+    int actualState = delegate.state;
 
-    if (actualState == 6) {
+    if (actualState == 7) {
         if (!isReloaded) {
             isReloaded = YES; // ล็อกสถานะทันทีเพื่อกันเหนียว
             // 2. ใช้ __weak ดักไว้ เผื่อผู้ใช้กดปิดหน้าวิดีโอหนีไปในเสี้ยววินาทีนั้น จะได้ไม่แครช
@@ -35,9 +40,6 @@ static BOOL isReloaded = NO;
         }
         isReloaded = NO;
     }
-    
-    // 4. ส่งค่าที่เราเซฟไว้ตั้งแต่รอบแรกกลับไปให้ YouTube เอาไปประมวลผลต่อตามปกติ
-    return actualState;
 }
 
 %end
