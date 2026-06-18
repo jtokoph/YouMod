@@ -1,6 +1,6 @@
 #import "Headers.h"
 
-@interface YTSingleVideoController (YouMod)
+@interface YTSingleVideoController ()
 - (void)play;
 @end
 
