@@ -140,6 +140,7 @@ static BOOL isDarkMode(UIView *view) {
 %hook YTContextualSheetView
 - (void)layoutSubviews {
     %orig;
+    if (localPageStyle != 1) return;
     for (UIView *subview in self.subviews) {
         if ([subview isKindOfClass:%c(YTContextualWrapView)]) {
             subview.backgroundColor = [UIColor blackColor];
