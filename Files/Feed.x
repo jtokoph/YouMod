@@ -6,11 +6,8 @@
 - (void)setFeedHeaderScrollMode:(int)arg1 { IS_ENABLED(HideSubbar) ? %orig(0) : %orig; }
 %end
 
-%hook YTChipCloudCell
-- (void)didMoveToWindow {
-    %orig;
-    if (self.superview && IS_ENABLED(HideSubbar)) [self.superview removeFromSuperview];
-}
+%hook YTMySubsFilterHeaderView
+- (void)setElementViews:(id)arg { if (!IS_ENABLED(HideSubbar)) %orig; }
 %end
 
 // Hide voice search button
