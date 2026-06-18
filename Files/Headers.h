@@ -245,6 +245,9 @@ typedef NS_ENUM(NSUInteger, GestureSection) {
 @interface YTPivotBarView : UIView
 @end
 
+@interface YTContextualSheetView : UIView
+@end
+
 @interface YTIBrowseRequest (YouMod)
 + (NSString *)browseIDForGamingDestination;
 + (NSString *)browseIDForSportsDestination;

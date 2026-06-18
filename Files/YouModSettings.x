@@ -191,11 +191,11 @@ static const void *kYMSwitchKeyAssoc = &kYMSwitchKeyAssoc;
     YTQTMButton *titleButton = [self valueForKey:@"_titleButton"];
 
     if (self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
-        [backButton performSelector:@selector(setTintColor:) withObject:[UIColor whiteColor]];
-        [titleButton performSelector:@selector(setTintColor:) withObject:[UIColor whiteColor]];
+        backButton.tintColor = [UIColor whiteColor];
+        titleButton.titleLabel.textColor = [UIColor whiteColor];
     } else {
-        [backButton performSelector:@selector(setTintColor:) withObject:[UIColor blackColor]];
-        [titleButton performSelector:@selector(setTintColor:) withObject:[UIColor blackColor]];
+        backButton.tintColor = [UIColor blackColor];
+        titleButton.titleLabel.textColor = [UIColor blackColor];
     }
 }
 
@@ -778,11 +778,11 @@ static const void *kYMTabSnapshotKey = &kYMTabSnapshotKey;
     YTQTMButton *titleButton = [self valueForKey:@"_titleButton"];
 
     if (self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
-        [backButton performSelector:@selector(setTintColor:) withObject:[UIColor whiteColor]];
-        [titleButton performSelector:@selector(setTintColor:) withObject:[UIColor whiteColor]];
+        backButton.tintColor = [UIColor whiteColor];
+        titleButton.titleLabel.textColor = [UIColor whiteColor];
     } else {
-        [backButton performSelector:@selector(setTintColor:) withObject:[UIColor blackColor]];
-        [titleButton performSelector:@selector(setTintColor:) withObject:[UIColor blackColor]];
+        backButton.tintColor = [UIColor blackColor];
+        titleButton.titleLabel.textColor = [UIColor blackColor];
     }
 }
 
