@@ -1,8 +1,6 @@
 // All Codes are adapt from YTLite and uYouEnhanced + Some of my research
 #import "Headers.h"
 
-extern void YouModConfigureDownloadButton(_ASDisplayView *view);
-
 // AccessGroupID
 static NSString *accessGroupID() {
     NSDictionary *query = [NSDictionary dictionaryWithObjectsAndKeys:
@@ -29,7 +27,6 @@ static NSString *accessGroupID() {
 
 - (void)didMoveToWindow {
     %orig;
-    YouModConfigureDownloadButton(self);
     if (IS_ENABLED(HideLikeButton) && [self.accessibilityIdentifier isEqualToString:@"id.video.like.button"]) self.hidden = YES;
     if (IS_ENABLED(HideDisLikeButton) && [self.accessibilityIdentifier isEqualToString:@"id.video.dislike.button"]) self.hidden = YES;
     if (IS_ENABLED(HideShareButton) && [self.accessibilityIdentifier isEqualToString:@"id.video.share.button"]) self.hidden = YES;

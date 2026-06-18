@@ -290,7 +290,6 @@ UIColor *SBColorFromHex(NSString *hexString) {
 %property (nonatomic, strong) NSArray *sbSegments;
 %property (nonatomic, strong) NSMutableSet *sbSkippedSegments;
 %property (nonatomic, strong) SBSkipNotificationView *sbNotificationView;
-%property (nonatomic, strong) UIButton *sbOverlayButton;
 %property (nonatomic, assign) BOOL sbEnabledForVideo;
 
 // Alternative: fires when video content changes (works in newer YT versions)
@@ -541,7 +540,39 @@ UIColor *SBColorFromHex(NSString *hexString) {
 
 %end
 
+// SponsorBlock's accent blue, reused for the toggle button's enabled state.
+static UIColor *SBAccentColor(void) {
+    return [UIColor colorWithRed:0.4 green:0.8 blue:1.0 alpha:1.0];
+}
+
 %ctor {
     sbSegmentCache = [NSMutableDictionary dictionary];
     %init;
+
+    // Register the SponsorBlock toggle in the player overlay's custom button row.
+    // sortOrder 100 keeps it right-most (directly under YouTube's settings gear).
+    YMOverlayButtonSpec *toggle = [[YMOverlayButtonSpec alloc] init];
+    toggle.identifier = @"sponsorblock.toggle";
+    toggle.symbolName = @"shield.fill";
+    toggle.tintColor = SBAccentColor();
+    toggle.sortOrder = 100;
+    toggle.isVisible = ^BOOL(YTPlayerViewController *player) {
+        return IS_ENABLED(SBEnabled) && IS_ENABLED(SBShowButton);
+    };
+    toggle.tintProvider = ^UIColor *(YTPlayerViewController *player) {
+        return (player && player.sbEnabledForVideo) ? SBAccentColor() : [UIColor grayColor];
+    };
+    toggle.onTap = ^(YTPlayerViewController *player, UIButton *button) {
+        if (!player) return;
+        BOOL newState = !player.sbEnabledForVideo;
+        player.sbEnabledForVideo = newState;
+        button.tintColor = newState ? SBAccentColor() : [UIColor grayColor];
+
+        NSArray *segments = newState ? (player.sbSegments ?: @[]) : @[];
+        if (newState && segments.count == 0) return;
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"SBSegmentsDidLoad"
+                                                            object:player
+                                                          userInfo:@{@"segments": segments}];
+    };
+    YMRegisterOverlayButton(toggle);
 }

@@ -304,6 +304,8 @@ typedef NS_ENUM(NSUInteger, GestureSection) {
 @property (nonatomic, retain) UIPanGestureRecognizer *YouModPanGesture;
 @property (nonatomic, retain) UILabel *YouModGestureHUD;
 @property (nonatomic, weak, readwrite) UIViewController *parentViewController;
+@property (nonatomic, assign, readonly) BOOL isInlinePlaybackActive;
+@property (nonatomic, assign, readonly) BOOL isPlayingAd;
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer;
 - (void)YouModAutoFullscreen;
 - (void)YouModTurnOffCaptions;
@@ -428,6 +430,25 @@ extern UIView *sbGetNotificationParent(void);
 extern void sbUpdateOverlayInsetForPivotBar(void);
 extern void YMPresentTabOrderModally(id parentResponder);
 
+#pragma mark - Custom Overlay Button Registry
+
+// A registered button shown in the player's controls overlay (top-right, under
+// YouTube's settings gear). Features register a spec from their own %ctor; the
+// single YTMainAppControlsOverlayView hook in OverlayButtons.x lays them all out.
+@interface YMOverlayButtonSpec : NSObject
+@property (nonatomic, copy) NSString *identifier;       // unique, e.g. @"sponsorblock.toggle"
+@property (nonatomic, copy) NSString *symbolName;       // SF Symbol name
+@property (nonatomic, strong) UIColor *tintColor;       // default tint (used if tintProvider is nil)
+@property (nonatomic, assign) NSInteger sortOrder;      // ascending; lower = closer to gear (rightmost)
+@property (nonatomic, copy) void (^onTap)(YTPlayerViewController *player, UIButton *button);
+@property (nonatomic, copy) BOOL (^isVisible)(YTPlayerViewController *player);     // nil = always visible
+@property (nonatomic, copy) UIColor *(^tintProvider)(YTPlayerViewController *player); // nil = use tintColor
+@property (nonatomic, assign) NSInteger viewTag;        // assigned by the registry; do not set
+@end
+
+extern void YMRegisterOverlayButton(YMOverlayButtonSpec *spec);
+extern NSArray<YMOverlayButtonSpec *> *YMRegisteredOverlayButtons(void);
+
 @interface YMDownloadProgressView : UIView
 @property (nonatomic, strong) UILabel *titleLabel;
 @property (nonatomic, strong) UILabel *subtitleLabel;
@@ -444,7 +465,6 @@ extern void YMPresentTabOrderModally(id parentResponder);
 @property (nonatomic, strong) NSArray<SBSegment *> *sbSegments;
 @property (nonatomic, strong) NSMutableSet<NSString *> *sbSkippedSegments;
 @property (nonatomic, strong) SBSkipNotificationView *sbNotificationView;
-@property (nonatomic, strong) UIButton *sbOverlayButton;
 @property (nonatomic, assign) BOOL sbEnabledForVideo;
 - (void)sbPerformSkip:(SBSegment *)segment;
 - (void)sbShowAskNotification:(SBSegment *)segment;
