@@ -8,16 +8,18 @@
 
 static BOOL isReloaded = NO;
 
+static CGFloat oldTime = 0;
+
 %hook YTLocalPlaybackController
 
 - (int)state {
     // 1. เรียกใช้งานคำสั่งดั้งเดิมของ YouTube เพียง "ครั้งเดียว" และเซฟค่าไว้
     int actualState = %orig;
-    
+
     if (actualState == 7) {
         if (!isReloaded) {
             isReloaded = YES; // ล็อกสถานะทันทีเพื่อกันเหนียว
-            
+            oldTime = self.contentVideoCurrentTime.time;
             // 2. ใช้ __weak ดักไว้ เผื่อผู้ใช้กดปิดหน้าวิดีโอหนีไปในเสี้ยววินาทีนั้น จะได้ไม่แครช
             __weak typeof(self) weakSelf = self;
             
@@ -34,7 +36,7 @@ static BOOL isReloaded = NO;
         }
     } else {
         if (isReloaded) {
-            [self seekToTime:self.contentVideoCurrentTime.time toleranceBefore:0 toleranceAfter:0];
+            [self seekToTime:oldTime toleranceBefore:0 toleranceAfter:0];
         }
         isReloaded = NO;
     }
