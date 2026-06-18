@@ -31,8 +31,9 @@ static BOOL isReloaded = NO;
                     
                     // เช็กให้ชัวร์ว่า Object มีตัวตนอยู่จริงและมีเมธอด reload ให้เรียกใช้งาน
                     if (watchController && [watchController respondsToSelector:@selector(time)]) {
+                        CGFloat aka = watchController.time;
                         [weakSelf heartbeatControllerWantsToReloadLiveStream:nil endpoint:nil];
-                        [weakSelf seekToTime:watchController.time toleranceBefore:nil toleranceAfter:nil];
+                        [weakSelf seekToTime:aka toleranceBefore:nil toleranceAfter:nil];
                     }
                 } @catch (NSException *exception) {
                     NSLog(@"[YouMod] Failed to safely reload _UIDelegate: %@", exception.reason);
