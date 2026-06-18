@@ -1,25 +1,20 @@
 #import "Headers.h"
 
-@interface YTLocalPlaybackController : NSObject
-- (void)seekToTime:(CGFloat)arg1 toleranceBefore:(CGFloat)arg2 toleranceAfter:(CGFloat)arg3;
-- (void)heartbeatControllerWantsToReloadLiveStream:(id)arg1 endpoint:(id)arg2;
-- (YTSingleVideoTime *)contentVideoCurrentTime;
+@interface YTSingleVideoController (YouMod)
+- (void)play;
 @end
 
 static BOOL isReloaded = NO;
 
-static CGFloat oldTime = 0;
+%hook YTSingleVideoController
 
-%hook YTLocalPlaybackController
-
-- (int)state {
+- (int)playerPlaybackState {
     // 1. เรียกใช้งานคำสั่งดั้งเดิมของ YouTube เพียง "ครั้งเดียว" และเซฟค่าไว้
     int actualState = %orig;
 
-    if (actualState == 7) {
+    if (actualState == 6) {
         if (!isReloaded) {
             isReloaded = YES; // ล็อกสถานะทันทีเพื่อกันเหนียว
-            oldTime = self.contentVideoCurrentTime.time;
             // 2. ใช้ __weak ดักไว้ เผื่อผู้ใช้กดปิดหน้าวิดีโอหนีไปในเสี้ยววินาทีนั้น จะได้ไม่แครช
             __weak typeof(self) weakSelf = self;
             
@@ -28,7 +23,7 @@ static CGFloat oldTime = 0;
                 if (!weakSelf) return;
                 
                 @try {
-                    [weakSelf heartbeatControllerWantsToReloadLiveStream:nil endpoint:nil];
+                    [weakSelf reloadPlayerWithContext:nil];
                 } @catch (NSException *exception) {
                     NSLog(@"[YouMod] Failed to safely reload _UIDelegate: %@", exception.reason);
                 }
@@ -36,7 +31,7 @@ static CGFloat oldTime = 0;
         }
     } else {
         if (isReloaded) {
-            [self seekToTime:oldTime toleranceBefore:0 toleranceAfter:0];
+            [self play];
         }
         isReloaded = NO;
     }
