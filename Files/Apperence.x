@@ -71,8 +71,7 @@ static BOOL isDarkMode(UIView *view) {
     UIResponder *responder = self.nextResponder;
     while (responder != nil) {
         if ([responder isKindOfClass:%c(YTActionSheetDialogViewController)]) {
-            UIViewController *vc = (UIViewController *)responder;
-            vc.view.backgroundColor = [UIColor blackColor];
+            self.backgroundColor = [UIColor blackColor];
             break;
         }
         responder = responder.nextResponder;
@@ -132,6 +131,18 @@ static BOOL isDarkMode(UIView *view) {
         if ([self.accessibilityIdentifier isEqualToString:@"subs_channel_bar.collection"]) self.backgroundColor = [UIColor clearColor];
     }
     */
+}
+%end
+
+%hook YTContextualSheetView
+- (void)layoutSubviews {
+    %orig;
+    for (UIView *subview in self.subviews) {
+        if ([subview isKindOfClass:%c(YTContextualWrapView)]) {
+            subview.backgroundColor = [UIColor blackColor];
+            break;
+        }
+    }
 }
 %end
 %end
