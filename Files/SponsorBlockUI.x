@@ -594,8 +594,17 @@ extern BOOL useBackwardIconForButton;
 
 %new
 - (void)sbSegmentsDidLoad:(NSNotification *)notification {
+    [self sbRefreshMarkers:notification.userInfo[@"segments"]];
+}
+
+// Re-resolves the current player bar view fresh and re-creates segment markers
+// on it. Called whenever the player layout might have changed (initial load,
+// fullscreen enter/exit, viewport resize) so markers always live on the
+// currently-visible bar instead of an old detached one.
+%new
+- (void)sbRefreshMarkers:(NSArray<SBSegment *> *)segments {
     @try {
-        NSArray<SBSegment *> *segments = notification.userInfo[@"segments"];
+        if (!segments) segments = self.sbSegments;
 
         id overlay = [self activeVideoPlayerOverlay];
         if (!overlay) return;
@@ -689,6 +698,23 @@ extern BOOL useBackwardIconForButton;
             [playerBar bringSubviewToFront:scrubberView.superview ?: scrubberView];
         }
     } @catch (NSException *e) {}
+}
+
+// On fullscreen enter/exit and other layout transitions, YouTube swaps the
+// player bar instance. Re-render markers on the current bar (matches
+// iSponsorBlock's approach). Deferred to the next runloop so YouTube's own
+// layout pass finishes first — otherwise the new bar's bounds.size.width can
+// still be 0 and the refresh early-returns without inserting markers.
+- (void)setPlayerViewLayout:(NSInteger)layout {
+    %orig;
+    __weak typeof(self) weakSelf = self;
+    dispatch_async(dispatch_get_main_queue(), ^{ [weakSelf sbRefreshMarkers:nil]; });
+}
+
+- (void)updateViewportSizeProvider {
+    %orig;
+    __weak typeof(self) weakSelf = self;
+    dispatch_async(dispatch_get_main_queue(), ^{ [weakSelf sbRefreshMarkers:nil]; });
 }
 
 %end

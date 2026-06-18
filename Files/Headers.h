@@ -516,6 +516,7 @@ extern void YMPresentTabOrderModally(id parentResponder);
 - (void)sbShowAskNotification:(SBSegment *)segment;
 - (void)sbShowHighlightBannerIfNeeded:(NSArray<SBSegment *> *)segments;
 - (void)sbSkipToHighlight;
+- (void)sbRefreshMarkers:(NSArray<SBSegment *> *)segments;
 @end
 
 @interface YTSegmentableInlinePlayerBarView : UIView

@@ -54,9 +54,22 @@ void sbUpdateOverlayInsetForPivotBar(void) {
     }
     YTPivotBarView *pivot = (YTPivotBarView *)pivotVC.viewIfLoaded;
 
+    // Measure the pivot bar's visible top edge in our overlay window's coords
+    // and convert it into the inset our pills need above the device safe area.
+    // This avoids reading pivot.bounds.size.height directly — that value
+    // includes home-indicator padding on notched devices and would over-correct
+    // the safe area, leaving the pill floating too high above the tabbar.
     CGFloat tabH = 0.0;
     if (pivot && pivot.window != nil && !pivot.hidden && pivot.alpha > 0.01) {
-        tabH = pivot.bounds.size.height;
+        UIView *overlayView = rootVC.view;
+        CGRect pivotInOverlay = [overlayView convertRect:pivot.bounds fromView:pivot];
+        CGFloat pivotTop = CGRectGetMinY(pivotInOverlay);
+        CGFloat overlayHeight = overlayView.bounds.size.height;
+        CGFloat deviceSafeBottom = sbOverlayWindow.safeAreaInsets.bottom;
+        // Clamp to [0, overlayHeight] in case convertRect returns a stale
+        // value during scene transitions (e.g. iPad split-view drag) — without
+        // an upper bound, an absurd tabH would push the pill off-screen.
+        tabH = MAX(0.0, MIN(overlayHeight, overlayHeight - deviceSafeBottom - pivotTop));
     }
     UIEdgeInsets current = rootVC.additionalSafeAreaInsets;
     if (current.bottom != tabH) {
