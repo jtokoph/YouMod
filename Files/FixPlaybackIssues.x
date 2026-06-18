@@ -26,21 +26,16 @@ static BOOL isReloaded = NO;
                 if (!weakSelf) return;
                 
                 @try {
-                    // ดึงค่าอย่างระมัดระวัง
-                    YTSingleVideoTime *watchController = weakSelf.contentVideoCurrentTime;
-                    
-                    // เช็กให้ชัวร์ว่า Object มีตัวตนอยู่จริงและมีเมธอด reload ให้เรียกใช้งาน
-                    if (watchController && [watchController respondsToSelector:@selector(time)]) {
-                        [weakSelf heartbeatControllerWantsToReloadLiveStream:nil endpoint:nil];
-                        [weakSelf seekToTime:watchController.time toleranceBefore:0 toleranceAfter:0];
-                    }
+                    [weakSelf heartbeatControllerWantsToReloadLiveStream:nil endpoint:nil];
                 } @catch (NSException *exception) {
                     NSLog(@"[YouMod] Failed to safely reload _UIDelegate: %@", exception.reason);
                 }
             });
         }
     } else {
-        // ถ้าระบบกลับมาทำงานสถานะปกติ (ไม่ใช่ 7) ค่อยเปิดล็อกให้ทำงานใหม่ได้
+        if (isReloaded) {
+            [self seekToTime:self.contentVideoCurrentTime.time toleranceBefore:0 toleranceAfter:0];
+        }
         isReloaded = NO;
     }
     
