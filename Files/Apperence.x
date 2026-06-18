@@ -68,7 +68,8 @@ static BOOL isDarkMode(UIView *view) {
     UIResponder *responder = self.nextResponder;
     while (responder != nil) {
         if ([responder isKindOfClass:%c(YTActionSheetDialogViewController)]) {
-            responder.backgroundColor = [UIColor blackColor];
+            UIViewController *vc = (UIViewController *)responder;
+            vc.view.backgroundColor = [UIColor blackColor];
             break;
         }
         responder = responder.nextResponder;

@@ -61,9 +61,9 @@ static NSMutableArray <YTIItemSectionRenderer *> *filteredArray(NSArray <YTIItem
                 YTIElementRenderer *elementRenderer = horizontalListSupportedRenderers.elementRenderer;
                 // Filter ads
                 if (isAdRenderer(elementRenderer, 4)) return YES;
+                NSString *description = [elementRenderer description];
                 // Filter shorts
                 if (IS_ENABLED(HideShortsShelf)) {
-                    NSString *description = [elementRenderer description];
                     if (IS_ENABLED(KeepShortsSubscript)) {
                         if ([description containsString:@"shorts_video_cell.eml"] && ![description containsString:@"subscriptions-shorts-shelf-item"]) return YES;
                     } else {
