@@ -1,8 +1,14 @@
 #import "Headers.h"
 
+@interface YTLocalPlaybackController (YouMod)
+- (void)seekToTime:(CGFloat)arg1 toleranceBefore:(CGFloat)arg2 toleranceAfter:(CGFloat)arg3;
+- (void)heartbeatControllerWantsToReloadLiveStream:(id)arg1 endpoint:(id)arg2;
+- (YTSingleVideoTime *)contentVideoCurrentTime;
+@end
+
 static BOOL isReloaded = NO;
 
-%hook YTPlayerViewController
+%hook YTLocalPlaybackController
 
 - (int)state {
     // 1. เรียกใช้งานคำสั่งดั้งเดิมของ YouTube เพียง "ครั้งเดียว" และเซฟค่าไว้
@@ -21,11 +27,12 @@ static BOOL isReloaded = NO;
                 
                 @try {
                     // ดึงค่าอย่างระมัดระวัง
-                    YTWatchController *watchController = [weakSelf valueForKey:@"_UIDelegate"];
+                    YTSingleVideoTime *watchController = weakSelf.contentVideoCurrentTime;
                     
                     // เช็กให้ชัวร์ว่า Object มีตัวตนอยู่จริงและมีเมธอด reload ให้เรียกใช้งาน
-                    if (watchController && [watchController respondsToSelector:@selector(reload)]) {
-                        [watchController reload];
+                    if (watchController && [watchController respondsToSelector:@selector(time)]) {
+                        [weakSelf heartbeatControllerWantsToReloadLiveStream:nil endpoint:nil];
+                        [weakSelf seekToTime:watchController.time toleranceBefore:nil toleranceAfter:nil];
                     }
                 } @catch (NSException *exception) {
                     NSLog(@"[YouMod] Failed to safely reload _UIDelegate: %@", exception.reason);
