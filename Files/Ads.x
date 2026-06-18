@@ -71,6 +71,10 @@ static NSMutableArray <YTIItemSectionRenderer *> *filteredArray(NSArray <YTIItem
                     }
                     if ([description containsString:@"shorts_grid_shelf_footer.eml"]) return YES;
                 }
+                // Filter feed posts
+                if (IS_ENABLED(HideFeedPost) && ([description containsString:@"poll_post_root.eml"] || [description containsString:@"options_post_root.eml"] || [description containsString:@"images_post_root_slim.eml"] || [description containsString:@"options_post_responsive_root.eml"] || [description containsString:@"post_base_wrapper_slim.eml"])) {
+                    return YES;
+                }
                 return NO;
             }];
             [itemsArray removeObjectsAtIndexes:removeItemsArrayIndexes];
@@ -104,7 +108,7 @@ static NSMutableArray <YTIItemSectionRenderer *> *filteredArray(NSArray <YTIItem
         }
         
         // Filter feed posts
-        if (IS_ENABLED(HideFeedPost) && [description containsString:@"poll_post_root.eml"]) {
+        if (IS_ENABLED(HideFeedPost) && ([description containsString:@"poll_post_root.eml"] || [description containsString:@"options_post_root.eml"] || [description containsString:@"images_post_root_slim.eml"] || [description containsString:@"options_post_responsive_root.eml"] || [description containsString:@"post_base_wrapper_slim.eml"])) {
             return YES;
         }
 

@@ -29,7 +29,6 @@
 #import <YouTubeHeader/YTVarispeedSwitchController.h>
 #import <YouTubeHeader/YTVarispeedSwitchControllerImpl.h>
 #import <YouTubeHeader/YTVarispeedSwitchControllerOption.h>
-#import <YouTubeHeader/YTMultiSizeViewController.h>
 #import <YouTubeHeader/YTInlinePlayerBarContainerView.h>
 #import <YouTubeHeader/YTSingleVideoTime.h>
 #import <YouTubeHeader/YTSingleVideoController.h>
@@ -38,23 +37,12 @@
 #import <YouTubeHeader/YTLabel.h>
 #import <YouTubeHeader/MLFormat.h>
 #import <YouTubeHeader/MLQuickMenuVideoQualitySettingFormatConstraint.h>
-#import <YouTubeHeader/GCKNNetworkReachability.h>
 #import <YouTubeHeader/YTCommonColorPalette.h>
 #import <YouTubeHeader/YTIPivotBarSupportedRenderers.h>
 #import <YouTubeHeader/YTIBrowseRequest.h>
-#import <YouTubeHeader/MLAVPlayer.h>
-#import <YouTubeHeader/MLDefaultPlayerViewFactory.h>
-#import <YouTubeHeader/MLPlayerPool.h>
-#import <YouTubeHeader/MLPlayerPoolImpl.h>
-#import <YouTubeHeader/MLVideoDecoderFactory.h>
-#import <YouTubeHeader/YTHotConfig.h>
-#import <YouTubeHeader/MLHLSMasterPlaylist.h>
-#import <YouTubeHeader/MLHLSStreamSelector.h>
-#import <YouTubeHeader/YTIHamplayerConfig.h>
 #import <YouTubeHeader/YTAssetLoader.h>
 #import <MediaPlayer/MediaPlayer.h>
 #import <YouTubeHeader/ASCollectionView.h>
-#import <YouTubeHeader/MLHAMPlayerItem.h>
 #import <YouTubeHeader/YTColor.h>
 #import <YouTubeHeader/YTModularPlayerBarController.h>
 #import <dlfcn.h>
@@ -62,17 +50,14 @@
 #import <netinet/in.h>
 #import <YouTubeHeader/YTAppViewControllerImpl.h>
 #import <YouTubeHeader/YTAppViewController.h>
+#import <YouTubeHeader/YTDefaultSheetController.h>
 
 // For Settings.x and SponsorBlockSettings.x
-#import <YouTubeHeader/YTDefaultSheetController.h>
 #import <PSHeader/Misc.h>
 #import <YouTubeHeader/YTSettingsGroupData.h>
-#import <YouTubeHeader/YTSettingsPickerViewController.h>
 #import <YouTubeHeader/YTSettingsSectionItem.h>
-#import <YouTubeHeader/YTSearchableSettingsViewController.h>
 #import <YouTubeHeader/YTSettingsSectionItemManager.h>
 #import <YouTubeHeader/YTSettingsViewController.h>
-#import <YouTubeHeader/YTToastResponderEvent.h>
 #import <YouTubeHeader/YTUIUtils.h>
 
 #define IS_ENABLED(k) [[NSUserDefaults standardUserDefaults] boolForKey:k]
@@ -253,9 +238,6 @@ typedef NS_ENUM(NSUInteger, GestureSection) {
     GestureSectionInvalid
 };
 
-@interface ASScrollView : UIScrollView
-@end
-
 @interface YTWatchController (YouMod)
 - (void)reload;
 @end
@@ -282,18 +264,7 @@ typedef NS_ENUM(NSUInteger, GestureSection) {
 - (void)YouModHoldToSpeed:(UILongPressGestureRecognizer *)gesture;
 @end
 
-@interface YTMainAppControlsOverlayView (YouMod)
-- (void)setOverlayVisible:(BOOL)visible;
-@end
-
-@interface YTPivotBarView : UIView
-- (YTPivotBarItemView *)itemView1;
-@end
-
 @interface YTNavigationBarTitleView : UIView
-@end
-
-@interface YTChipCloudCell : UICollectionViewCell
 @end
 
 @interface YTSearchViewController : UIViewController
@@ -309,7 +280,6 @@ typedef NS_ENUM(NSUInteger, GestureSection) {
 
 @interface YTPivotBarViewController : UIViewController
 - (void)selectItemWithPivotIdentifier:(id)pivotIndentifier;
-- (YTPivotBarView *)pivotBarView;
 @end
 
 @interface YTAppViewController (YouMod)
@@ -328,8 +298,6 @@ typedef NS_ENUM(NSUInteger, GestureSection) {
 @property (nonatomic, retain) UIPanGestureRecognizer *YouModPanGesture;
 @property (nonatomic, retain) UILabel *YouModGestureHUD;
 @property (nonatomic, weak, readwrite) UIViewController *parentViewController;
-@property (nonatomic, assign, readonly) BOOL isInlinePlaybackActive;
-@property (nonatomic, assign, readonly) BOOL isPlayingAd;
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer;
 - (void)YouModAutoFullscreen;
 - (void)YouModTurnOffCaptions;
@@ -343,10 +311,6 @@ typedef NS_ENUM(NSUInteger, GestureSection) {
 @end
 
 @interface SSOConfiguration : NSObject
-@end
-
-@interface _ASDisplayView (YouMod)
-- (BOOL)isInsideViewControllerOfClass:(NSString *)className;
 @end
 
 @interface YTVideoQualitySwitchOriginalController (YouMod)
@@ -396,52 +360,16 @@ typedef NS_ENUM(NSUInteger, GestureSection) {
 @end
 
 // Player Gestures - @bhackel (YTLitePlus)
-@interface YTFineScrubberFilmstripView : UIView
-@end
-
-@interface YTFineScrubberFilmstripCollectionView : UICollectionView
-@end
-
-@interface YTWatchFullscreenViewController : YTMultiSizeViewController
-@end
-
-@interface YTPlayerBarController (YouMod)
-- (void)didScrub:(UIPanGestureRecognizer *)gestureRecognizer;
-- (void)startScrubbing;
-- (void)didScrubToPoint:(CGPoint)point;
-- (void)endScrubbingForSeekSource:(int)seekSource;
-@end
-
 @interface YTMainAppVideoPlayerOverlayViewController (YouMod)
-@property (nonatomic, strong, readwrite) YTPlayerBarController *playerBarController;
 @property (nonatomic, assign) YTPlayerViewController *parentViewController;
 - (NSString *)videoID;
 - (CGFloat)mediaTime;
 @end
 
-@interface YTInlinePlayerBarContainerView (YouMod)
-@property UIPanGestureRecognizer *scrubGestureRecognizer;
-@property (nonatomic, strong, readwrite) YTFineScrubberFilmstripView *fineScrubberFilmstrip;
-@property (nonatomic, strong, readwrite) NSString *endTimeString;
-- (CGFloat)scrubXForScrubRange:(CGFloat)scrubRange;
-@end
-
 @interface YTSingleVideoController (YouMod)
 @property (nonatomic, assign, readonly) CGFloat totalMediaTime;
-@property (nonatomic, readonly, strong) YTSingleVideoTime *localTime;
-@property (nonatomic, strong, readonly) id <MLVideoFormatConstraint> videoFormatConstraint;
 - (void)setVideoFormatConstraint:(id)arg;
 - (void)YouModAutoQuality;
-@end
-
-@protocol MLPlayerItemDelegate <NSObject>
-@end
-
-@interface MLHAMPlayerItem (YouMod)
-@property (nonatomic, weak, readwrite) id <MLPlayerItemDelegate> playerItemDelegate;
-@end
-
-@interface YTGLMediaPlayerViewFactory : NSObject
 @end
 
 @interface YTReelPlayerViewController (YouMod)
@@ -527,8 +455,4 @@ extern void YMPresentTabOrderModally(id parentResponder);
 @property (nonatomic, strong) NSArray<UIView *> *sbMarkerViews;
 - (void)sbRenderSegments:(NSArray<SBSegment *> *)segments;
 - (void)sbClearSegments;
-@end
-
-@interface YTModularPlayerBarController (YouMod)
-- (void)setEnableSnapToChapter:(BOOL)arg;
 @end

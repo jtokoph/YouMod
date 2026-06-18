@@ -65,7 +65,7 @@
 %hook YTNavigationBarTitleView
 - (void)layoutSubviews {
     %orig;
-    if (self.subviews.count > 1 && [self.subviews[1].accessibilityIdentifier isEqualToString:@"id.yoodle.logo"] && IS_ENABLED(HideYTLogo)) {
+    if (self.subviews.count > 1 && [self.subviews[1].accessibilityIdentifier isEqualToString:@"id.youtube.logo"] && IS_ENABLED(HideYTLogo)) {
         self.subviews[1].hidden = YES;
     }
 }
