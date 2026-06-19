@@ -31,7 +31,8 @@ NSString *getAdString(NSString *description) {
         @"text_image_button_layout",
         @"text_search_ad",
         @"video_display_full_layout",
-        @"video_display_full_buttoned_layout"
+        @"video_display_full_buttoned_layout",
+        @"video_display_button_group_layout"
     ])
         if ([description containsString:str]) return str;
     return nil;
@@ -181,7 +182,10 @@ static NSMutableArray <YTIItemSectionRenderer *> *filteredArray(NSArray <YTIItem
 %hook YTReelDataSource
 - (YTReelModel *)makeContentModelForEntry:(id)entry {
     YTReelModel *model = %orig;
+    YTReelPlayerResponder *responder = [model valueForKey:@"_reelPlayerResponder"];
     if ([model respondsToSelector:@selector(videoType)] && model.videoType == 3)
+        return nil;
+    if (responder.parentResponder isKindOfClass:%c(YTShortsAdsPlayerViewController))
         return nil;
     if ([model respondsToSelector:@selector(videoType)] && (model.videoType == 4 || model.videoType == 7) && IS_ENABLED(RemoveShortsLive))
         return nil;
@@ -192,7 +196,10 @@ static NSMutableArray <YTIItemSectionRenderer *> *filteredArray(NSArray <YTIItem
 %hook YTReelInfinitePlaybackDataSource
 - (YTReelModel *)makeContentModelForEntry:(id)entry {
     YTReelModel *model = %orig;
+    YTReelPlayerResponder *responder = [model valueForKey:@"_reelPlayerResponder"];
     if ([model respondsToSelector:@selector(videoType)] && model.videoType == 3)
+        return nil;
+    if (responder.parentResponder isKindOfClass:%c(YTShortsAdsPlayerViewController))
         return nil;
     if ([model respondsToSelector:@selector(videoType)] && (model.videoType == 4 || model.videoType == 7) && IS_ENABLED(RemoveShortsLive))
         return nil;
@@ -200,7 +207,9 @@ static NSMutableArray <YTIItemSectionRenderer *> *filteredArray(NSArray <YTIItem
 }
 - (void)setReels:(NSMutableOrderedSet <YTReelModel *> *)reels {
     [reels removeObjectsAtIndexes:[reels indexesOfObjectsPassingTest:^BOOL(YTReelModel *obj, NSUInteger idx, BOOL *stop) {
+        YTReelPlayerResponder *responder = [obj valueForKey:@"_reelPlayerResponder"];
         if ([obj respondsToSelector:@selector(videoType)] && obj.videoType == 3) return YES;
+        if (responder.parentResponder isKindOfClass:%c(YTShortsAdsPlayerViewController)) return YES;
         if ([obj respondsToSelector:@selector(videoType)] && (obj.videoType == 4 || obj.videoType == 7) && IS_ENABLED(RemoveShortsLive)) return YES;
         return NO;
     }]];

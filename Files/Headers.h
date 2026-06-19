@@ -248,6 +248,13 @@ typedef NS_ENUM(NSUInteger, GestureSection) {
 @interface YTContextualSheetView : UIView
 @end
 
+@interface YTReelPlayerResponder : NSObject
+- (id)parentResponder;
+@end
+
+@interface YTShortsAdsPlayerViewController : YTReelPlayerViewController
+@end
+
 @interface YTIBrowseRequest (YouMod)
 + (NSString *)browseIDForGamingDestination;
 + (NSString *)browseIDForSportsDestination;

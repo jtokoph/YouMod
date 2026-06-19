@@ -54,13 +54,16 @@ static BOOL isDarkMode(UIView *view) {
 }
 %end
 
-// There is YTBotttomSheetController, but I can't reprecate it yet.
 %hook _ASDisplayView
 - (void)didMoveToWindow {
     %orig;
     if (localPageStyle != 1) {
         if ([self.accessibilityIdentifier isEqualToString:@"id.elements.components.text_field"]) self.superview.backgroundColor = [UIColor clearColor];
-        if ([self.accessibilityIdentifier isEqualToString:@"id.elements.components.comment_composer"]) self.superview.backgroundColor = [UIColor clearColor];
+        if ([self.accessibilityIdentifier isEqualToString:@"id.elements.components.comment_composer"]) self.backgroundColor = [UIColor clearColor];
+        if ([self.accessibilityIdentifier isEqualToString:@"id.elements.components.filter_chip_bar"]) {
+            self.backgroundColor = [UIColor clearColor];
+            self.superview.backgroundColor = [UIColor clearColor];
+        }
         return;
     }
     NSSet *blackViews = [NSSet setWithObjects:
@@ -71,10 +74,14 @@ static BOOL isDarkMode(UIView *view) {
     ];  
     if ([blackViews containsObject:self.accessibilityIdentifier]) self.backgroundColor = [UIColor blackColor];       
     if ([self.accessibilityIdentifier isEqualToString:@"id.elements.components.text_field"]) self.superview.backgroundColor = [UIColor blackColor];
+    if ([self.accessibilityIdentifier isEqualToString:@"id.elements.components.filter_chip_bar"]) {
+        self.backgroundColor = [UIColor blackColor];
+        self.superview.backgroundColor = [UIColor blackColor];
+    }
     // Action dialog
     UIResponder *responder = self.nextResponder;
     while (responder != nil) {
-        if ([responder isKindOfClass:%c(YTActionSheetDialogViewController)]) {
+        if ([responder isKindOfClass:%c(YTActionSheetDialogViewController)] || [responder isKindOfClass:%c(YTBotttomSheetController)]) {
             self.backgroundColor = [UIColor blackColor];
             break;
         }
@@ -85,7 +92,7 @@ static BOOL isDarkMode(UIView *view) {
     %orig;
     if (localPageStyle != 1) {
         if ([self.accessibilityIdentifier isEqualToString:@"id.elements.components.text_field"]) self.superview.backgroundColor = [UIColor clearColor];
-        if ([self.accessibilityIdentifier isEqualToString:@"id.elements.components.comment_composer"]) self.superview.backgroundColor = [UIColor clearColor];
+        if ([self.accessibilityIdentifier isEqualToString:@"id.elements.components.comment_composer"]) self.backgroundColor = [UIColor clearColor];
         return;
     }
     NSSet *blackViews = [NSSet setWithObjects:
@@ -95,15 +102,18 @@ static BOOL isDarkMode(UIView *view) {
         @"eml.live_chat_text_message", nil
     ];  
     if ([blackViews containsObject:self.accessibilityIdentifier]) self.backgroundColor = [UIColor blackColor];       
-    if ([self.accessibilityIdentifier isEqualToString:@"id.elements.components.text_field"]) self.superview.backgroundColor = [UIColor blackColor];
     // Action dialog
     UIResponder *responder = self.nextResponder;
     while (responder != nil) {
-        if ([responder isKindOfClass:%c(YTActionSheetDialogViewController)]) {
+        if ([responder isKindOfClass:%c(YTActionSheetDialogViewController)] || [responder isKindOfClass:%c(YTBotttomSheetController)]) {
             self.backgroundColor = [UIColor blackColor];
             break;
         }
         responder = responder.nextResponder;
+    }
+    if ([self.accessibilityIdentifier isEqualToString:@"id.elements.components.filter_chip_bar"]) {
+        self.backgroundColor = [UIColor blackColor];
+        self.superview.backgroundColor = [UIColor blackColor];
     }
 }
 %end
@@ -112,7 +122,7 @@ static BOOL isDarkMode(UIView *view) {
 - (void)didMoveToWindow {
     %orig;
     if (localPageStyle != 1) {
-        if ([self.accessibilityIdentifier isEqualToString:@"eml.chip_bar_collection"]) self.superview.backgroundColor = [UIColor clearColor];
+        if ([self.accessibilityIdentifier isEqualToString:@"eml.chip_bar_collection"]) self.backgroundColor = [UIColor clearColor];
         return;
     }
     NSSet *blackViews = [NSSet setWithObjects:
@@ -125,7 +135,7 @@ static BOOL isDarkMode(UIView *view) {
 - (void)layoutSubviews {
     %orig;
     if (localPageStyle != 1) {
-        if ([self.accessibilityIdentifier isEqualToString:@"eml.chip_bar_collection"]) self.superview.backgroundColor = [UIColor clearColor];
+        if ([self.accessibilityIdentifier isEqualToString:@"eml.chip_bar_collection"]) self.backgroundColor = [UIColor clearColor];
         return;
     }
     NSSet *blackViews = [NSSet setWithObjects:

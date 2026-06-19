@@ -50,35 +50,23 @@ NSArray<YMOverlayButtonSpec *> *YMRegisteredOverlayButtons(void) {
 // Resolve the player VC that owns this overlay. Prefer the exposed property, fall
 // back to walking the responder chain (older layouts), mirroring the old SB code.
 static YTPlayerViewController *YMPlayerVCFromOverlay(YTMainAppControlsOverlayView *overlay) {
-    @try {
-        if ([overlay respondsToSelector:@selector(playerViewController)]) {
-            YTPlayerViewController *pvc = overlay.playerViewController;
-            if (pvc) return pvc;
-        }
-        UIResponder *responder = overlay;
-        while (responder) {
-            if ([responder isKindOfClass:%c(YTPlayerViewController)])
-                return (YTPlayerViewController *)responder;
-            responder = [responder nextResponder];
-        }
-    } @catch (NSException *e) {}
-    return nil;
+    YTMainAppVideoPlayerOverlayViewController *mainOverlayController = (YTMainAppVideoPlayerOverlayViewController *)self.eventsDelegate;
+    return mainOverlayController.parentViewController;
 }
 
 // Recursively find the right-most YTQTMButton in the overlay's top region. YouTube
 // sometimes nests the gear/CC/cast buttons inside a container, so a one-level scan
 // would miss them and silently fall back to the screen edge.
-static void YMScanForGearMidX(UIView *view, YTMainAppControlsOverlayView *overlay,
-                              Class buttonClass, CGFloat topRegionMaxY, CGFloat *bestMidX) {
+static void YMScanForGearMidX(UIView *view, YTMainAppControlsOverlayView *overlay, CGFloat topRegionMaxY, CGFloat *bestMidX) {
     for (UIView *sub in view.subviews) {
-        if ([sub isKindOfClass:buttonClass]) {
+        if ([sub isKindOfClass:%c(YTQTMButton)]) {
             CGRect f = [sub convertRect:sub.bounds toView:overlay];
             if (CGRectGetMidY(f) <= topRegionMaxY) { // in the top button row
                 CGFloat midX = CGRectGetMidX(f);
                 if (midX > *bestMidX) *bestMidX = midX;
             }
         }
-        YMScanForGearMidX(sub, overlay, buttonClass, topRegionMaxY, bestMidX);
+        YMScanForGearMidX(sub, overlay, topRegionMaxY, bestMidX);
     }
 }
 
@@ -86,18 +74,13 @@ static void YMScanForGearMidX(UIView *view, YTMainAppControlsOverlayView *overla
 // The gear is the right-most YTQTMButton sitting in the overlay's top region. Returns
 // its center-x in the overlay's coordinate space, or a negative value if not found.
 static CGFloat YMGearCenterXInOverlay(YTMainAppControlsOverlayView *overlay) {
-    @try {
-        Class buttonClass = %c(YTQTMButton);
-        if (!buttonClass) return -1.0;
-        CGFloat topRegionMaxY = overlay.bounds.size.height * 0.25;
-        CGFloat bestMidX = -1.0;
-        YMScanForGearMidX(overlay, overlay, buttonClass, topRegionMaxY, &bestMidX);
-        return bestMidX;
-    } @catch (NSException *e) {
-        return -1.0;
-    }
+    CGFloat topRegionMaxY = overlay.bounds.size.height * 0.25;
+    CGFloat bestMidX = -1.0;
+    YMScanForGearMidX(overlay, overlay, topRegionMaxY, &bestMidX);
+    return bestMidX;
 }
 
+// Might use YTQTMButton
 static UIButton *YMCreateOverlayButton(YTMainAppControlsOverlayView *overlay, YMOverlayButtonSpec *spec) {
     UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
     btn.tag = spec.viewTag;
@@ -119,69 +102,61 @@ static UIButton *YMCreateOverlayButton(YTMainAppControlsOverlayView *overlay, YM
 
 - (void)layoutSubviews {
     %orig;
-    @try {
-        NSArray<YMOverlayButtonSpec *> *specs = YMRegisteredOverlayButtons();
-        if (specs.count == 0) return;
+    NSArray<YMOverlayButtonSpec *> *specs = YMRegisteredOverlayButtons();
+    if (specs.count == 0) return;
 
-        YTPlayerViewController *player = YMPlayerVCFromOverlay(self);
+    YTPlayerViewController *player = YMPlayerVCFromOverlay(self);
 
-        // layoutSubviews is the high-frequency path and may (re)create buttons, so it
-        // owns the hidden state — otherwise a freshly created button shows on top of a
-        // faded-out overlay until the next setOverlayVisible: call.
-        BOOL overlayVisible = [self respondsToSelector:@selector(isOverlayVisible)] ? self.isOverlayVisible : YES;
+    // layoutSubviews is the high-frequency path and may (re)create buttons, so it
+    // owns the hidden state — otherwise a freshly created button shows on top of a
+    // faded-out overlay until the next setOverlayVisible: call.
+    BOOL overlayVisible = self.isOverlayVisible;
 
-        // Anchor the row's right-most button under the gear; grow leftward.
-        CGFloat gearMidX = YMGearCenterXInOverlay(self);
-        CGFloat anchorCenterX = (gearMidX > 0)
-            ? gearMidX
-            : self.bounds.size.width - YMOverlayButtonEdgePadding - YMOverlayButtonSize / 2.0;
+    // Anchor the row's right-most button under the gear; grow leftward.
+    CGFloat gearMidX = YMGearCenterXInOverlay(self);
+    CGFloat anchorCenterX = (gearMidX > 0) ? gearMidX : self.bounds.size.width - YMOverlayButtonEdgePadding - YMOverlayButtonSize / 2.0;
 
-        NSInteger row = 0;
-        for (YMOverlayButtonSpec *spec in specs) {
-            BOOL visible = (spec.isVisible == nil) || spec.isVisible(player);
-            UIButton *btn = (UIButton *)[self viewWithTag:spec.viewTag];
+    NSInteger row = 0;
+    for (YMOverlayButtonSpec *spec in specs) {
+        BOOL visible = (spec.isVisible == nil) || spec.isVisible(player);
+        UIButton *btn = (UIButton *)[self viewWithTag:spec.viewTag];
 
-            if (!visible) {
-                if (btn) [btn removeFromSuperview];
-                continue;
-            }
-            if (!btn) btn = YMCreateOverlayButton(self, spec);
-
-            btn.hidden = !overlayVisible;
-            if (spec.tintProvider) btn.tintColor = spec.tintProvider(player);
-
-            CGFloat centerX = anchorCenterX - row * (YMOverlayButtonSize + YMOverlayButtonGap);
-            btn.frame = CGRectMake(centerX - YMOverlayButtonSize / 2.0,
-                                   YMOverlayButtonTopInset,
-                                   YMOverlayButtonSize,
-                                   YMOverlayButtonSize);
-            row++;
+        if (!visible) {
+            if (btn) [btn removeFromSuperview];
+            continue;
         }
-    } @catch (NSException *e) {}
+        if (!btn) btn = YMCreateOverlayButton(self, spec);
+
+        btn.hidden = !overlayVisible;
+        if (spec.tintProvider) btn.tintColor = spec.tintProvider(player);
+
+        CGFloat centerX = anchorCenterX - row * (YMOverlayButtonSize + YMOverlayButtonGap);
+        btn.frame = CGRectMake(centerX - YMOverlayButtonSize / 2.0,
+                                YMOverlayButtonTopInset,
+                                YMOverlayButtonSize,
+                                YMOverlayButtonSize);
+        row++;
+    }
 }
 
 - (void)setOverlayVisible:(BOOL)visible {
     %orig;
-    @try {
-        for (YMOverlayButtonSpec *spec in YMRegisteredOverlayButtons()) {
-            UIButton *btn = (UIButton *)[self viewWithTag:spec.viewTag];
-            if (btn) btn.hidden = !visible;
-        }
-    } @catch (NSException *e) {}
+    for (YMOverlayButtonSpec *spec in YMRegisteredOverlayButtons()) {
+        UIButton *btn = (UIButton *)[self viewWithTag:spec.viewTag];
+        if (btn) btn.hidden = !visible;
+    }
 }
 
 %new
 - (void)ymOverlayButtonTapped:(UIButton *)sender {
-    @try {
-        YMOverlayButtonSpec *matched = nil;
-        for (YMOverlayButtonSpec *spec in YMRegisteredOverlayButtons()) {
-            if (spec.viewTag == sender.tag) { matched = spec; break; }
-        }
-        if (!matched || !matched.onTap) return;
+    YMOverlayButtonSpec *matched = nil;
+    for (YMOverlayButtonSpec *spec in YMRegisteredOverlayButtons()) {
+        if (spec.viewTag == sender.tag) { matched = spec; break; }
+    }
+    if (!matched || !matched.onTap) return;
 
-        YTPlayerViewController *player = YMPlayerVCFromOverlay(self);
-        matched.onTap(player, sender);
-    } @catch (NSException *e) {}
+    YTPlayerViewController *player = YMPlayerVCFromOverlay(self);
+    matched.onTap(player, sender);
 }
 
 %end
