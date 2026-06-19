@@ -50,7 +50,7 @@ NSArray<YMOverlayButtonSpec *> *YMRegisteredOverlayButtons(void) {
 // Resolve the player VC that owns this overlay. Prefer the exposed property, fall
 // back to walking the responder chain (older layouts), mirroring the old SB code.
 static YTPlayerViewController *YMPlayerVCFromOverlay(YTMainAppControlsOverlayView *overlay) {
-    YTMainAppVideoPlayerOverlayViewController *mainOverlayController = (YTMainAppVideoPlayerOverlayViewController *)self.eventsDelegate;
+    YTMainAppVideoPlayerOverlayViewController *mainOverlayController = (YTMainAppVideoPlayerOverlayViewController *)overlay.eventsDelegate;
     return mainOverlayController.parentViewController;
 }
 
