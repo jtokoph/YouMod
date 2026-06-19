@@ -1892,9 +1892,10 @@ NSString *YouModGlobalAuthHeader = nil;
         responder = responder.nextResponder;
     }
     if (responder) {
-        YTPlayerViewController *player = (YTPlayerViewController *)responder.childViewControllers[0];
+        YTShortsPlayerViewController *shortsPlayerView = (YTShortsPlayerViewController *)responder;
+        YTPlayerViewController *player = (YTPlayerViewController *)shortsPlayerView.childViewControllers[0];
         UIViewController *presenter = YouModPresenterForSender(button, player);
-        YouModShowDownloadManager(resolved, presenter, button);
+        YouModShowDownloadManager(player, presenter, button);
     }
 }
 
