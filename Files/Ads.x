@@ -70,7 +70,7 @@ static NSMutableArray <YTIItemSectionRenderer *> *filteredArray(NSArray <YTIItem
                     } else {
                         if ([description containsString:@"shorts_video_cell.eml"]) return YES;
                     }
-                    if ([description containsString:@"shorts_grid_shelf_footer.eml"]) return YES;
+                    if ([description containsString:@"shorts_grid_shelf_footer.eml"] || ([description containsString:@"shelf_header.eml"] && [description containsString:@"youtube_shorts"])) return YES;
                 }
                 // Filter feed posts
                 if (IS_ENABLED(HideFeedPost) && ([description containsString:@"poll_post_root.eml"] || [description containsString:@"options_post_root.eml"] || [description containsString:@"images_post_root_slim.eml"] || [description containsString:@"options_post_responsive_root.eml"] || [description containsString:@"post_base_wrapper_slim.eml"])) {
