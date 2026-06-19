@@ -101,7 +101,8 @@ static BOOL isDarkMode(UIView *view) {
         @"id.subs.subscriptions_channel_bar",
         @"eml.live_chat_text_message", nil
     ];  
-    if ([blackViews containsObject:self.accessibilityIdentifier]) self.backgroundColor = [UIColor blackColor];       
+    if ([blackViews containsObject:self.accessibilityIdentifier]) self.backgroundColor = [UIColor blackColor];      
+    if ([self.accessibilityIdentifier isEqualToString:@"id.elements.components.text_field"]) self.superview.backgroundColor = [UIColor blackColor]; 
     // Action dialog
     UIResponder *responder = self.nextResponder;
     while (responder != nil) {
