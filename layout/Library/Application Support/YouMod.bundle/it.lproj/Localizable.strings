@@ -1,4 +1,3 @@
-"NOTE" = "NOTA: Alcune funzioni potrebbero lasciare un riquadro vuoto.";
 "SETTINGS" = "Impostazioni";
 "INTERFACE" = "Interface";
 
@@ -8,8 +7,8 @@
 "SOURCE_CODES_DESC" = "Dai un'occhiata al codice!";
 
 "EXTRA" = "Extra";
-"FIX_PLAYBACK_ISSUES" = "Fix playback issues";
-"FIX_PLAYBACK_ISSUES_DESC" = "Fix video playback issues for some users. Turning this on will disable VP9 and AV1. Plus the video quality is limited to 1080p and HDR is removed.\nKnown issues: The player might act weird with this option on.";
+"FIX_PLAYBACK_ISSUES" = "Fix playback issues (Temporary)";
+"FIX_PLAYBACK_ISSUES_DESC" = "Try to fix video playback issues for some users. Turning this on will make the player automatically reloads itself everytime it errors or fails to play the video.";
 
 "PERFER_HEADER" = "Opzioni YouMod";
 "PERFER" = "Opzioni";
@@ -119,12 +118,6 @@
 "KEEP_SHORTS_SUBSCRIPT_DESC" = "Prevents removing Shorts from Subscriptions tab.";
 "HIDE_SEARCH_HISTORY" = "Nascondi cronologia ricerche";
 "HIDE_SEARCH_HISTORY_DESC" = "Nasconde la cronologia delle ricerche precedenti e i suggerimenti quando si usa la barra di ricerca.\nNOTA: La tua cronologia delle ricerche sarà ancora accessibile negli altri client YouTube.";
-"HIDE_SUB_BUTTON" = "Nascondi pulsante Iscriviti";
-"HIDE_SUB_BUTTON_DESC" = "Nasconde il pulsante iscriviti nei canali e nelle descrizioni dei video.";
-"HIDE_SHOP_BUTTON" = "Nascondi pulsante Shopping";
-"HIDE_SHOP_BUTTON_DESC" = "Nasconde il pulsante shopping/negozio nelle descrizioni dei canali.";
-"HIDE_MEMBER_BUTTON" = "Nascondi pulsante Abbonati";
-"HIDE_MEMBER_BUTTON_DESC" = "Nasconde il pulsante 'Abbonati' nei canali e nelle descrizioni dei video.";
 
 "PLAYER" = "Player";
 "QUALITY_WIFI" = "Playback quality on WiFi";
@@ -232,20 +225,6 @@
 "FORCE_MINIPLAYER_DESC" = "Allows all videos, including those made for kids, to play in the miniplayer when dismissing the player.";
 "FORCE_SEEKBAR" = "Always show progress bar";
 "FORCE_SEEKBAR_DESC" = "Ensures the progress bar (seekbar) remains visible at all times while in fullscreen mode.";
-"HIDE_LIKE_BUTTON" = "Nascondi pulsante Mi piace";
-"HIDE_LIKE_BUTTON_DESC" = "Nasconde il pulsante Mi piace nella barra delle azioni sotto il video.";
-"HIDE_DISLIKE_BUTTON" = "Nascondi pulsante Non mi piace";
-"HIDE_DISLIKE_BUTTON_DESC" = "Nasconde il pulsante Non mi piace nella barra delle azioni sotto il video.";
-"HIDE_SHARE_BUTTON" = "Nascondi pulsante Condividi";
-"HIDE_SHARE_BUTTON_DESC" = "Nasconde il pulsante Condividi nella barra delle azioni sotto il video.";
-"HIDE_DOWNLOAD_BUTTON" = "Nascondi pulsante Scarica";
-"HIDE_DOWNLOAD_BUTTON_DESC" = "Nasconde il pulsante Scarica nella barra delle azioni sotto il video.";
-"HIDE_CLIP_BUTTON" = "Nascondi pulsante Clip";
-"HIDE_CLIP_BUTTON_DESC" = "Nasconde il pulsante Clip nella barra delle azioni sotto il video.";
-"HIDE_REMIX_BUTTON" = "Nascondi pulsante Remix";
-"HIDE_REMIX_BUTTON_DESC" = "Nasconde il pulsante Remix nella barra delle azioni sotto il video.";
-"HIDE_SAVE_BUTTON" = "Nascondi pulsante Salva";
-"HIDE_SAVE_BUTTON_DESC" = "Nasconde il pulsante Salva nella barra delle azioni sotto il video.";
 
 "SHORTS" = "Shorts";
 "SHORTS_ACTION" = "Shorts action after the video ends";
@@ -256,34 +235,10 @@
 "REMOVE_LIVE_SHORTS_DESC" = "Removes live videos from the feed.";
 "HIDE_SHORTS_HEADER" = "Hide Shorts header";
 "HIDE_SHORTS_HEADER_DESC" = "Hide Shorts header that is on top of the Shorts player.";
-"HIDE_SHORTS_LIKE_BUTTON" = "Nascondi pulsante Mi piace";
-"HIDE_SHORTS_LIKE_BUTTON_DESC" = "Nasconde il pulsante Mi piace nel player degli Shorts.";
-"HIDE_SHORTS_DISLIKE_BUTTON" = "Nascondi pulsante Non mi piace";
-"HIDE_SHORTS_DISLIKE_BUTTON_DESC" = "Nasconde il pulsante Non mi piace nel player degli Shorts.";
-"HIDE_SHORTS_COMMENT_BUTTON" = "Nascondi pulsante Commenti";
-"HIDE_SHORTS_COMMENT_BUTTON_DESC" = "Nasconde il pulsante dei commenti nel player degli Shorts.";
-"HIDE_SHORTS_SHARE_BUTTON" = "Nascondi pulsante Condividi";
-"HIDE_SHORTS_SHARE_BUTTON_DESC" = "Nasconde il pulsante Condividi nel player degli Shorts.";
-"HIDE_SHORTS_REMIX_BUTTON" = "Nascondi pulsante Remix";
-"HIDE_SHORTS_REMIX_BUTTON_DESC" = "Nasconde il pulsante Remix nel player degli Shorts.";
-"HIDE_METADATA_BUTTON" = "Nascondi pulsante metadati audio";
-"HIDE_METADATA_BUTTON_DESC" = "Nasconde il pulsante che mostra la sorgente audio o i metadati musicali nel player degli Shorts.";
 "HIDE_SHORTS_PRODUCT" = "Nascondi prodotti";
 "HIDE_SHORTS_PRODUCT_DESC" = "Nasconde i prodotti taggati e i link per lo shopping negli Shorts.";
 "HIDE_SHORTS_RECBAR" = "Nascondi barra dei suggerimenti";
 "HIDE_SHORTS_RECBAR_DESC" = "Nasconde la barra delle azioni suggerite nel player degli Shorts (es. Prova questo audio, Shopping, Anteprima commento).";
-"HIDE_SHORTS_COMMIT" = "Nascondi barra commissioni";
-"HIDE_SHORTS_COMMIT_DESC" = "Nasconde la barra che indica che il video ha commissioni nel player degli Shorts.";
-"HIDE_SHORTS_SUBSCRIPT_BUTTON" = "Nascondi pulsante iscrizioni";
-"HIDE_SHORTS_SUBSCRIPT_BUTTON_DESC" = "Nasconde il pulsante Iscrizioni in alto nel player degli Shorts.";
-"HIDE_SHORTS_LIVE_BUTTON" = "Nascondi pulsante live";
-"HIDE_SHORTS_LIVE_BUTTON_DESC" = "Nasconde il pulsante Live in alto nel player degli Shorts.";
-"HIDE_SHORTS_LENS_BUTTON" = "Nascondi pulsante lens";
-"HIDE_SHORTS_LENS_BUTTON_DESC" = "Nasconde il pulsante Lens in alto nel player degli Shorts.";
-"HIDE_SHORTS_TRENDS_BUTTON" = "Nascondi pulsante tendenze";
-"HIDE_SHORTS_TRENDS_BUTTON_DESC" = "Nasconde il pulsante Tendenze in alto nel player degli Shorts.";
-"HIDE_SHORTS_TO_VIDEO" = "Nascondi link al video completo";
-"HIDE_SHORTS_TO_VIDEO_DESC" = "Nasconde il link che reindirizza da uno Short al video completo.";
 "ENABLES_SHORTS_QUALITY" = "Abilita selettore qualità negli Shorts";
 "ENABLES_SHORTS_QUALITY_DESC" = "Forza l'abilitazione del menu di selezione della qualità video negli Shorts.";
 "SHOW_SHORTS_SEEKBAR" = "Mostra sempre barra di scorrimento";
@@ -386,6 +341,8 @@
 "REMOVE_HIDE_FROM_PLAYLIST_OPTION_DESC" = "Remove 'Hide video from playlist' option from the flyout menu.";
 "REMOVE_HELP_OPTION" = "Remove 'Help & feedback' option";
 "REMOVE_HELP_OPTION_DESC" = "Remove 'Help & feedback' option from the flyout menu.";
+"REMOVE_NOTIFY_OPTION" = "Remove 'Notify me' option";
+"REMOVE_NOTIFY_OPTION_DESC" = "Remove 'Notify me' option from the flyout menu.";
 
 "SB_DESCRIPTION" = "Skip sponsored segments automatically using community-submitted data.";
 "SB_ENABLE" = "Enable SponsorBlock";

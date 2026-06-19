@@ -10,10 +10,6 @@
 - (void)setElementViews:(id)arg { if (!IS_ENABLED(HideSubbar)) %orig; }
 %end
 
-%hook YTChipCloudCell
-- (void)setEntry:(id)arg { if (!IS_ENABLED(HideSubbar)) %orig; }
-%end
-
 // Hide voice search button
 %hook YTSearchViewController
 - (void)viewDidLoad {

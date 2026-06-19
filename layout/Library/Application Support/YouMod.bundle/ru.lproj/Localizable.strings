@@ -1,4 +1,3 @@
-"NOTE" = "ПРИМЕЧАНИЕ: Некоторые функции скрытия могут оставлять пустую область.";
 "SETTINGS" = "Settings";
 "INTERFACE" = "Interface";
 
@@ -8,8 +7,8 @@
 "SOURCE_CODES_DESC" = "Посмотреть исходный код!";
 
 "EXTRA" = "Extra";
-"FIX_PLAYBACK_ISSUES" = "Fix playback issues";
-"FIX_PLAYBACK_ISSUES_DESC" = "Fix video playback issues for some users. Turning this on will disable VP9 and AV1. Plus the video quality is limited to 1080p and HDR is removed.\nKnown issues: The player might act weird with this option on.";
+"FIX_PLAYBACK_ISSUES" = "Fix playback issues (Temporary)";
+"FIX_PLAYBACK_ISSUES_DESC" = "Try to fix video playback issues for some users. Turning this on will make the player automatically reloads itself everytime it errors or fails to play the video.";
 
 "PERFER_HEADER" = "YouMod perferences";
 "PERFER" = "Настройки";
@@ -119,12 +118,6 @@
 "KEEP_SHORTS_SUBSCRIPT_DESC" = "Prevents removing Shorts from Subscriptions tab.";
 "HIDE_SEARCH_HISTORY" = "Скрыть историю поиска";
 "HIDE_SEARCH_HISTORY_DESC" = "Скрыть предыдущие поисковые запросы и подсказки при использовании строки поиска.\nПРИМЕЧАНИЕ: История поиска по-прежнему будет доступна в других клиентах YouTube.";
-"HIDE_SUB_BUTTON" = "Скрыть кнопку подписки";
-"HIDE_SUB_BUTTON_DESC" = "Скрыть кнопку подписки на каналах и в описаниях видео.";
-"HIDE_SHOP_BUTTON" = "Скрыть кнопку покупок";
-"HIDE_SHOP_BUTTON_DESC" = "Скрыть кнопку покупок/магазина в описаниях каналов.";
-"HIDE_MEMBER_BUTTON" = "Скрыть кнопку спонсорства";
-"HIDE_MEMBER_BUTTON_DESC" = "Скрыть кнопку «Стать спонсором» на каналах и в описаниях видео.";
 
 "PLAYER" = "Плеер";
 "PLAYER_ACTIONS" = "Player actions";
@@ -234,20 +227,6 @@
 "FORCE_MINIPLAYER_DESC" = "Allows all videos, including those made for kids, to play in the miniplayer when dismissing the player.";
 "FORCE_SEEKBAR" = "Always show progress bar";
 "FORCE_SEEKBAR_DESC" = "Ensures the progress bar (seekbar) remains visible at all times while in fullscreen mode.";
-"HIDE_LIKE_BUTTON" = "Скрыть кнопку «Нравится»";
-"HIDE_LIKE_BUTTON_DESC" = "Скрыть кнопку «Нравится» на панели действий под видео.";
-"HIDE_DISLIKE_BUTTON" = "Скрыть кнопку «Не нравится»";
-"HIDE_DISLIKE_BUTTON_DESC" = "Скрыть кнопку «Не нравится» на панели действий под видео.";
-"HIDE_SHARE_BUTTON" = "Скрыть кнопку «Поделиться»";
-"HIDE_SHARE_BUTTON_DESC" = "Скрыть кнопку «Поделиться» на панели действий под видео.";
-"HIDE_DOWNLOAD_BUTTON" = "Скрыть кнопку «Скачать»";
-"HIDE_DOWNLOAD_BUTTON_DESC" = "Скрыть кнопку «Скачать» на панели действий под видео.";
-"HIDE_CLIP_BUTTON" = "Скрыть кнопку «Клип»";
-"HIDE_CLIP_BUTTON_DESC" = "Скрыть кнопку «Клип» на панели действий под видео.";
-"HIDE_REMIX_BUTTON" = "Скрыть кнопку Remix";
-"HIDE_REMIX_BUTTON_DESC" = "Скрыть кнопку Remix на панели действий под видео.";
-"HIDE_SAVE_BUTTON" = "Скрыть кнопку «Сохранить»";
-"HIDE_SAVE_BUTTON_DESC" = "Скрыть кнопку «Сохранить» на панели действий под видео.";
 
 "SHORTS" = "Shorts";
 "SHORTS_ACTION" = "Shorts action after the video ends";
@@ -258,34 +237,10 @@
 "REMOVE_LIVE_SHORTS_DESC" = "Removes live videos from the feed.";
 "HIDE_SHORTS_HEADER" = "Hide Shorts header";
 "HIDE_SHORTS_HEADER_DESC" = "Hide Shorts header that is on top of the Shorts player.";
-"HIDE_SHORTS_LIKE_BUTTON" = "Скрыть кнопку «Нравится»";
-"HIDE_SHORTS_LIKE_BUTTON_DESC" = "Скрыть кнопку «Нравится» в плеере Shorts.";
-"HIDE_SHORTS_DISLIKE_BUTTON" = "Скрыть кнопку «Не нравится»";
-"HIDE_SHORTS_DISLIKE_BUTTON_DESC" = "Скрыть кнопку «Не нравится» в плеере Shorts.";
-"HIDE_SHORTS_COMMENT_BUTTON" = "Скрыть кнопку комментариев";
-"HIDE_SHORTS_COMMENT_BUTTON_DESC" = "Скрыть кнопку комментариев в плеере Shorts.";
-"HIDE_SHORTS_SHARE_BUTTON" = "Скрыть кнопку «Поделиться»";
-"HIDE_SHORTS_SHARE_BUTTON_DESC" = "Скрыть кнопку «Поделиться» в плеере Shorts.";
-"HIDE_SHORTS_REMIX_BUTTON" = "Скрыть кнопку Remix";
-"HIDE_SHORTS_REMIX_BUTTON_DESC" = "Скрыть кнопку Remix в плеере Shorts.";
-"HIDE_METADATA_BUTTON" = "Скрыть кнопку метаданных звука";
-"HIDE_METADATA_BUTTON_DESC" = "Скрыть кнопку, которая показывает источник звука или музыкальные метаданные в плеере Shorts.";
 "HIDE_SHORTS_PRODUCT" = "Скрыть товары";
 "HIDE_SHORTS_PRODUCT_DESC" = "Скрыть отмеченные товары и ссылки на покупки в интерфейсе Shorts.";
 "HIDE_SHORTS_RECBAR" = "Скрыть панель рекомендаций";
 "HIDE_SHORTS_RECBAR_DESC" = "Скрыть панель предлагаемых действий в плеере Shorts (например, «Попробовать этот звук», «Покупки»).";
-"HIDE_SHORTS_COMMIT" = "Скрыть панель комиссий";
-"HIDE_SHORTS_COMMIT_DESC" = "Скрыть панель, которая показывает, что видео приносит комиссию, в плеере Shorts.";
-"HIDE_SHORTS_SUBSCRIPT_BUTTON" = "Скрыть кнопку подписок";
-"HIDE_SHORTS_SUBSCRIPT_BUTTON_DESC" = "Скрыть кнопку «Подписки» в верхней части плеера Shorts.";
-"HIDE_SHORTS_LIVE_BUTTON" = "Скрыть кнопку прямого эфира";
-"HIDE_SHORTS_LIVE_BUTTON_DESC" = "Скрыть кнопку прямого эфира в верхней части плеера Shorts.";
-"HIDE_SHORTS_LENS_BUTTON" = "Hide lens button";
-"HIDE_SHORTS_LENS_BUTTON_DESC" = "Hide the Lens button at the top of the Shorts player.";
-"HIDE_SHORTS_TRENDS_BUTTON" = "Hide trends button";
-"HIDE_SHORTS_TRENDS_BUTTON_DESC" = "Hide the Trends button at the top of the Shorts player.";
-"HIDE_SHORTS_TO_VIDEO" = "Скрыть ссылку на полное видео";
-"HIDE_SHORTS_TO_VIDEO_DESC" = "Скрыть ссылку, которая ведёт из Shorts к полному видео.";
 "ENABLES_SHORTS_QUALITY" = "Включить выбор качества в Shorts";
 "ENABLES_SHORTS_QUALITY_DESC" = "Принудительно включить меню выбора качества видео в Shorts.";
 "SHOW_SHORTS_SEEKBAR" = "Всегда показывать полосу перемотки";
@@ -388,6 +343,8 @@
 "REMOVE_HIDE_FROM_PLAYLIST_OPTION_DESC" = "Remove 'Hide video from playlist' option from the flyout menu.";
 "REMOVE_HELP_OPTION" = "Remove 'Help & feedback' option";
 "REMOVE_HELP_OPTION_DESC" = "Remove 'Help & feedback' option from the flyout menu.";
+"REMOVE_NOTIFY_OPTION" = "Remove 'Notify me' option";
+"REMOVE_NOTIFY_OPTION_DESC" = "Remove 'Notify me' option from the flyout menu.";
 
 "SB_DESCRIPTION" = "Skip sponsored segments automatically using community-submitted data.";
 "SB_ENABLE" = "Enable SponsorBlock";

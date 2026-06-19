@@ -145,6 +145,7 @@ Class YTILikeResponseClass, YTIDislikeResponseClass, YTIRemoveLikeResponseClass;
         @"12": @(IS_ENABLED(RemoveNotInterestedOption)),
         @"22": @(IS_ENABLED(RemoveInfoOption)),
         @"36": @(IS_ENABLED(RemoveFilterOption)),
+        @"40": @(IS_ENABLED(RemoveNotifyOption)),
         @"58": @(IS_ENABLED(RemoveReportOption))
     };
     if ([actionsToRemove[iden] boolValue]) return;

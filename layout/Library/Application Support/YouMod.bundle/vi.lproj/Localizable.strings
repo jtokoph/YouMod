@@ -1,4 +1,3 @@
-"NOTE" = "LƯU Ý : Một số tính năng ẩn sẽ để lại khoảng trống.";
 "SETTINGS" = "Cài đặt";
 "INTERFACE" = "Interface";
 
@@ -8,8 +7,8 @@
 "SOURCE_CODES_DESC" = "Xem mã nguồn dự án!";
 
 "EXTRA" = "Extra";
-"FIX_PLAYBACK_ISSUES" = "Fix playback issues";
-"FIX_PLAYBACK_ISSUES_DESC" = "Fix video playback issues for some users. Turning this on will disable VP9 and AV1. Plus the video quality is limited to 1080p and HDR is removed.\nKnown issues: The player might act weird with this option on.";
+"FIX_PLAYBACK_ISSUES" = "Fix playback issues (Temporary)";
+"FIX_PLAYBACK_ISSUES_DESC" = "Try to fix video playback issues for some users. Turning this on will make the player automatically reloads itself everytime it errors or fails to play the video.";
 
 "PERFER_HEADER" = "Tuỳ chọn YouMod";
 "PERFER" = "Tùy chọn";
@@ -119,12 +118,6 @@
 "KEEP_SHORTS_SUBSCRIPT_DESC" = "Prevents removing Shorts from Subscriptions tab.";
 "HIDE_SEARCH_HISTORY" = "Ẩn lịch sử tìm kiếm";
 "HIDE_SEARCH_HISTORY_DESC" = "Ẩn lịch sử tìm kiếm và các đề xuất trước đó khi sử dụng thanh tìm kiếm.\nGHI CHÚ: Lịch sử tìm kiếm của bạn vẫn khả dụng trên các ứng dụng YouTube khác.";
-"HIDE_SUB_BUTTON" = "Ẩn nút Đăng kí";
-"HIDE_SUB_BUTTON_DESC" = "Ẩn nút Đăng kí trong các kênh và phần mô tả.";
-"HIDE_SHOP_BUTTON" = "Ẩn nút Mua sắm";
-"HIDE_SHOP_BUTTON_DESC" = "Ẩn nút Mua sắm/Cửa hàng trong phần mô tả video.";
-"HIDE_MEMBER_BUTTON" = "Ẩn nút Hội viên";
-"HIDE_MEMBER_BUTTON_DESC" = "Ẩn nút 'Tham gia' hội viên trong kênh và phần mô tả video.";
 
 "PLAYER" = "Trình phát video";
 "PLAYER_ACTIONS" = "Player actions";
@@ -234,20 +227,6 @@
 "FORCE_MINIPLAYER_DESC" = "Cho phép tất cả các video, bao gồm cả video dành cho trẻ em, phát trong trình phát thu nhỏ khi vuốt đóng video.";
 "FORCE_SEEKBAR" = "Luôn hiện thanh tiến trình";
 "FORCE_SEEKBAR_DESC" = "Làm cho thanh tiến trình (thanh tua) luôn hiển thị ở mọi lúc khi ở chế độ toàn màn hình.";
-"HIDE_LIKE_BUTTON" = "Ẩn nút Thích";
-"HIDE_LIKE_BUTTON_DESC" = "Ẩn nút Thích trên thanh hành động bên dưới trình phát.";
-"HIDE_DISLIKE_BUTTON" = "Ẩn nút Không thích";
-"HIDE_DISLIKE_BUTTON_DESC" = "Ẩn nút Không thích trên thanh hành động bên dưới trình phát.";
-"HIDE_SHARE_BUTTON" = "Ẩn nút Chia sẻ";
-"HIDE_SHARE_BUTTON_DESC" = "Ẩn nút Chia sẻ trên thanh hành động bên dưới trình phát.";
-"HIDE_DOWNLOAD_BUTTON" = "Ẩn nút Tải xuống";
-"HIDE_DOWNLOAD_BUTTON_DESC" = "Ẩn nút Tải xuống trên thanh hành động bên dưới trình phát.";
-"HIDE_CLIP_BUTTON" = "Ẩn nút Clip";
-"HIDE_CLIP_BUTTON_DESC" = "Ẩn nút Tạo đoạn trích (Clip) trên thanh hành động bên dưới lớp phủ video.";
-"HIDE_REMIX_BUTTON" = "Ẩn nút 'Phối lại'";
-"HIDE_REMIX_BUTTON_DESC" = "Ẩn nút 'Phối lại' trên thanh hành động bên dưới trình phát.";
-"HIDE_SAVE_BUTTON" = "Ẩn nút Lưu";
-"HIDE_SAVE_BUTTON_DESC" = "Ẩn nút Lưu trên thanh hành động bên dưới trình phát.";
 
 "SHORTS" = "Shorts";
 "SHORTS_ACTION" = "Shorts action after the video ends";
@@ -258,34 +237,10 @@
 "REMOVE_LIVE_SHORTS_DESC" = "Removes live videos from the feed.";
 "HIDE_SHORTS_HEADER" = "Hide Shorts header";
 "HIDE_SHORTS_HEADER_DESC" = "Hide Shorts header that is on top of the Shorts player.";
-"HIDE_SHORTS_LIKE_BUTTON" = "Ẩn nút Thích";
-"HIDE_SHORTS_LIKE_BUTTON_DESC" = "Ẩn nút Thích trong trình phát Shorts.";
-"HIDE_SHORTS_DISLIKE_BUTTON" = "Ẩn nút Không thích";
-"HIDE_SHORTS_DISLIKE_BUTTON_DESC" = "Ẩn nút Không thích trong trình phát Shorts.";
-"HIDE_SHORTS_COMMENT_BUTTON" = "Ẩn nút Bình luận";
-"HIDE_SHORTS_COMMENT_BUTTON_DESC" = "Ẩn nút Bình luận trong trình phát Shorts.";
-"HIDE_SHORTS_SHARE_BUTTON" = "Ẩn nút Chia sẻ";
-"HIDE_SHORTS_SHARE_BUTTON_DESC" = "Ẩn nút Chia sẻ trong trình phát Shorts.";
-"HIDE_SHORTS_REMIX_BUTTON" = "Ẩn nút 'Phối lại'";
-"HIDE_SHORTS_REMIX_BUTTON_DESC" = "Ẩn nút 'Phối lại' trong trình phát Shorts.";
-"HIDE_METADATA_BUTTON" = "Ẩn nút nguồn âm thanh";
-"HIDE_METADATA_BUTTON_DESC" = "Ẩn nút hiển thị nguồn âm thanh hoặc thông tin bài hát trong trình phát Shorts.";
 "HIDE_SHORTS_PRODUCT" = "Ẩn các sản phẩm";
 "HIDE_SHORTS_PRODUCT_DESC" = "Ẩn các sản phẩm được gắn thẻ và liên kết mua sắm trong trình phát Shorts.";
 "HIDE_SHORTS_RECBAR" = "Ẩn thanh đề xuất";
 "HIDE_SHORTS_RECBAR_DESC" = "Ẩn thanh hành động đề xuất trong trình phát Shorts (ví dụ: Thử âm thanh, Mua sắm, Xem trước bình luận).";
-"HIDE_SHORTS_COMMIT" = "Ẩn thanh hoa hồng";
-"HIDE_SHORTS_COMMIT_DESC" = "Ẩn thanh thông báo video có nhận hoa hồng trong trình phát Shorts.";
-"HIDE_SHORTS_SUBSCRIPT_BUTTON" = "Ẩn nút Kênh đăng ký";
-"HIDE_SHORTS_SUBSCRIPT_BUTTON_DESC" = "Ẩn nút Kênh đăng ký ở phía trên trình phát Shorts.";
-"HIDE_SHORTS_LIVE_BUTTON" = "Ẩn nút Phát trực tiếp";
-"HIDE_SHORTS_LIVE_BUTTON_DESC" = "Ẩn nút Phát trực tiếp ở phía trên trình phát Shorts.";
-"HIDE_SHORTS_LENS_BUTTON" = "Ẩn nút Ống kính";
-"HIDE_SHORTS_LENS_BUTTON_DESC" = "Ẩn nút Ống kính ở phía trên trình phát Shorts";
-"HIDE_SHORTS_TRENDS_BUTTON" = "Ẩn nút Xu hướng";
-"HIDE_SHORTS_TRENDS_BUTTON_DESC" = "Ẩn nút Xu hướng ở phía trên trình phát Shorts.";
-"HIDE_SHORTS_TO_VIDEO" = "Ẩn liên kết tới video đầy đủ";
-"HIDE_SHORTS_TO_VIDEO_DESC" = "Ẩn liên kết chuyển hướng từ một video ngắn sang một video đầy đủ trong trình phát Shorts.";
 "ENABLES_SHORTS_QUALITY" = "Bật bộ chọn chất lượng Shorts";
 "ENABLES_SHORTS_QUALITY_DESC" = "Ép bật menu chọn chất lượng video trong Shorts.";
 "SHOW_SHORTS_SEEKBAR" = "Luôn hiện thanh tiến trình";
@@ -388,6 +343,8 @@
 "REMOVE_HIDE_FROM_PLAYLIST_OPTION_DESC" = "Remove 'Hide video from playlist' option from the flyout menu.";
 "REMOVE_HELP_OPTION" = "Remove 'Help & feedback' option";
 "REMOVE_HELP_OPTION_DESC" = "Remove 'Help & feedback' option from the flyout menu.";
+"REMOVE_NOTIFY_OPTION" = "Remove 'Notify me' option";
+"REMOVE_NOTIFY_OPTION_DESC" = "Remove 'Notify me' option from the flyout menu.";
 
 "SB_DESCRIPTION" = "Skip sponsored segments automatically using community-submitted data.";
 "SB_ENABLE" = "Enable SponsorBlock";

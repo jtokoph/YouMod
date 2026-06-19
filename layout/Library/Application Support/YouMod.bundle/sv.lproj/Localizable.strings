@@ -1,4 +1,3 @@
-"NOTE" = "NOTE: Some hiding features may leave a blank box.";
 "SETTINGS" = "Settings";
 "INTERFACE" = "Interface";
 
@@ -8,8 +7,8 @@
 "SOURCE_CODES_DESC" = "Take a look at the codes!";
 
 "EXTRA" = "Extra";
-"FIX_PLAYBACK_ISSUES" = "Fix playback issues";
-"FIX_PLAYBACK_ISSUES_DESC" = "Fix video playback issues for some users. Turning this on will disable VP9 and AV1. Plus the video quality is limited to 1080p and HDR is removed.\nKnown issues: The player might act weird with this option on.";
+"FIX_PLAYBACK_ISSUES" = "Fix playback issues (Temporary)";
+"FIX_PLAYBACK_ISSUES_DESC" = "Try to fix video playback issues for some users. Turning this on will make the player automatically reloads itself everytime it errors or fails to play the video.";
 
 "PERFER_HEADER" = "YouMod perferences";
 "PERFER" = "Perferences";
@@ -119,12 +118,6 @@
 "KEEP_SHORTS_SUBSCRIPT_DESC" = "Prevents removing Shorts from Subscriptions tab.";
 "HIDE_SEARCH_HISTORY" = "Hide search history";
 "HIDE_SEARCH_HISTORY_DESC" = "Hide previous search history and suggestions when using the search bar.\nNOTE: Your search history will still be accessible in your other YouTube clients.";
-"HIDE_SUB_BUTTON" = "Hide Subscribe button";
-"HIDE_SUB_BUTTON_DESC" = "Hides the subscribe button in channels and video descriptions.";
-"HIDE_SHOP_BUTTON" = "Hide Shopping button";
-"HIDE_SHOP_BUTTON_DESC" = "Hides the shopping/store button in channels descriptions.";
-"HIDE_MEMBER_BUTTON" = "Hide Membership button";
-"HIDE_MEMBER_BUTTON_DESC" = "Hides the 'Join' button in channels and video descriptions.";
 
 "PLAYER" = "Player";
 "PLAYER_ACTIONS" = "Player actions";
@@ -234,20 +227,6 @@
 "FORCE_MINIPLAYER_DESC" = "Allows all videos, including those made for kids, to play in the miniplayer when dismissing the player.";
 "FORCE_SEEKBAR" = "Always show progress bar";
 "FORCE_SEEKBAR_DESC" = "Makes the progress bar (seekbar) remains visible at all times while in fullscreen mode.";
-"HIDE_LIKE_BUTTON" = "Hide Like button";
-"HIDE_LIKE_BUTTON_DESC" = "Hide Like button in the action bar under the video overlay.";
-"HIDE_DISLIKE_BUTTON" = "Hide Dislike button";
-"HIDE_DISLIKE_BUTTON_DESC" = "Hide Dislike button in the action bar under the video overlay.";
-"HIDE_SHARE_BUTTON" = "Hide Share button";
-"HIDE_SHARE_BUTTON_DESC" = "Hide Share button in the action bar under the video overlay.";
-"HIDE_DOWNLOAD_BUTTON" = "Hide Download button";
-"HIDE_DOWNLOAD_BUTTON_DESC" = "Hide Download button in the action bar under the video overlay.";
-"HIDE_CLIP_BUTTON" = "Hide Clip button";
-"HIDE_CLIP_BUTTON_DESC" = "Hide Clip button in the action bar under the video overlay.";
-"HIDE_REMIX_BUTTON" = "Hide Remix button";
-"HIDE_REMIX_BUTTON_DESC" = "Hide Remix button in the action bar under the video overlay.";
-"HIDE_SAVE_BUTTON" = "Hide Save button";
-"HIDE_SAVE_BUTTON_DESC" = "Hide Save button in the action bar under the video overlay.";
 
 "SHORTS" = "Shorts";
 "SHORTS_ACTION" = "Shorts action after the video ends";
@@ -258,34 +237,10 @@
 "REMOVE_LIVE_SHORTS_DESC" = "Removes live videos from the feed.";
 "HIDE_SHORTS_HEADER" = "Hide Shorts header";
 "HIDE_SHORTS_HEADER_DESC" = "Hide Shorts header that is on top of the Shorts player.";
-"HIDE_SHORTS_LIKE_BUTTON" = "Hide Like button";
-"HIDE_SHORTS_LIKE_BUTTON_DESC" = "Hide the Like button in the Shorts player.";
-"HIDE_SHORTS_DISLIKE_BUTTON" = "Hide Dislike button";
-"HIDE_SHORTS_DISLIKE_BUTTON_DESC" = "Hide the Dislike button in the Shorts player.";
-"HIDE_SHORTS_COMMENT_BUTTON" = "Hide Comment button";
-"HIDE_SHORTS_COMMENT_BUTTON_DESC" = "Hide the Comment button in the Shorts player.";
-"HIDE_SHORTS_SHARE_BUTTON" = "Hide Share button";
-"HIDE_SHORTS_SHARE_BUTTON_DESC" = "Hide the Share button in the Shorts player.";
-"HIDE_SHORTS_REMIX_BUTTON" = "Hide Remix button";
-"HIDE_SHORTS_REMIX_BUTTON_DESC" = "Hide the Remix button in the Shorts player.";
-"HIDE_METADATA_BUTTON" = "Hide sound metadata button";
-"HIDE_METADATA_BUTTON_DESC" = "Hide the button that shows the sound source or music metadata in the Shorts player.";
 "HIDE_SHORTS_PRODUCT" = "Hide products";
 "HIDE_SHORTS_PRODUCT_DESC" = "Hide tagged products and shopping links in the Shorts overlay.";
 "HIDE_SHORTS_RECBAR" = "Hide recommendation bar";
 "HIDE_SHORTS_RECBAR_DESC" = "Hide the suggested action bar in the Shorts player (e.g. Try this sound, Shopping, Preview comment).";
-"HIDE_SHORTS_COMMIT" = "Hide commissions bar";
-"HIDE_SHORTS_COMMIT_DESC" = "Hide the bar that shows the video got commissions in the Shorts player.";
-"HIDE_SHORTS_SUBSCRIPT_BUTTON" = "Hide subscriptions button";
-"HIDE_SHORTS_SUBSCRIPT_BUTTON_DESC" = "Hide the Subscriptions button at the top of the Shorts player.";
-"HIDE_SHORTS_LIVE_BUTTON" = "Hide live button";
-"HIDE_SHORTS_LIVE_BUTTON_DESC" = "Hide the Live button at the top of the Shorts player.";
-"HIDE_SHORTS_LENS_BUTTON" = "Hide lens button";
-"HIDE_SHORTS_LENS_BUTTON_DESC" = "Hide the Lens button at the top of the Shorts player.";
-"HIDE_SHORTS_TRENDS_BUTTON" = "Hide trends button";
-"HIDE_SHORTS_TRENDS_BUTTON_DESC" = "Hide the Trends button at the top of the Shorts player.";
-"HIDE_SHORTS_TO_VIDEO" = "Hide link to full video";
-"HIDE_SHORTS_TO_VIDEO_DESC" = "Hide the link that redirects in a Short to a full video in the Shorts player.";
 "ENABLES_SHORTS_QUALITY" = "Enable Shorts quality picker";
 "ENABLES_SHORTS_QUALITY_DESC" = "Force enable the video quality selection menu in Shorts.";
 "SHOW_SHORTS_SEEKBAR" = "Always show seekbar";
@@ -388,6 +343,8 @@
 "REMOVE_HIDE_FROM_PLAYLIST_OPTION_DESC" = "Remove 'Hide video from playlist' option from the flyout menu.";
 "REMOVE_HELP_OPTION" = "Remove 'Help & feedback' option";
 "REMOVE_HELP_OPTION_DESC" = "Remove 'Help & feedback' option from the flyout menu.";
+"REMOVE_NOTIFY_OPTION" = "Remove 'Notify me' option";
+"REMOVE_NOTIFY_OPTION_DESC" = "Remove 'Notify me' option from the flyout menu.";
 
 "SB_DESCRIPTION" = "Skip sponsored segments automatically using community-submitted data.";
 "SB_ENABLE" = "Enable SponsorBlock";

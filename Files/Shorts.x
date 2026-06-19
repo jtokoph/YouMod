@@ -57,3 +57,16 @@ static void YouModMakeAShortsAction(YTReelPlayerViewController *self, YTSingleVi
     YouModMakeAShortsAction(self, video, time);
 }
 %end
+
+// _ASDisplayView filters
+%hook _ASDisplayView
+- (void)didMoveToWindow {
+    %orig;
+    NSDictionary *elements = @{
+        @"product_sticker.main_target": @(IS_ENABLED(HideShortsProducts)),
+        @"product_sticker.secondary_target": @(IS_ENABLED(HideShortsProducts)),
+        @"id.elements.components.suggested_action": @(IS_ENABLED(HideShortsRecbar))
+    };
+    if ([elements[self.accessibilityIdentifier] boolValue]) [self removeFromSuperview]; 
+}
+%end
