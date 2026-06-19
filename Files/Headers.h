@@ -222,6 +222,10 @@
 #define YT_BUNDLE_ID @"com.google.ios.youtube"
 #define YT_NAME @"YouTube"
 
+@interface YTShortsPlayerViewController (YouMod)
+- (NSArray *)childViewControllers;
+@end
+
 @interface YTMenuItemMDCButton : UIButton
 @end
 
