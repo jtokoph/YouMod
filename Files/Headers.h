@@ -33,6 +33,7 @@
 #import <YouTubeHeader/YTSingleVideoTime.h>
 #import <YouTubeHeader/YTSingleVideoController.h>
 #import <YouTubeHeader/YTPlayerView.h>
+#import <YouTubeHeader/YTShortsPlayerViewController.h>
 #import <YouTubeHeader/YTReelPlayerViewController.h>
 #import <YouTubeHeader/YTLabel.h>
 #import <YouTubeHeader/MLFormat.h>
@@ -221,10 +222,6 @@
 
 #define YT_BUNDLE_ID @"com.google.ios.youtube"
 #define YT_NAME @"YouTube"
-
-@interface YTShortsPlayerViewController (YouMod)
-- (NSArray *)childViewControllers;
-@end
 
 @interface YTMenuItemMDCButton : UIButton
 @end
