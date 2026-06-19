@@ -31,8 +31,8 @@ NSString *getAdString(NSString *description) {
         @"text_image_button_layout",
         @"text_search_ad",
         @"video_display_full_layout",
-        @"video_display_full_buttoned_layout",
-        @"video_display_button_group_layout"
+        @"video_display_full_buttoned_layout"
+        // @"video_display_button_group_layout"
     ])
         if ([description containsString:str]) return str;
     return nil;
