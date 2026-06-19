@@ -1842,23 +1842,82 @@ NSString *YouModGlobalAuthHeader = nil;
 }
 %end
 
+// Download button in Shorts
+%hook _ASDisplayView
+
+- (void)layoutSubviews {
+    %orig;
+    if (!IS_ENABLED(DownloadManager)) return;
+    UIView *likeButtonView = nil;
+    for (UIView *subview in self.subviews) {
+        if ([subview.accessibilityIdentifier isEqualToString:@"id.reel_like_button"]) {
+            likeButtonView = subview;
+            break;
+        }
+    }
+    
+    if (!likeButtonView) return;
+    
+    UIButton *downloadBtn = (UIButton *)[self viewWithTag:1501];
+    if (!downloadBtn) {
+        downloadBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        downloadBtn.tag = 1501;
+
+        UIImage *btnImage = [UIImage systemImageNamed:@"arrow.down.circle"];
+        [downloadBtn setImage:btnImage forState:UIControlStateNormal];
+        downloadBtn.tintColor = [UIColor whiteColor];
+        downloadBtn.imageView.contentMode = UIViewContentModeScaleAspectFit;
+        downloadBtn.imageEdgeInsets = UIEdgeInsetsMake(18, 20, 18, 20);
+        
+        [downloadBtn addTarget:self action:@selector(didTapYouModShortsDownload:) forControlEvents:UIControlEventTouchUpInside];
+        [self addSubview:downloadBtn];
+    }
+    
+    CGFloat btnWidth = 64.0;
+    CGFloat btnHeight = 60.0;
+    
+    CGFloat pX = likeButtonView.center.x - (btnWidth / 2.0);
+    CGFloat pY = likeButtonView.frame.origin.y - btnHeight - 5.0;
+    
+    downloadBtn.frame = CGRectMake(pX, pY, btnWidth, btnHeight);
+    
+    [self bringSubviewToFront:downloadBtn];
+}
+
+%new
+- (void)didTapYouModShortsDownload:(UIButton *)button {
+    // Loop to find playerview
+    UIResponder *responder = self.nextResponder;
+    while (responder && ![responder isKindOfClass:%c(YTShortsPlayerViewController)]) {
+        responder = responder.nextResponder;
+    }
+    if (responder) {
+        YTPlayerViewController *player = (YTPlayerViewController *)responder.childViewControllers[0];
+        UIViewController *presenter = YouModPresenterForSender(button, player);
+        YouModShowDownloadManager(resolved, presenter, button);
+    }
+}
+
+%end
+
 %ctor {
     // Download.x previously relied on Logos' implicit %init; declaring an explicit
     // %ctor means we must call it ourselves, or every hook in this file goes dead.
     %init;
-
-    // Register the download button in the player overlay's custom button row.
-    // sortOrder 200 places it to the left of the SponsorBlock toggle (sortOrder 100).
-    YMOverlayButtonSpec *download = [[YMOverlayButtonSpec alloc] init];
-    download.identifier = @"download.video";
-    download.symbolName = @"arrow.down.circle";
-    download.tintColor = [UIColor whiteColor];
-    download.sortOrder = 200;
-    download.isVisible = nil; // always visible when the overlay is up
-    download.onTap = ^(YTPlayerViewController *player, UIButton *button) {
-        UIViewController *presenter = YouModPresenterForSender(button, player ?: YouModCurrentPlayerViewController);
-        YTPlayerViewController *resolved = YouModPlayerFromViewController(presenter) ?: player ?: YouModCurrentPlayerViewController;
-        YouModShowDownloadManager(resolved, presenter, button);
-    };
-    YMRegisterOverlayButton(download);
+    if (IS_ENABLED(DownloadManager)) {
+        // Register the download button in the player overlay's custom button row.
+        // sortOrder 200 places it to the left of the SponsorBlock toggle (sortOrder 100).
+        YMOverlayButtonSpec *download = [[YMOverlayButtonSpec alloc] init];
+        download.identifier = @"download.video";
+        download.symbolName = @"arrow.down.circle";
+        download.tintColor = [UIColor whiteColor];
+        download.sortOrder = 200;
+        download.isVisible = nil; // always visible when the overlay is up
+        download.onTap = ^(YTPlayerViewController *player, UIButton *button) {
+            UIViewController *presenter = YouModPresenterForSender(button, player ?: YouModCurrentPlayerViewController);
+            YTPlayerViewController *resolved = YouModPlayerFromViewController(presenter) ?: player ?: YouModCurrentPlayerViewController;
+            YouModShowDownloadManager(resolved, presenter, button);
+        };
+        YMRegisterOverlayButton(download);
+    }
 }
