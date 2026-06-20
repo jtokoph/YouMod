@@ -863,12 +863,7 @@ static YouModMediaFormat *YouModMediaFormatFromStream(id stream, BOOL video) {
     NSString *url = YouModStringFromSelector(stream, @selector(URL));
     NSString *mimeType = YouModStringFromSelector(stream, @selector(mimeType));
     NSString *lowerMime = mimeType.lowercaseString;
-    NSInteger itag = YouModIntegerFromSelector(stream, @selector(itag));
-
-    NSSet *mp4VideoItags = [NSSet setWithObjects:@18, @22, @37, @38, @59, @78, @133, @134, @135, @136, @137, @160, @212, @264, @266, @298, @299, nil];
-    NSSet *m4aAudioItags = [NSSet setWithObjects:@139, @140, @141, @256, @258, @325, @328, nil];
-    BOOL itagMatches = video ? [mp4VideoItags containsObject:@(itag)] : [m4aAudioItags containsObject:@(itag)];
-    BOOL typeMatches = video ? ([lowerMime containsString:@"video/"] || itagMatches) : ([lowerMime containsString:@"audio/"] || itagMatches);
+    BOOL typeMatches = video ? ([lowerMime containsString:@"video/"]) : ([lowerMime containsString:@"audio/"]);
     if (!typeMatches) return nil;
 
     BOOL mimeLooksMP4 = [lowerMime containsString:@"mp4"] || [lowerMime containsString:@"m4a"];
