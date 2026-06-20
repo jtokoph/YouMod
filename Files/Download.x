@@ -736,7 +736,7 @@ static NSString *YouModMimeDetail(NSString *mimeType) {
 
 static NSString *YouModFileExtensionForFormat(YouModMediaFormat *format) {
     NSString *lower = format.mimeType.lowercaseString;
-    if ([lower containsString:@"m4a"]) return @"m4a";
+    if ([lower containsString:@"mp4a"]) return @"m4a";
     if ([lower containsString:@"mp4"]) return @"mp4";
     return nil;
 }
@@ -744,7 +744,7 @@ static NSString *YouModFileExtensionForFormat(YouModMediaFormat *format) {
 static BOOL YouModFormatLooksMP4Family(YouModMediaFormat *format) {
     NSString *mime = format.mimeType.lowercaseString;
     NSString *extension = YouModFileExtensionForFormat(format);
-    return [mime containsString:@"mp4"] || [mime containsString:@"m4a"] || [@[@"mp4", @"m4a"] containsObject:extension];
+    return [mime containsString:@"mp4"] || [mime containsString:@"mp4a"] || [@[@"mp4", @"mp4a"] containsObject:extension];
 }
 
 static NSString *YouModMergedVideoOutputExtension(YouModMediaFormat *videoFormat, YouModMediaFormat *audioFormat) {
@@ -866,7 +866,7 @@ static YouModMediaFormat *YouModMediaFormatFromStream(id stream, BOOL video) {
     BOOL typeMatches = video ? ([lowerMime containsString:@"video/"]) : ([lowerMime containsString:@"audio/"]);
     if (!typeMatches) return nil;
 
-    BOOL mimeLooksMP4 = ([lowerMime containsString:@"mp4"] || [lowerMime containsString:@"m4a"]) && [lowerMime containsString:@"avc1"];
+    BOOL mimeLooksMP4 = [lowerMime containsString:@"mp4"] && ([lowerMime containsString:@"avc1"] || [lowerMime containsString:@"mp4a"]) ;
     if (mimeType.length && !mimeLooksMP4) return nil;
 
     YouModMediaFormat *format = [YouModMediaFormat new];
