@@ -881,13 +881,12 @@ static YouModMediaFormat *YouModMediaFormatFromStream(id stream, BOOL video) {
     format.fps = fps;
     format.qualityLabel = YouModStringFromSelector(stream, @selector(qualityLabel));
     if (!video) {
-        NSMutableArray *audioTraits = [NSMutableArray array];
         id audio = YouModObjectFromSelector(stream, @selector(audioTrack));
         if (audio) {
             NSString *audioidp = YouModStringFromSelector(audio, @selector(id_p)); 
-            if ([audioidp hasSuffix:@".4"]) [audioTraits addObject:audioidp];
+            if ([audioidp hasSuffix:@".4"]) format.audioTrack = YES;
         }
-        format.audioTrack = [[audioTraits componentsJoinedByString:@" "] localizedCaseInsensitiveContainsString:@"drc"];
+        format.audioTrack = NO;
     }
     if (YouModBoolFromSelector(stream, @selector(hasContentLength))) {
         format.contentLength = YouModUnsignedLongLongFromSelector(stream, @selector(contentLength));
@@ -1874,7 +1873,13 @@ NSString *YouModGlobalAuthHeader = nil;
     CGFloat btnHeight = 60.0;
     
     CGFloat pX = likeButtonView.frame.origin.x;
-    CGFloat pY = likeButtonView.frame.origin.y + 25.0;
+    CGFloat pY;
+    // In older YT versions, the button frame is 0, 0. So we will manually set the button frame.
+    if (likeButtonView.frame.origin.y == 0) {
+        pY = likeButtonView.frame.origin.y + 60.0;
+    } else {
+        pY = likeButtonView.frame.origin.y + 25.0;
+    }
     
     downloadBtn.frame = CGRectMake(pX, pY, btnWidth, btnHeight);
     
