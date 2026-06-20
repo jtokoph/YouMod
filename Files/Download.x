@@ -885,8 +885,9 @@ static YouModMediaFormat *YouModMediaFormatFromStream(id stream, BOOL video) {
         if (audio) {
             NSString *audioidp = YouModStringFromSelector(audio, @selector(id_p)); 
             if ([audioidp hasSuffix:@".4"]) format.audioTrack = YES;
+        } else {
+            format.audioTrack = NO;
         }
-        format.audioTrack = NO;
     }
     if (YouModBoolFromSelector(stream, @selector(hasContentLength))) {
         format.contentLength = YouModUnsignedLongLongFromSelector(stream, @selector(contentLength));
