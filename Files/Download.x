@@ -1842,15 +1842,18 @@ NSString *YouModGlobalAuthHeader = nil;
 }
 %end
 
+@interface YTReelWatchPlaybackOverlayView : UIView
+@end
+
 // Download button in Shorts
-%hook _ASDisplayView
+%hook YTReelWatchPlaybackOverlayView
 
 - (void)layoutSubviews {
     %orig;
     if (!IS_ENABLED(DownloadManager)) return;
     UIView *likeButtonView = nil;
     for (UIView *subview in self.subviews) {
-        if ([subview.accessibilityIdentifier isEqualToString:@"id.reel_like_button"]) {
+        if ([subview isKindOfClass:%c(YTReelPlayerButton)]) {
             likeButtonView = subview;
             break;
         }
@@ -1863,11 +1866,10 @@ NSString *YouModGlobalAuthHeader = nil;
         downloadBtn = [UIButton buttonWithType:UIButtonTypeCustom];
         downloadBtn.tag = 1501;
 
-        UIImage *btnImage = [UIImage systemImageNamed:@"arrow.down.circle"];
-        [downloadBtn setImage:btnImage forState:UIControlStateNormal];
+        UIImageSymbolConfiguration *config = [UIImageSymbolConfiguration configurationWithPointSize:20 weight:UIImageSymbolWeightMedium];
+        UIImage *icon = [UIImage systemImageNamed:@"arrow.down.circle" withConfiguration:config];
+        [downloadBtn setImage:icon forState:UIControlStateNormal];
         downloadBtn.tintColor = [UIColor whiteColor];
-        downloadBtn.imageView.contentMode = UIViewContentModeScaleAspectFit;
-        downloadBtn.imageEdgeInsets = UIEdgeInsetsMake(18, 20, 18, 20);
         
         [downloadBtn addTarget:self action:@selector(didTapYouModShortsDownload:) forControlEvents:UIControlEventTouchUpInside];
         [self addSubview:downloadBtn];
