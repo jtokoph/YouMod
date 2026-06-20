@@ -866,8 +866,8 @@ static YouModMediaFormat *YouModMediaFormatFromStream(id stream, BOOL video) {
     BOOL typeMatches = video ? ([lowerMime containsString:@"video/"]) : ([lowerMime containsString:@"audio/"]);
     if (!typeMatches) return nil;
 
-    BOOL mimeLooksMP4 = [lowerMime containsString:@"mp4"] || [lowerMime containsString:@"m4a"];
-    if (mimeType.length && !mimeLooksMP4 && !itagMatches) return nil;
+    BOOL mimeLooksMP4 = ([lowerMime containsString:@"mp4"] || [lowerMime containsString:@"m4a"]) && [lowerMime containsString:@"avc1"];
+    if (mimeType.length && !mimeLooksMP4) return nil;
 
     YouModMediaFormat *format = [YouModMediaFormat new];
     format.source = stream;
