@@ -1845,6 +1845,9 @@ NSString *YouModGlobalAuthHeader = nil;
 @interface YTReelWatchPlaybackOverlayView : UIView
 @end
 
+@interface YTReelPlayerButton : YTQTMButton
+@end
+
 // Download button in Shorts
 %hook YTReelWatchPlaybackOverlayView
 
@@ -1878,7 +1881,7 @@ NSString *YouModGlobalAuthHeader = nil;
     CGFloat btnWidth = 64.0;
     CGFloat btnHeight = 60.0;
     
-    CGFloat pX = likeButtonView.center.x - (btnWidth / 2.0);
+    CGFloat pX = likeButtonView.frame.origin.x - (btnWidth / 2.0);
     CGFloat pY = likeButtonView.frame.origin.y - btnHeight - 5.0;
     
     downloadBtn.frame = CGRectMake(pX, pY, btnWidth, btnHeight);
