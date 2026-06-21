@@ -1837,7 +1837,7 @@ NSString *YouModGlobalAuthHeader = nil;
 %end
 
 void YouModConfigureDownloadButton(_ASDisplayView *view) {
-    if (!IS_ENABLED(DownloadManager) || IS_ENABLED(HideDownloadButton)) return;
+    if (!IS_ENABLED(DownloadManager)) return;
     if (objc_getAssociatedObject(view, @selector(YouModDownloadButtonTapped:))) return;
 
     // For iPad (Old ID)
@@ -1930,3 +1930,25 @@ void YouModConfigureDownloadButton(_ASDisplayView *view) {
 }
 
 %end
+
+%ctor {
+    // Download.x previously relied on Logos' implicit %init; declaring an explicit
+    // %ctor means we must call it ourselves, or every hook in this file goes dead.
+    %init;
+    if (IS_ENABLED(DownloadManager)) {
+        // Register the download button in the player overlay's custom button row.
+        // sortOrder 200 places it to the left of the SponsorBlock toggle (sortOrder 100).
+        YMOverlayButtonSpec *download = [[YMOverlayButtonSpec alloc] init];
+        download.identifier = @"download.video";
+        download.symbolName = @"arrow.down.circle";
+        download.tintColor = [UIColor whiteColor];
+        download.sortOrder = 200;
+        download.isVisible = nil; // always visible when the overlay is up
+        download.onTap = ^(YTPlayerViewController *player, UIButton *button) {
+            UIViewController *presenter = YouModPresenterForSender(button, player ?: YouModCurrentPlayerViewController);
+            YTPlayerViewController *resolved = YouModPlayerFromViewController(presenter) ?: player ?: YouModCurrentPlayerViewController;
+            YouModShowDownloadManager(resolved, presenter, button);
+        };
+        YMRegisterOverlayButton(download);
+    }
+}

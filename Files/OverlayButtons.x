@@ -98,7 +98,6 @@ static UIButton *YMCreateOverlayButton(YTMainAppControlsOverlayView *overlay, YM
 
 #pragma mark - YTMainAppControlsOverlayView Hook
 
-static BOOL isSetDownloadButton = NO;
 // static BOOL isSetSleepTimerButton = NO;
 // static BOOL isSetSpeedButton = NO;
 // static BOOL isSetMuteButton = NO;
@@ -107,24 +106,6 @@ static BOOL isSetDownloadButton = NO;
 
 - (void)layoutSubviews {
     %orig;
-    // Download button
-    if (IS_ENABLED(DownloadManager) && !isSetDownloadButton) {
-        // Register the download button in the player overlay's custom button row.
-        // sortOrder 200 places it to the left of the SponsorBlock toggle (sortOrder 100).
-        YMOverlayButtonSpec *download = [[YMOverlayButtonSpec alloc] init];
-        download.identifier = @"download.video";
-        download.symbolName = @"arrow.down.circle";
-        download.tintColor = [UIColor whiteColor];
-        download.sortOrder = 200;
-        download.isVisible = nil; // always visible when the overlay is up
-        download.onTap = ^(YTPlayerViewController *player, UIButton *button) {
-            UIViewController *presenter = YouModPresenterForSender(button, player ?: YouModCurrentPlayerViewController);
-            YTPlayerViewController *resolved = YouModPlayerFromViewController(presenter) ?: player ?: YouModCurrentPlayerViewController;
-            YouModShowDownloadManager(resolved, presenter, button);
-        };
-        YMRegisterOverlayButton(download);
-        isSetDownloadButton = YES;
-    }
     /*
     if (IS_ENABLED(MuteButton) && !isSetMuteButton) {
         YMOverlayButtonSpec *mute = [[YMOverlayButtonSpec alloc] init];
