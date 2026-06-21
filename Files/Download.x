@@ -1836,6 +1836,34 @@ NSString *YouModGlobalAuthHeader = nil;
 }
 %end
 
+void YouModConfigureDownloadButton(_ASDisplayView *view) {
+    if (!IS_ENABLED(DownloadManager) || IS_ENABLED(HideDownloadButton)) return;
+    if (objc_getAssociatedObject(view, @selector(YouModDownloadButtonTapped:))) return;
+
+    // For iPad (Old ID)
+    if ([view.accessibilityIdentifier isEqualToString:@"id.ui.add_to.offline.button"]) {
+        view.userInteractionEnabled = YES;
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:view action:@selector(YouModDownloadButtonTapped:)];
+        tap.cancelsTouchesInView = YES;
+        tap.delaysTouchesBegan = YES;
+        tap.delaysTouchesEnded = YES;
+        [view addGestureRecognizer:tap];
+        objc_setAssociatedObject(view, @selector(YouModDownloadButtonTapped:), @YES, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    }
+}
+
+%hook _ASDisplayView
+
+%new
+- (void)YouModDownloadButtonTapped:(UITapGestureRecognizer *)sender {
+    if (sender.state != UIGestureRecognizerStateEnded) return;
+    UIViewController *presenter = YouModPresenterForSender(self, YouModCurrentPlayerViewController);
+    YTPlayerViewController *player = YouModPlayerFromViewController(presenter);
+    YouModShowDownloadManager(player, presenter, self);
+}
+
+%end
+
 @interface YTReelWatchPlaybackOverlayView : UIView
 @end
 
@@ -1902,25 +1930,3 @@ NSString *YouModGlobalAuthHeader = nil;
 }
 
 %end
-
-%ctor {
-    // Download.x previously relied on Logos' implicit %init; declaring an explicit
-    // %ctor means we must call it ourselves, or every hook in this file goes dead.
-    %init;
-    if (IS_ENABLED(DownloadManager)) {
-        // Register the download button in the player overlay's custom button row.
-        // sortOrder 200 places it to the left of the SponsorBlock toggle (sortOrder 100).
-        YMOverlayButtonSpec *download = [[YMOverlayButtonSpec alloc] init];
-        download.identifier = @"download.video";
-        download.symbolName = @"arrow.down.circle";
-        download.tintColor = [UIColor whiteColor];
-        download.sortOrder = 200;
-        download.isVisible = nil; // always visible when the overlay is up
-        download.onTap = ^(YTPlayerViewController *player, UIButton *button) {
-            UIViewController *presenter = YouModPresenterForSender(button, player ?: YouModCurrentPlayerViewController);
-            YTPlayerViewController *resolved = YouModPlayerFromViewController(presenter) ?: player ?: YouModCurrentPlayerViewController;
-            YouModShowDownloadManager(resolved, presenter, button);
-        };
-        YMRegisterOverlayButton(download);
-    }
-}

@@ -98,10 +98,50 @@ static UIButton *YMCreateOverlayButton(YTMainAppControlsOverlayView *overlay, YM
 
 #pragma mark - YTMainAppControlsOverlayView Hook
 
+static BOOL isSetDownloadButton = NO;
+// static BOOL isSetSleepTimerButton = NO;
+// static BOOL isSetSpeedButton = NO;
+// static BOOL isSetMuteButton = NO;
+
 %hook YTMainAppControlsOverlayView
 
 - (void)layoutSubviews {
     %orig;
+    // Download button
+    if (IS_ENABLED(DownloadManager) && !isSetDownloadButton) {
+        // Register the download button in the player overlay's custom button row.
+        // sortOrder 200 places it to the left of the SponsorBlock toggle (sortOrder 100).
+        YMOverlayButtonSpec *download = [[YMOverlayButtonSpec alloc] init];
+        download.identifier = @"download.video";
+        download.symbolName = @"arrow.down.circle";
+        download.tintColor = [UIColor whiteColor];
+        download.sortOrder = 200;
+        download.isVisible = nil; // always visible when the overlay is up
+        download.onTap = ^(YTPlayerViewController *player, UIButton *button) {
+            UIViewController *presenter = YouModPresenterForSender(button, player ?: YouModCurrentPlayerViewController);
+            YTPlayerViewController *resolved = YouModPlayerFromViewController(presenter) ?: player ?: YouModCurrentPlayerViewController;
+            YouModShowDownloadManager(resolved, presenter, button);
+        };
+        YMRegisterOverlayButton(download);
+        isSetDownloadButton = YES;
+    }
+    /*
+    if (IS_ENABLED(MuteButton) && !isSetMuteButton) {
+        YMOverlayButtonSpec *mute = [[YMOverlayButtonSpec alloc] init];
+        mute.identifier = @"mute.video";
+        mute.symbolName = @"speaker.wave.2";
+        mute.tintColor = [UIColor whiteColor];
+        mute.sortOrder = 300;
+        mute.isVisible = nil; // always visible when the overlay is up
+        mute.onTap = ^(YTPlayerViewController *player, UIButton *button) {
+            UIViewController *presenter = YouModPresenterForSender(button, player ?: YouModCurrentPlayerViewController);
+            YTPlayerViewController *resolved = YouModPlayerFromViewController(presenter) ?: player ?: YouModCurrentPlayerViewController;
+            YouModShowDownloadManager(resolved, presenter, button);
+        };
+        YMRegisterOverlayButton(mute);
+        isSetMuteButton = YES;
+    }
+    */
     NSArray<YMOverlayButtonSpec *> *specs = YMRegisteredOverlayButtons();
     if (specs.count == 0) return;
 
@@ -158,5 +198,18 @@ static UIButton *YMCreateOverlayButton(YTMainAppControlsOverlayView *overlay, YM
     YTPlayerViewController *player = YMPlayerVCFromOverlay(self);
     matched.onTap(player, sender);
 }
+
+/* Mute logic from YouMute
+%new
+- (void)YouModDidPressMute:(BOOL)mute {
+    YTMainAppVideoPlayerOverlayViewController *c = [self valueForKey:@"_eventsDelegate"];
+    YTSingleVideoController *video = [c valueForKey:@"_currentSingleVideoObservable"];
+    BOOL muteStatus = ![video isMuted];
+    [[NSUserDefaults standardUserDefaults] setBool:muteStatus forKey:Muted];
+    [video setMuted:muteStatus];
+    // Change this to our button logic
+    [self.overlayButtons[TweakKey] setImage:muteImage([video isMuted]) forState:UIControlStateNormal];
+}
+*/
 
 %end

@@ -140,8 +140,8 @@ static NSBundle *YouModBundle() {
         [defaults setBool:YES forKey:HideCastButtonNav];
         [defaults setBool:YES forKey:HideCastButtonPlayer];
         [defaults setBool:YES forKey:BackgroundPlayback];
-        // [defaults setBool:YES forKey:DownloadManager];
-        // [defaults setBool:YES forKey:DownloadSaveToPhotos];
+        [defaults setBool:YES forKey:DownloadManager];
+        [defaults setBool:YES forKey:DownloadSaveToPhotos];
         [defaults setBool:YES forKey:DisableHints];
         [defaults setInteger:1 forKey:GestureActivationArea];
         [defaults setInteger:1 forKey:LeftSideGesture];
