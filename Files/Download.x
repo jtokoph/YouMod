@@ -881,12 +881,10 @@ static YouModMediaFormat *YouModMediaFormatFromStream(id stream, BOOL video) {
     format.fps = fps;
     format.qualityLabel = YouModStringFromSelector(stream, @selector(qualityLabel));
     if (!video) {
-        format.audioTrack = NO;
         id audio = YouModObjectFromSelector(stream, @selector(audioTrack));
-        if (audio) {
-            NSString *audioidp = YouModStringFromSelector(audio, @selector(id_p)); 
-            if (audioidp && ![audioidp hasSuffix:@".4"]) return nil;
-        }
+        NSString *audioidp = YouModStringFromSelector(audio, @selector(id_p)); 
+        if (YouModBoolFromSelector(audio, @selector(hasId_p)) && ![audioidp hasSuffix:@".4"]) return nil;
+        format.audioTrack = NO;
     }
     if (YouModBoolFromSelector(stream, @selector(hasContentLength))) {
         format.contentLength = YouModUnsignedLongLongFromSelector(stream, @selector(contentLength));
