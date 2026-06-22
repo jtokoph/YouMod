@@ -762,10 +762,6 @@ static NSString *YouModFormatSubtitle(YouModMediaFormat *format) {
     return [parts componentsJoinedByString:@" - "];
 }
 
-static NSString *YouModVideoIDForPlayer(YTPlayerViewController *player) {
-    return [player currentVideoID];
-}
-
 static YTIPlayerResponse *YouModPlayerDataForPlayer(YTPlayerViewController *player) {
     YTPlayerResponse *response;
     @try {
@@ -1558,7 +1554,7 @@ static void YouModDownloadThumbnail(NSString *videoID, UIViewController *present
 }
 
 static void YouModCopyVideoInfo(YTPlayerViewController *player, UIViewController *presenter) {
-    NSString *videoID = YouModVideoIDForPlayer(player);
+    NSString *videoID = player.currentVideoID;
     NSString *title = YouModTitleForPlayer(player);
     NSString *url = [NSString stringWithFormat:@"https://www.youtube.com/watch?v=%@", videoID];
     NSString *description = YouModDescriptionForPlayer(player);
@@ -1570,7 +1566,7 @@ static void YouModShowVideoQualitySheet(YTPlayerViewController *player, UIViewCo
     NSArray <YouModMediaFormat *> *videoFormats = YouModFormatsForPlayer(player, YES);
     YouModMediaFormat *audioFormat = YouModBestAudioFormatForPlayer(player);
     NSString *title = YouModTitleForPlayer(player);
-    NSString *videoID = YouModVideoIDForPlayer(player);
+    NSString *videoID = player.currentVideoID;
 
     if (videoFormats.count == 0 || !audioFormat) {
         YouModSendError(LOC(@"NO_VID_AUDIO_STREAM_FOUND"));
@@ -1597,7 +1593,7 @@ static void YouModShowVideoQualitySheet(YTPlayerViewController *player, UIViewCo
 static void YouModShowAudioSourceSheet(YTPlayerViewController *player, YouModAudioOutputFormat *outputFormat, UIViewController *presenter, UIView *sender) {
     NSArray <YouModMediaFormat *> *audioFormats = YouModFormatsForPlayer(player, NO);
     NSString *title = YouModTitleForPlayer(player);
-    NSString *videoID = YouModVideoIDForPlayer(player);
+    NSString *videoID = player.currentVideoID;
 
     if (audioFormats.count == 0) {
         YouModSendError(LOC(@"NO_AUDIO_STREAM_FOUND"));
@@ -1643,7 +1639,7 @@ static void YouModShowCaptionsSheet(YTPlayerViewController *player, UIViewContro
                         YouModSendError(LOC(@"CAPTIONS_FAILED"));
                         return;
                     }
-                    NSString *videoID = YouModVideoIDForPlayer(player);
+                    NSString *videoID = player.currentVideoID;
                     NSString *filename = [NSString stringWithFormat:@"%@_%@.vtt", videoID, languageCode];
                     NSURL *tempURL = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:filename]];
                     [data writeToURL:tempURL atomically:YES];
@@ -1667,7 +1663,7 @@ static void YouModShowDownloadManager(YTPlayerViewController *player, UIViewCont
         return;
     }
 
-    NSString *videoID = YouModVideoIDForPlayer(player);
+    NSString *videoID = player.currentVideoID;
     NSMutableArray *items = [NSMutableArray array];
     NSString *videoTitle = LOC(@"DOWNLOAD_VIDEO");
     NSString *shortsTitle = [NSString stringWithFormat:@"%@ Shorts", videoTitle];
