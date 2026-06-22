@@ -48,7 +48,6 @@ static NSBundle *YouModBundle() {
 @interface YTICaptionTrackEntry : GPBMessage
 - (NSString *)baseURL;
 - (NSString *)languageCode;
-- (NSString *)vssId;
 - (YTIFormattedString *)name;
 @end
 
