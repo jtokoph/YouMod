@@ -13,6 +13,8 @@
 #import <YouTubeHeader/YTIPlayerResponse.h>
 #import <YouTubeHeader/YTPlayerResponse.h>
 #import <YouTubeHeader/YTIVideoDetails.h>
+#import <YouTubeHeader/YTIStreamingData.h>
+#import <YouTubeHeader/YTIFormattedString.h>
 
 #define TweakName @"YouMod"
 
@@ -40,17 +42,45 @@ static NSBundle *YouModBundle() {
 
 @interface YTPlayerViewController (YouModDownload)
 - (YTPlayerResponse *)contentPlayerResponse;
+- (YTPlayerResponse *)playerResponse;
+@end
+
+@interface YTICaptionTrackEntry : GBPMessage
+- (NSString *)baseURL;
+- (NSString *)languageCode;
+- (NSString *)vssId;
+- (YTIFormattedString *)name;
+@end
+
+@interface YTIPlayerCaptionsTrackListRenderer : GBPMessage
+- (NSMutableArray *)captionTracksArray;
+@end
+
+@interface YTIAudioTrack (YouModDownload)
+- (BOOL)hasId_p;
+@end
+
+@interface YTICaptionsSupportedRenderers : GBPMessage
+- (YTIPlayerCaptionsTrackListRenderer *)playerCaptionsTracklistRenderer;
 @end
 
 @interface YTIPlayerResponse (YouModDownload)
-- (id)streamingData;
+- (YTIStreamingData *)streamingData;
+- (YTICaptionsSupportedRenderers *)captions;
 @end
 
 @interface YTIFormatStream (YouModDownload)
 - (NSString *)mimeType;
-- (BOOL)hasContentLength;
-- (unsigned long long)contentLength;
-- (unsigned long long)approxDurationMs;
+- (NSInteger)contentLength;
+- (NSUInteger)approxDurationMs;
+- (int)height;
+- (int)fps;
+- (YTIAudioTrack *)audioTrack;
+- (int)itag;
+@end
+
+@interface YTIFormattedString (YouModDownload)
+- (NSString *)dropdownOptionTitle;
 @end
 
 @interface YTIVideoDetails (YouModDownload)
@@ -90,15 +120,14 @@ static UIImage *YouModIconImage(NSInteger iconType) {
 @end
 
 @interface YouModMediaFormat : NSObject
-@property (nonatomic, strong) id source;
+@property (nonatomic, strong) YTIFormatStream *source;
 @property (nonatomic, copy) NSString *urlString;
 @property (nonatomic, copy) NSString *qualityLabel;
 @property (nonatomic, copy) NSString *mimeType;
-@property (nonatomic, assign) unsigned long long contentLength;
-@property (nonatomic, assign) unsigned long long durationMs;
-@property (nonatomic, assign) NSInteger fps;
+@property (nonatomic, assign) NSInteger contentLength;
+@property (nonatomic, assign) NSUInteger durationMs;
+@property (nonatomic, assign) int fps;
 @property (nonatomic, assign) BOOL video;
-@property (nonatomic, assign) BOOL audioTrack;
 @end
 
 @implementation YouModMediaFormat
@@ -500,24 +529,6 @@ void YouModDownloadSetCurrentPlayer(YTPlayerViewController *player) {
     YouModCurrentPlayerViewController = player;
 }
 
-static NSString *YouModStringFromSelector(id object, SEL selector) {
-    if (!object) return nil;
-    id value = nil;
-    if ([object respondsToSelector:selector]) {
-        value = ((id (*)(id, SEL))objc_msgSend)(object, selector);
-    } else {
-        @try {
-            value = [object valueForKey:NSStringFromSelector(selector)];
-        } @catch (__unused NSException *exception) {
-            value = nil;
-        }
-    }
-    if ([value isKindOfClass:NSString.class]) return value;
-    if ([value isKindOfClass:NSURL.class]) return [(NSURL *)value absoluteString];
-    if ([value respondsToSelector:@selector(stringValue)]) return [value stringValue];
-    return [value respondsToSelector:@selector(description)] ? [value description] : nil;
-}
-
 static id YouModObjectFromSelector(id object, SEL selector) {
     if (!object) return nil;
     if ([object respondsToSelector:selector]) {
@@ -528,48 +539,6 @@ static id YouModObjectFromSelector(id object, SEL selector) {
     } @catch (__unused NSException *exception) {
         return nil;
     }
-}
-
-static unsigned long long YouModUnsignedLongLongFromSelector(id object, SEL selector) {
-    if (!object) return 0;
-    if ([object respondsToSelector:selector]) {
-        return ((unsigned long long (*)(id, SEL))objc_msgSend)(object, selector);
-    }
-    @try {
-        id value = [object valueForKey:NSStringFromSelector(selector)];
-        if ([value respondsToSelector:@selector(unsignedLongLongValue)])
-            return [value unsignedLongLongValue];
-    } @catch (__unused NSException *exception) {
-    }
-    return 0;
-}
-
-static BOOL YouModBoolFromSelector(id object, SEL selector) {
-    if (!object) return NO;
-    if ([object respondsToSelector:selector]) {
-        return ((BOOL (*)(id, SEL))objc_msgSend)(object, selector);
-    }
-    @try {
-        id value = [object valueForKey:NSStringFromSelector(selector)];
-        if ([value respondsToSelector:@selector(boolValue)])
-            return [value boolValue];
-    } @catch (__unused NSException *exception) {
-    }
-    return NO;
-}
-
-static NSInteger YouModIntegerFromSelector(id object, SEL selector) {
-    if (!object) return 0;
-    if ([object respondsToSelector:selector]) {
-        return ((NSInteger (*)(id, SEL))objc_msgSend)(object, selector);
-    }
-    @try {
-        id value = [object valueForKey:NSStringFromSelector(selector)];
-        if ([value respondsToSelector:@selector(integerValue)])
-            return [value integerValue];
-    } @catch (__unused NSException *exception) {
-    }
-    return 0;
 }
 
 static UIViewController *YouModTopViewController(UIViewController *root) {
@@ -799,41 +768,38 @@ static NSString *YouModVideoIDForPlayer(YTPlayerViewController *player) {
     return [player currentVideoID];
 }
 
-static id YouModPlayerResponsesForPlayer(YTPlayerViewController *player) {
-    id response = YouModObjectFromSelector(player, @selector(contentPlayerResponse));
-    if (response == nil) response = YouModObjectFromSelector(player, @selector(playerResponse));
-    return response;
+static YTIPlayerResponse *YouModPlayerDataForPlayer(YTPlayerViewController *player) {
+    YTPlayerResponse *response;
+    @try {
+        response = player.contentPlayerResponse;
+    } @catch (id ex) {
+        response = player.playerResponse;
+    }
+    YTIPlayerResponse *playerData = response.playerData;
+    return playerData;
 }
 
 static NSArray *YouModCaptionTracksForPlayer(YTPlayerViewController *player) {
-    id response = YouModPlayerResponsesForPlayer(player);
-    id playerData = YouModObjectFromSelector(response, @selector(playerData));
-    id captions = YouModObjectFromSelector(playerData, @selector(captions));
-    id tracklistRenderer = YouModObjectFromSelector(captions, @selector(playerCaptionsTracklistRenderer));
-    NSArray *tracks = YouModObjectFromSelector(tracklistRenderer, @selector(captionTracksArray));
+    YTIPlayerResponse *playerData = YouModPlayerDataForPlayer(player);
+    YTICaptionsSupportedRenderers *captions = playerData.captions;
+    YTIPlayerCaptionsTrackListRenderer *tracklistRenderer = captions.playerCaptionsTracklistRenderer;
+    NSArray *tracks = tracklistRenderer.captionTracksArray;
     if (tracks.count > 0) return tracks;
     return nil;
 }
 
-static id YouModPlayerDataForPlayer(YTPlayerViewController *player) {
-    id response = YouModPlayerResponsesForPlayer(player);
-    id playerData = YouModObjectFromSelector(response, @selector(playerData));
-    return playerData;
-}
-
 static NSString *YouModTitleForPlayer(YTPlayerViewController *player) {
-    id playerData = YouModPlayerDataForPlayer(player);
-    id details = YouModObjectFromSelector(playerData, @selector(videoDetails));
-    NSString *title = YouModStringFromSelector(details, @selector(title));
-    NSString *author = YouModStringFromSelector(details, @selector(author));
-    // Can add description if uses details.shortDescription
+    YTIPlayerResponse *playerData = YouModPlayerDataForPlayer(player);
+    YTIVideoDetails *details = playerData.videoDetails;
+    NSString *title = details.title;
+    NSString *author = details.author;
     return [NSString stringWithFormat:@"%@ - %@", author, title];
 }
 
 static NSString *YouModDescriptionForPlayer(YTPlayerViewController *player) {
-    id playerData = YouModPlayerDataForPlayer(player);
-    id details = YouModObjectFromSelector(playerData, @selector(videoDetails));
-    NSString *description = YouModStringFromSelector(details, @selector(shortDescription));
+    YTIPlayerResponse *playerData = YouModPlayerDataForPlayer(player);
+    YTIVideoDetails *details = playerData.videoDetails;
+    NSString *description = details.shortDescription;
     return description;
 }
 
@@ -851,22 +817,21 @@ static NSArray *YouModAdaptiveFormatObjectsForPlayer(YTPlayerViewController *pla
         }
     };
 
-    id response = YouModPlayerResponsesForPlayer(player);
-    id playerData = YouModObjectFromSelector(response, @selector(playerData));
-    id responseStreamingData = YouModObjectFromSelector(playerData, @selector(streamingData));
-    appendFormats(YouModObjectFromSelector(responseStreamingData, @selector(adaptiveFormatsArray)));
+    YTIPlayerResponse *playerData = YouModPlayerDataForPlayer(player);
+    YTIStreamingData *streamingData = playerData.streamingData;
+    appendFormats(streamingData.adaptiveFormatsArray);
 
     return formats.copy;
 }
 
-static YouModMediaFormat *YouModMediaFormatFromStream(id stream, BOOL video) {
-    NSString *url = YouModStringFromSelector(stream, @selector(URL));
-    NSString *mimeType = YouModStringFromSelector(stream, @selector(mimeType));
+static YouModMediaFormat *YouModMediaFormatFromStream(YTIFormatStream *stream, BOOL video) {
+    NSString *url = stream.URL;
+    NSString *mimeType = stream.mimeType;
     NSString *lowerMime = mimeType.lowercaseString;
     BOOL typeMatches = video ? ([lowerMime containsString:@"video/"]) : ([lowerMime containsString:@"audio/"]);
     if (!typeMatches) return nil;
 
-    BOOL mimeLooksMP4 = [lowerMime containsString:@"mp4"] && ([lowerMime containsString:@"avc1"] || [lowerMime containsString:@"mp4a"]) ;
+    BOOL mimeLooksMP4 = [lowerMime containsString:@"mp4"] && ([lowerMime containsString:@"avc1"] || ([lowerMime containsString:@"mp4a"] && stream.itag == 140));
     if (mimeType.length && !mimeLooksMP4) return nil;
 
     YouModMediaFormat *format = [YouModMediaFormat new];
@@ -874,22 +839,20 @@ static YouModMediaFormat *YouModMediaFormatFromStream(id stream, BOOL video) {
     format.video = video;
     format.urlString = YouModURLStringWithCPN(url);
     format.mimeType = mimeType;
-    NSInteger height = YouModIntegerFromSelector(stream, @selector(height));
-    NSInteger fps = YouModIntegerFromSelector(stream, @selector(fps));
+    int height = stream.height;
+    int fps = stream.fps;
     fps = YouModNormalizedFPS(fps);
     if (video && (height > 1080 || height < 144 || fps < 30)) return nil;
     format.fps = fps;
-    format.qualityLabel = YouModStringFromSelector(stream, @selector(qualityLabel));
+    format.qualityLabel = stream.qualityLabel;
     if (!video) {
-        id audio = YouModObjectFromSelector(stream, @selector(audioTrack));
-        NSString *audioidp = YouModStringFromSelector(audio, @selector(id_p)); 
-        if (YouModBoolFromSelector(audio, @selector(hasId_p)) && ![audioidp hasSuffix:@".4"]) return nil;
-        format.audioTrack = NO;
+        YTIAudioTrack *audio = stream.audioTrack;
+        NSString *audioidp = audio.id_p; 
+        if (audio.hasId_p && ![audioidp hasSuffix:@".4"]) return nil;
     }
-    if (YouModBoolFromSelector(stream, @selector(hasContentLength))) {
-        format.contentLength = YouModUnsignedLongLongFromSelector(stream, @selector(contentLength));
-    }
-    format.durationMs = YouModUnsignedLongLongFromSelector(stream, @selector(approxDurationMs));
+    format.contentLength = stream.contentLength;
+    format.durationMs = stream.approxDurationMs;
+
     return format;
 }
 
@@ -924,7 +887,7 @@ static NSInteger YouModNormalizedFPS(NSInteger fps) {
 
 static NSArray <YouModMediaFormat *> *YouModFormatsForPlayer(YTPlayerViewController *player, BOOL video) {
     NSMutableArray *formats = [NSMutableArray array];
-    for (id stream in YouModAdaptiveFormatObjectsForPlayer(player)) {
+    for (YTIFormatStream *stream in YouModAdaptiveFormatObjectsForPlayer(player)) {
         YouModMediaFormat *format = YouModMediaFormatFromStream(stream, video);
         if (format) [formats addObject:format];
     }
@@ -943,8 +906,6 @@ static NSArray <YouModMediaFormat *> *YouModFormatsForPlayer(YTPlayerViewControl
         BOOL rightMP4 = YouModFormatLooksMP4Family(right);
         if (leftMP4 != rightMP4) return leftMP4 ? NSOrderedAscending : NSOrderedDescending;
 
-        if (!video && left.audioTrack != right.audioTrack)
-            return left.audioTrack ? NSOrderedAscending : NSOrderedDescending;
         if (left.contentLength != right.contentLength)
             return left.contentLength > right.contentLength ? NSOrderedAscending : NSOrderedDescending;
         return NSOrderedSame;
@@ -956,7 +917,7 @@ static NSArray <YouModMediaFormat *> *YouModFormatsForPlayer(YTPlayerViewControl
         NSInteger fps = format.fps ?: YouModFPSFromQuality(format.qualityLabel);
         NSString *key = video
             ? [NSString stringWithFormat:@"%@-%ld-%@", format.qualityLabel, (long)fps, YouModMimeDetail(format.mimeType)]
-            : [NSString stringWithFormat:@"%@-%@-%@", format.qualityLabel, format.audioTrack ? @"drc" : @"std", YouModMimeDetail(format.mimeType)];
+            : [NSString stringWithFormat:@"%@-%@", format.qualityLabel, YouModMimeDetail(format.mimeType)];
         if ([seen containsObject:key]) continue;
         [seen addObject:key];
         [unique addObject:format];
@@ -1036,40 +997,20 @@ static void YouModShareFile(NSURL *fileURL, UIViewController *presenter) {
 
 static void YouModPresentMenu(NSString *title, NSArray <YouModMenuItem *> *items, UIViewController *presenter, UIView *sender) {
     presenter = YouModTopViewController(presenter);
-    Class sheetClass = NSClassFromString(@"YTDefaultSheetController");
-    if (sheetClass && [sheetClass respondsToSelector:@selector(sheetControllerWithParentResponder:)]) {
-        YTDefaultSheetController *sheet = [sheetClass sheetControllerWithParentResponder:presenter];
-        Class actionClass = NSClassFromString(@"YTActionSheetAction");
-        for (YouModMenuItem *item in items) {
-            id action = nil;
-            if ([actionClass respondsToSelector:@selector(actionWithTitle:subtitle:iconImage:handler:)]) {
-                action = ((id (*)(Class, SEL, NSString *, NSString *, UIImage *, id))objc_msgSend)(actionClass, @selector(actionWithTitle:subtitle:iconImage:handler:), item.title, item.subtitle, item.iconImage, ^(__unused id action) {
+    YTDefaultSheetController *sheet = [%c(YTDefaultSheetController) sheetControllerWithParentResponder:presenter];
+    Class actionClass = %c(YTActionSheetAction);
+    for (YouModMenuItem *item in items) {
+        id action = ((id (*)(Class, SEL, NSString *, NSString *, UIImage *, id))objc_msgSend)(actionClass, @selector(actionWithTitle:subtitle:iconImage:handler:), item.title, item.subtitle, item.iconImage, ^(__unused id action) {
                     if (item.handler) item.handler();
-                });
-            } else {
-                action = ((id (*)(Class, SEL, NSString *, NSInteger, id))objc_msgSend)(actionClass, @selector(actionWithTitle:style:handler:), item.title, 0, ^(__unused id action) {
-                    if (item.handler) item.handler();
-                });
-            }
-            if (action) [sheet addAction:action];
-        }
-        if (sender && [sheet respondsToSelector:@selector(presentFromView:animated:completion:)])
+        });
+        [sheet addAction:action];
+        if (sender) {
             [sheet presentFromView:sender animated:YES completion:nil];
-        else
+        } else {
             [sheet presentFromViewController:presenter animated:YES completion:nil];
+        }
         return;
     }
-
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:title message:nil preferredStyle:UIAlertControllerStyleActionSheet];
-    for (YouModMenuItem *item in items) {
-        NSString *rowTitle = item.subtitle.length ? [NSString stringWithFormat:@"%@\n%@", item.title, item.subtitle] : item.title;
-        [alert addAction:[UIAlertAction actionWithTitle:rowTitle style:UIAlertActionStyleDefault handler:^(__unused UIAlertAction *action) {
-            if (item.handler) item.handler();
-        }]];
-    }
-    [alert addAction:[UIAlertAction actionWithTitle:LOC(@"CANCEL") style:UIAlertActionStyleCancel handler:nil]];
-    alert.popoverPresentationController.sourceView = sender ?: presenter.view;
-    [presenter presentViewController:alert animated:YES completion:nil];
 }
 
 @implementation YouModDownloadCoordinator
@@ -1662,7 +1603,7 @@ static void YouModCopyVideoInfo(YTPlayerViewController *player, UIViewController
     YouModSendSuccess(LOC(@"COPIED_VID_INFO"));
 }
 
-static void YouModShowVideoQualitySheet(YTPlayerViewController *player, UIViewController *presenter, UIView *sender) {
+static void YouModShowVideoQualitySheet(YTPlayerViewController *player, UIViewController *presenter, UIView *sender, BOOL isShorts) {
     NSArray <YouModMediaFormat *> *videoFormats = YouModFormatsForPlayer(player, YES);
     YouModMediaFormat *audioFormat = YouModBestAudioFormatForPlayer(player);
     NSString *title = YouModTitleForPlayer(player);
@@ -1675,13 +1616,17 @@ static void YouModShowVideoQualitySheet(YTPlayerViewController *player, UIViewCo
 
     NSMutableArray *items = [NSMutableArray array];
     for (YouModMediaFormat *format in videoFormats) {
-        NSString *label = format.qualityLabel;
-        if ([label containsString:@"HDR"] || [label containsString:@"1440p"] || [label containsString:@"2160p"]) continue;
-        NSString *rowTitle = label.length ? label : @"video";
+        NSString *rowTitle = format.qualityLabel;
         NSString *subtitle = YouModFormatSubtitle(format);
-        [items addObject:[YouModMenuItem itemWithTitle:rowTitle subtitle:subtitle icon:YouModIconImage(658) handler:^{
-            [[YouModDownloadCoordinator sharedCoordinator] startVideoDownloadWithVideoFormat:format audioFormat:audioFormat fileName:title videoID:videoID presenter:presenter];
-        }]];
+        if (isShorts) {
+            [items addObject:[YouModMenuItem itemWithTitle:rowTitle subtitle:subtitle icon:YouModIconImage(769) handler:^{
+                [[YouModDownloadCoordinator sharedCoordinator] startVideoDownloadWithVideoFormat:format audioFormat:audioFormat fileName:title videoID:videoID presenter:presenter];
+            }]];
+        } else {
+            [items addObject:[YouModMenuItem itemWithTitle:rowTitle subtitle:subtitle icon:YouModIconImage(658) handler:^{
+                [[YouModDownloadCoordinator sharedCoordinator] startVideoDownloadWithVideoFormat:format audioFormat:audioFormat fileName:title videoID:videoID presenter:presenter];
+            }]];
+        }
     }
     YouModPresentMenu(LOC(@"DOWNLOAD_VIDEO"), items, presenter, sender);
 }
@@ -1713,21 +1658,14 @@ static void YouModShowCaptionsSheet(YTPlayerViewController *player, UIViewContro
     }
     
     NSMutableArray *items = [NSMutableArray array];
-    for (id track in tracks) {
-        NSString *baseURL = YouModStringFromSelector(track, @selector(baseURL));
+    for (YTICaptionTrackEntry *track in tracks) {
+        NSString *baseURL = track.baseURL;
         if (baseURL.length == 0) continue;
         
-        NSString *languageCode = YouModStringFromSelector(track, @selector(languageCode));
-        NSString *vssId = YouModStringFromSelector(track, @selector(vssId));
-        NSString *nameStr = nil;
-        id nameObj = YouModObjectFromSelector(track, @selector(name));
-        nameStr = YouModStringFromSelector(nameObj, @selector(simpleText));
-        if (!nameStr.length) {
-            NSArray *runs = YouModObjectFromSelector(nameObj, @selector(runsArray));
-            if (runs.count > 0) nameStr = YouModStringFromSelector(runs.firstObject, @selector(text));
-        }
-        if (!nameStr.length) nameStr = languageCode;
-        if (!nameStr.length) nameStr = vssId;
+        NSString *languageCode = track.languageCode;
+        NSString *vssId = track.vssId;
+        YTIFormattedString *nameObj = track.name;
+        NSString *nameStr = nameObj.dropdownOptionTitle;
         
         [items addObject:[YouModMenuItem itemWithTitle:nameStr subtitle:languageCode icon:YouModIconImage(637) handler:^{
             NSString *vttURL = [baseURL stringByAppendingString:@"&fmt=vtt"];
@@ -1743,8 +1681,8 @@ static void YouModShowCaptionsSheet(YTPlayerViewController *player, UIViewContro
                         YouModSendError(LOC(@"CAPTIONS_FAILED"));
                         return;
                     }
-                    NSString *videoID = YouModVideoIDForPlayer(player) ?: @"video";
-                    NSString *filename = [NSString stringWithFormat:@"%@_%@.vtt", videoID, languageCode ?: @"captions"];
+                    NSString *videoID = YouModVideoIDForPlayer(player);
+                    NSString *filename = [NSString stringWithFormat:@"%@_%@.vtt", videoID, languageCode];
                     NSURL *tempURL = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:filename]];
                     [data writeToURL:tempURL atomically:YES];
                     YouModShareFile(tempURL, presenter);
@@ -1761,7 +1699,7 @@ static void YouModShowCaptionsSheet(YTPlayerViewController *player, UIViewContro
     YouModPresentMenu(LOC(@"DOWNLOAD_CAPTIONS"), items, presenter, sender);
 }
 
-static void YouModShowDownloadManager(YTPlayerViewController *player, UIViewController *presenter, UIView *sender) {
+static void YouModShowDownloadManager(YTPlayerViewController *player, UIViewController *presenter, UIView *sender, BOOL isShorts) {
     if (!player) {
         YouModSendError(LOC(@"OPEN_VID_BEFORE"));
         return;
@@ -1769,9 +1707,19 @@ static void YouModShowDownloadManager(YTPlayerViewController *player, UIViewCont
 
     NSString *videoID = YouModVideoIDForPlayer(player);
     NSMutableArray *items = [NSMutableArray array];
-    [items addObject:[YouModMenuItem itemWithTitle:LOC(@"DOWNLOAD_VIDEO") subtitle:LOC(@"DOWNLOAD_VIDEO_DESC") icon:YouModIconImage(658) handler:^{
-        YouModShowVideoQualitySheet(player, presenter, sender);
-    }]];
+    NSString *videoTitle = LOC(@"DOWNLOAD_VIDEO");
+    NSString *shortsTitle = [NSString stringWithFormat:@"%@ Shorts", videoTitle];
+    NSString *videoDesc = LOC(@"DOWNLOAD_VIDEO_DESC");
+    NSString *shortsDesc = [NSString stringWithFormat:@"%@ Shorts", videoDesc];
+    if (isShorts) {
+        [items addObject:[YouModMenuItem itemWithTitle:shortsTitle subtitle:shortsDesc icon:YouModIconImage(769) handler:^{
+            YouModShowVideoQualitySheet(player, presenter, sender, YES);
+        }]];
+    } else {
+        [items addObject:[YouModMenuItem itemWithTitle:LOC(@"DOWNLOAD_VIDEO") subtitle:LOC(@"DOWNLOAD_VIDEO_DESC") icon:YouModIconImage(658) handler:^{
+            YouModShowVideoQualitySheet(player, presenter, sender, NO);
+        }]];
+    }
     [items addObject:[YouModMenuItem itemWithTitle:LOC(@"DOWNLOAD_AUDIO") subtitle:LOC(@"DOWNLOAD_AUDIO_DESC") icon:YouModIconImage(21) handler:^{
         YouModShowAudioSheet(player, presenter, sender);
     }]];
@@ -1857,7 +1805,7 @@ void YouModConfigureDownloadButton(_ASDisplayView *view) {
     if (sender.state != UIGestureRecognizerStateEnded) return;
     UIViewController *presenter = YouModPresenterForSender(self, YouModCurrentPlayerViewController);
     YTPlayerViewController *player = YouModPlayerFromViewController(presenter);
-    YouModShowDownloadManager(player, presenter, self);
+    YouModShowDownloadManager(player, presenter, self, NO);
 }
 
 %end
@@ -1923,7 +1871,7 @@ void YouModConfigureDownloadButton(_ASDisplayView *view) {
         YTShortsPlayerViewController *shortsPlayerView = (YTShortsPlayerViewController *)responder;
         YTPlayerViewController *player = (YTPlayerViewController *)shortsPlayerView.childViewControllers[0];
         UIViewController *presenter = YouModPresenterForSender(button, player);
-        YouModShowDownloadManager(player, presenter, button);
+        YouModShowDownloadManager(player, presenter, button, YES);
     }
 }
 
@@ -1945,7 +1893,7 @@ void YouModConfigureDownloadButton(_ASDisplayView *view) {
         download.onTap = ^(YTPlayerViewController *player, UIButton *button) {
             UIViewController *presenter = YouModPresenterForSender(button, player ?: YouModCurrentPlayerViewController);
             YTPlayerViewController *resolved = YouModPlayerFromViewController(presenter) ?: player ?: YouModCurrentPlayerViewController;
-            YouModShowDownloadManager(resolved, presenter, button);
+            YouModShowDownloadManager(resolved, presenter, button, NO);
         };
         YMRegisterOverlayButton(download);
     }
