@@ -163,14 +163,7 @@ static void YouModAddEndTime(YTPlayerViewController *self, YTSingleVideoControll
 - (void)handleYouModScrubTap:(UITapGestureRecognizer *)gesture {
     if (gesture.state == UIGestureRecognizerStateEnded) {
         UIView *gestureView = gesture.view; // คลาส YTInlineScrubGestureView (ตัวแม่)
-        UIView *progressBar;
-        
-        for (UIView *subview in self.subviews) {
-            if ([subview isKindOfClass:%c(YTModularPlayerBarView)]) {
-                progressBar = subview;
-                break;
-            }
-        }
+        UIView *progressBar = self.modularPlayerBar;
         
         // 2. ดึงพิกัดนิ้วที่กดสัมผัสเทียบกับหน้าจอหลัก (Window)
         // ดึงหน้าต่างหลักแบบปลอดภัยสำหรับแอปยุคใหม่ (iOS 13+ และ Multiple Scenes Support)

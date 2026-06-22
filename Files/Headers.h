@@ -466,10 +466,8 @@ extern NSArray<YMOverlayButtonSpec *> *YMRegisteredOverlayButtons(void);
 
 @interface YTSegmentableInlinePlayerBarView : UIView
 @property (nonatomic, assign, readwrite) BOOL enableSnapToChapter;
-@end
-
-@interface YTSegmentableInlinePlayerBarView (SponsorBlock)
 @property (nonatomic, strong) NSArray<UIView *> *sbMarkerViews;
 - (void)sbRenderSegments:(NSArray<SBSegment *> *)segments;
 - (void)sbClearSegments;
+- (void)sbRepositionMarkers;
 @end
