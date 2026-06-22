@@ -45,14 +45,14 @@ static NSBundle *YouModBundle() {
 - (YTPlayerResponse *)playerResponse;
 @end
 
-@interface YTICaptionTrackEntry : GBPMessage
+@interface YTICaptionTrackEntry : GPBMessage
 - (NSString *)baseURL;
 - (NSString *)languageCode;
 - (NSString *)vssId;
 - (YTIFormattedString *)name;
 @end
 
-@interface YTIPlayerCaptionsTrackListRenderer : GBPMessage
+@interface YTIPlayerCaptionsTrackListRenderer : GPBMessage
 - (NSMutableArray *)captionTracksArray;
 @end
 
@@ -60,7 +60,7 @@ static NSBundle *YouModBundle() {
 - (BOOL)hasId_p;
 @end
 
-@interface YTICaptionsSupportedRenderers : GBPMessage
+@interface YTICaptionsSupportedRenderers : GPBMessage
 - (YTIPlayerCaptionsTrackListRenderer *)playerCaptionsTracklistRenderer;
 @end
 
@@ -1627,7 +1627,6 @@ static void YouModShowCaptionsSheet(YTPlayerViewController *player, UIViewContro
         if (baseURL.length == 0) continue;
         
         NSString *languageCode = track.languageCode;
-        NSString *vssId = track.vssId;
         YTIFormattedString *nameObj = track.name;
         NSString *nameStr = nameObj.dropdownOptionTitle;
         
