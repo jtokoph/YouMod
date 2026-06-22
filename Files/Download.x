@@ -1673,23 +1673,35 @@ static void YouModShowDownloadManager(YTPlayerViewController *player, UIViewCont
         [items addObject:[YouModMenuItem itemWithTitle:shortsTitle subtitle:shortsDesc icon:YouModIconImage(769) handler:^{
             YouModShowVideoQualitySheet(player, presenter, sender, YES);
         }]];
+        [items addObject:[YouModMenuItem itemWithTitle:LOC(@"DOWNLOAD_AUDIO") subtitle:LOC(@"DOWNLOAD_AUDIO_DESC") icon:YouModIconImage(21) handler:^{
+        YouModShowAudioSheet(player, presenter, sender);
+        }]];
+        [items addObject:[YouModMenuItem itemWithTitle:LOC(@"DOWNLOAD_CAPTIONS") subtitle:LOC(@"DOWNLOAD_CAPTIONS_DESC") icon:YouModIconImage(637) handler:^{
+            YouModShowCaptionsSheet(player, presenter, sender);
+        }]];
+        [items addObject:[YouModMenuItem itemWithTitle:LOC(@"SAVE_THUMBNAIL") subtitle:LOC(@"SAVE_THUMBNAIL_DESC") icon:YouModIconImage(367) handler:^{
+            YouModDownloadThumbnail(videoID, presenter);
+        }]];
+        [items addObject:[YouModMenuItem itemWithTitle:LOC(@"COPY_VID_INFO") subtitle:LOC(@"COPY_VID_INFO_DESC") icon:YouModIconImage(250) handler:^{
+            YouModCopyVideoInfo(player, presenter);
+        }]];
     } else {
         [items addObject:[YouModMenuItem itemWithTitle:LOC(@"DOWNLOAD_VIDEO") subtitle:LOC(@"DOWNLOAD_VIDEO_DESC") icon:YouModIconImage(658) handler:^{
             YouModShowVideoQualitySheet(player, presenter, sender, NO);
         }]];
-    }
-    [items addObject:[YouModMenuItem itemWithTitle:LOC(@"DOWNLOAD_AUDIO") subtitle:LOC(@"DOWNLOAD_AUDIO_DESC") icon:YouModIconImage(21) handler:^{
+        [items addObject:[YouModMenuItem itemWithTitle:LOC(@"DOWNLOAD_AUDIO") subtitle:LOC(@"DOWNLOAD_AUDIO_DESC") icon:YouModIconImage(21) handler:^{
         YouModShowAudioSheet(player, presenter, sender);
-    }]];
-    [items addObject:[YouModMenuItem itemWithTitle:LOC(@"DOWNLOAD_CAPTIONS") subtitle:LOC(@"DOWNLOAD_CAPTIONS_DESC") icon:YouModIconImage(637) handler:^{
-        YouModShowCaptionsSheet(player, presenter, sender);
-    }]];
-    [items addObject:[YouModMenuItem itemWithTitle:LOC(@"SAVE_THUMBNAIL") subtitle:LOC(@"SAVE_THUMBNAIL_DESC") icon:YouModIconImage(367) handler:^{
-        YouModDownloadThumbnail(videoID, presenter);
-    }]];
-    [items addObject:[YouModMenuItem itemWithTitle:LOC(@"COPY_VID_INFO") subtitle:LOC(@"COPY_VID_INFO_DESC") icon:YouModIconImage(250) handler:^{
-        YouModCopyVideoInfo(player, presenter);
-    }]];
+        }]];
+        [items addObject:[YouModMenuItem itemWithTitle:LOC(@"DOWNLOAD_CAPTIONS") subtitle:LOC(@"DOWNLOAD_CAPTIONS_DESC") icon:YouModIconImage(637) handler:^{
+            YouModShowCaptionsSheet(player, presenter, sender);
+        }]];
+        [items addObject:[YouModMenuItem itemWithTitle:LOC(@"SAVE_THUMBNAIL") subtitle:LOC(@"SAVE_THUMBNAIL_DESC") icon:YouModIconImage(367) handler:^{
+            YouModDownloadThumbnail(videoID, presenter);
+        }]];
+        [items addObject:[YouModMenuItem itemWithTitle:LOC(@"COPY_VID_INFO") subtitle:LOC(@"COPY_VID_INFO_DESC") icon:YouModIconImage(250) handler:^{
+            YouModCopyVideoInfo(player, presenter);
+        }]];
+    }
     YouModPresentMenu(LOC(@"DOWNLOAD_MANAGER"), items, presenter, sender);
 }
 
