@@ -667,6 +667,13 @@ static BOOL YouModCMTimeIsUsable(CMTime time) {
     return isfinite(seconds) && seconds > 0.0;
 }
 
+static CMTime YouModHalfCMTime(CMTime time) {
+    if (!YouModCMTimeIsUsable(time)) return kCMTimeInvalid;
+    int64_t halfValue = time.value / 2;
+    if (halfValue <= 0) halfValue = 1;
+    return CMTimeMake(halfValue, time.timescale);
+}
+
 static CMTime YouModMinUsableDuration(CMTime first, CMTime second) {
     BOOL firstOK = YouModCMTimeIsUsable(first);
     BOOL secondOK = YouModCMTimeIsUsable(second);
@@ -1329,7 +1336,10 @@ static void YouModPresentMenu(NSString *title, NSArray <YouModMenuItem *> *items
     }
 
     AVMutableCompositionTrack *compositionAudio = [composition addMutableTrackWithMediaType:AVMediaTypeAudio preferredTrackID:kCMPersistentTrackID_Invalid];
-    [compositionAudio insertTimeRange:CMTimeRangeMake(kCMTimeZero, duration) ofTrack:audioTrack atTime:kCMTimeZero error:&insertError];
+    CMTime audioDuration = YouModMinUsableDuration(duration, audioTrack.timeRange.duration);
+    CMTime trimmedAudioDuration = YouModHalfCMTime(audioDuration);
+    if (!YouModCMTimeIsUsable(trimmedAudioDuration)) trimmedAudioDuration = audioDuration;
+    [compositionAudio insertTimeRange:CMTimeRangeMake(kCMTimeZero, trimmedAudioDuration) ofTrack:audioTrack atTime:kCMTimeZero error:&insertError];
     if (insertError) {
         [self failWithError:insertError];
         return;
@@ -1387,8 +1397,10 @@ static void YouModPresentMenu(NSString *title, NSArray <YouModMenuItem *> *items
     AVAssetTrack *audioTrack = [[asset tracksWithMediaType:AVMediaTypeAudio] firstObject];
     if (audioTrack) {
         CMTime audioDuration = YouModMinUsableDuration(duration, audioTrack.timeRange.duration);
+        CMTime trimmedAudioDuration = YouModHalfCMTime(audioDuration);
+        if (!YouModCMTimeIsUsable(trimmedAudioDuration)) trimmedAudioDuration = audioDuration;
         AVMutableCompositionTrack *compositionAudio = [composition addMutableTrackWithMediaType:AVMediaTypeAudio preferredTrackID:kCMPersistentTrackID_Invalid];
-        [compositionAudio insertTimeRange:CMTimeRangeMake(kCMTimeZero, audioDuration) ofTrack:audioTrack atTime:kCMTimeZero error:&insertError];
+        [compositionAudio insertTimeRange:CMTimeRangeMake(kCMTimeZero, trimmedAudioDuration) ofTrack:audioTrack atTime:kCMTimeZero error:&insertError];
         if (insertError) {
             [self failWithError:insertError];
             return;
