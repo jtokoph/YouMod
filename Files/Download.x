@@ -798,24 +798,9 @@ static NSString *YouModDescriptionForPlayer(YTPlayerViewController *player) {
 }
 
 static NSArray *YouModAdaptiveFormatObjectsForPlayer(YTPlayerViewController *player) {
-    NSMutableArray *formats = [NSMutableArray array];
-    NSMutableSet *seenPointers = [NSMutableSet set];
-
-    void (^appendFormats)(NSArray *) = ^(NSArray *candidateFormats) {
-        if (![candidateFormats isKindOfClass:NSArray.class]) return;
-        for (id format in candidateFormats) {
-            NSString *key = [NSString stringWithFormat:@"%p", format];
-            if ([seenPointers containsObject:key]) continue;
-            [seenPointers addObject:key];
-            [formats addObject:format];
-        }
-    };
-
     YTIPlayerResponse *playerData = YouModPlayerDataForPlayer(player);
     YTIStreamingData *streamingData = playerData.streamingData;
-    appendFormats(streamingData.adaptiveFormatsArray);
-
-    return formats.copy;
+    return streamingData.adaptiveFormatsArray;
 }
 
 static YouModMediaFormat *YouModMediaFormatFromStream(YTIFormatStream *stream, BOOL video) {
