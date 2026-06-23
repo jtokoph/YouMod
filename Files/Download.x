@@ -865,8 +865,9 @@ static NSArray <YouModMediaFormat *> *YouModFormatsForPlayer(YTPlayerViewControl
     NSMutableArray *unique = [NSMutableArray array];
     NSMutableSet *seen = [NSMutableSet set];
     for (YouModMediaFormat *format in formats) {
+        NSInteger fps = format.fps;
         NSString *key = video
-            ? [NSString stringWithFormat:@"%@-%@-%@", format.qualityLabel, (NSString *)format.fps, YouModMimeDetail(format.mimeType)]
+            ? [NSString stringWithFormat:@"%@-%ld-%@", format.qualityLabel, (long)fps, YouModMimeDetail(format.mimeType)]
             : [NSString stringWithFormat:@"%@-%@", format.qualityLabel, YouModMimeDetail(format.mimeType)];
         if ([seen containsObject:key]) continue;
         [seen addObject:key];
