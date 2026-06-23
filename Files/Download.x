@@ -948,14 +948,8 @@ static void YouModShareFile(NSURL *fileURL, UIViewController *presenter) {
 
 static void YouModPresentMenu(NSString *title, NSArray <YouModMenuItem *> *items, UIViewController *presenter, UIView *sender) {
     presenter = YouModTopViewController(presenter);
-    YTDefaultSheetController *sheet = [%c(YTDefaultSheetController) sheetControllerWithParentResponder:presenter];
-    // Class actionClass = %c(YTActionSheetAction);
+    YTDefaultSheetController *sheet = [%c(YTDefaultSheetController) sheetControllerWithParentResponder:presenter];;
     for (YouModMenuItem *item in items) {
-        /*
-        id action = ((id (*)(Class, SEL, NSString *, NSString *, UIImage *, id))objc_msgSend)(actionClass, @selector(actionWithTitle:subtitle:iconImage:handler:), item.title, item.subtitle, item.iconImage, ^(__unused id action) {
-                    if (item.handler) item.handler();
-        });
-        */
         YTActionSheetAction *action = [%c(YTActionSheetAction) actionWithTitle:item.title subtitle:item.subtitle iconImage:item.iconImage handler:^(__unused YTActionSheetAction *action) {
             if (item.handler) item.handler();
         }];
@@ -1088,10 +1082,6 @@ static void YouModPresentMenu(NSString *title, NSArray <YouModMenuItem *> *items
             }
             if (completion) completion(fileURL, nil);
         }];
-        // Immediately show 0% so UI starts at zero rather than waiting for first chunk.
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self updateDownloadProgressWithCurrentBytes:0 expectedBytes:expectedBytes];
-        });
         [self.rangeDownloader start];
         return;
     }
