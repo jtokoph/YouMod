@@ -812,7 +812,7 @@ static const void *kYMTabSnapshotKey = &kYMTabSnapshotKey;
     } else {
         // Default: Home, Shorts, Create, Subscriptions, Library enabled
         for (NSInteger i = 0; i < kYMTabCount; i++) {
-            BOOL defaultEnabled = (i < 5 && i != 2);
+            BOOL defaultEnabled = i < 5;
             [data addObject:[@{@"id": kYMTabIDs[i], @"enabled": @(defaultEnabled)} mutableCopy]];
         }
     }

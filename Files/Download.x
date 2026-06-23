@@ -88,6 +88,10 @@ static NSBundle *YouModBundle() {
 - (NSString *)shortDescription;
 @end
 
+@interface YTDataUtils : NSObject
++ (instancetype)generateClientSideNonce;
+@end
+
 static UIImage *YouModIconImage(NSInteger iconType) {
     YTIIcon *icon = [%c(YTIIcon) new];
     icon.iconType = iconType;
@@ -126,6 +130,7 @@ static UIImage *YouModIconImage(NSInteger iconType) {
 @property (nonatomic, assign) NSInteger contentLength;
 @property (nonatomic, assign) NSUInteger durationMs;
 @property (nonatomic, assign) int fps;
+@property (nonatomic, assign) int resolution;
 @property (nonatomic, assign) BOOL video;
 @end
 
@@ -354,7 +359,8 @@ static void YouModApplyDownloadHeaders(NSMutableURLRequest *request, NSDictionar
             return;
         }
 
-        unsigned long long chunkSize = self.expectedBytes / YouModFastDownloadConcurrency;
+        // Aim for ~100 chunks (≈1% per chunk) but respect min/max bounds.
+        unsigned long long chunkSize = self.expectedBytes / 100ULL;
         if (chunkSize < 256ULL * 1024ULL) chunkSize = 256ULL * 1024ULL;
         if (chunkSize > YouModFastDownloadChunkBytes) chunkSize = YouModFastDownloadChunkBytes;
 
@@ -607,8 +613,7 @@ static NSString *YouModURLStringWithCPN(NSString *urlString) {
     if (urlString.length == 0) return urlString;
     urlString = YouModURLStringBypassingThrottle(urlString);
     if ([urlString containsString:@"cpn="]) return urlString;
-    Class ytDataUtils = NSClassFromString(@"YTDataUtils");
-    NSString *cpn = ((id (*)(Class, SEL))objc_msgSend)(ytDataUtils, @selector(generateClientSideNonce));
+    NSString *cpn = [%c(YTDataUtils) generateClientSideNonce];
     NSString *separator = [urlString containsString:@"?"] ? @"&" : @"?";
     return [NSString stringWithFormat:@"%@%@cpn=%@", urlString, separator, cpn];
 }
@@ -647,10 +652,6 @@ static NSURL *YouModTemporaryFileURL(NSString *extension) {
     NSString *name = [[NSUUID UUID].UUIDString stringByAppendingPathExtension:extension];
     return [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:name]];
 }
-
-static NSInteger YouModResolutionFromQuality(NSString *quality);
-static NSInteger YouModFPSFromQuality(NSString *quality);
-static NSInteger YouModNormalizedFPS(NSInteger fps);
 
 static unsigned long long YouModDurationMsForURL(NSURL *url) {
     AVURLAsset *asset = [AVURLAsset URLAssetWithURL:url options:nil];
@@ -819,10 +820,9 @@ static YouModMediaFormat *YouModMediaFormatFromStream(YTIFormatStream *stream, B
     format.urlString = YouModURLStringWithCPN(url);
     format.mimeType = mimeType;
     int height = stream.height;
-    int fps = stream.fps;
-    fps = YouModNormalizedFPS(fps);
-    if (video && (height > 1080 || height < 144 || fps < 30)) return nil;
-    format.fps = fps;
+    if (video && height > 1080) return nil;
+    format.resolution = height;
+    format.fps = stream.fps;
     format.qualityLabel = stream.qualityLabel;
     if ([stream.qualityLabel hasSuffix:@"HDR"]) return nil;
     if (!video) {
@@ -836,35 +836,6 @@ static YouModMediaFormat *YouModMediaFormatFromStream(YTIFormatStream *stream, B
     return format;
 }
 
-static NSInteger YouModResolutionFromQuality(NSString *quality) {
-    NSScanner *scanner = [NSScanner scannerWithString:quality];
-    NSInteger value = 0;
-    [scanner scanInteger:&value];
-    return value;
-}
-
-static NSInteger YouModFPSFromQuality(NSString *quality) {
-    NSString *lower = quality.lowercaseString;
-    NSRange pRange = [lower rangeOfString:@"p"];
-    if (pRange.location != NSNotFound && pRange.location + 1 < lower.length) {
-        NSString *afterP = [lower substringFromIndex:pRange.location + 1];
-        NSScanner *scanner = [NSScanner scannerWithString:afterP];
-        NSInteger fps = 0;
-        if ([scanner scanInteger:&fps] && fps > 0) return fps;
-    }
-    if ([lower containsString:@"60"]) return 60;
-    if ([lower containsString:@"50"]) return 50;
-    if ([lower containsString:@"30"]) return 30;
-    return 0;
-}
-
-static NSInteger YouModNormalizedFPS(NSInteger fps) {
-    if (fps >= 51 && fps <= 61) return 60;
-    if (fps >= 41 && fps <= 51) return 50;
-    if (fps >= 24 && fps <= 31) return 30;
-    return fps;
-}
-
 static NSArray <YouModMediaFormat *> *YouModFormatsForPlayer(YTPlayerViewController *player, BOOL video) {
     NSMutableArray *formats = [NSMutableArray array];
     for (YTIFormatStream *stream in YouModAdaptiveFormatObjectsForPlayer(player)) {
@@ -874,11 +845,11 @@ static NSArray <YouModMediaFormat *> *YouModFormatsForPlayer(YTPlayerViewControl
 
     [formats sortUsingComparator:^NSComparisonResult(YouModMediaFormat *left, YouModMediaFormat *right) {
         if (video) {
-            NSInteger leftRes = YouModResolutionFromQuality(left.qualityLabel);
-            NSInteger rightRes = YouModResolutionFromQuality(right.qualityLabel);
+            NSInteger leftRes = left.resolution;
+            NSInteger rightRes = right.resolution;
             if (leftRes != rightRes) return leftRes > rightRes ? NSOrderedAscending : NSOrderedDescending;
-            NSInteger leftFPS = left.fps ?: YouModFPSFromQuality(left.qualityLabel);
-            NSInteger rightFPS = right.fps ?: YouModFPSFromQuality(right.qualityLabel);
+            NSInteger leftFPS = left.fps;
+            NSInteger rightFPS = right.fps;
             if (leftFPS != rightFPS) return leftFPS > rightFPS ? NSOrderedAscending : NSOrderedDescending;
         }
         
@@ -894,9 +865,8 @@ static NSArray <YouModMediaFormat *> *YouModFormatsForPlayer(YTPlayerViewControl
     NSMutableArray *unique = [NSMutableArray array];
     NSMutableSet *seen = [NSMutableSet set];
     for (YouModMediaFormat *format in formats) {
-        NSInteger fps = format.fps ?: YouModFPSFromQuality(format.qualityLabel);
         NSString *key = video
-            ? [NSString stringWithFormat:@"%@-%ld-%@", format.qualityLabel, (long)fps, YouModMimeDetail(format.mimeType)]
+            ? [NSString stringWithFormat:@"%@-%ld-%@", format.qualityLabel, format.fps, YouModMimeDetail(format.mimeType)]
             : [NSString stringWithFormat:@"%@-%@", format.qualityLabel, YouModMimeDetail(format.mimeType)];
         if ([seen containsObject:key]) continue;
         [seen addObject:key];
@@ -978,11 +948,16 @@ static void YouModShareFile(NSURL *fileURL, UIViewController *presenter) {
 static void YouModPresentMenu(NSString *title, NSArray <YouModMenuItem *> *items, UIViewController *presenter, UIView *sender) {
     presenter = YouModTopViewController(presenter);
     YTDefaultSheetController *sheet = [%c(YTDefaultSheetController) sheetControllerWithParentResponder:presenter];
-    Class actionClass = %c(YTActionSheetAction);
+    // Class actionClass = %c(YTActionSheetAction);
     for (YouModMenuItem *item in items) {
+        /*
         id action = ((id (*)(Class, SEL, NSString *, NSString *, UIImage *, id))objc_msgSend)(actionClass, @selector(actionWithTitle:subtitle:iconImage:handler:), item.title, item.subtitle, item.iconImage, ^(__unused id action) {
                     if (item.handler) item.handler();
         });
+        */
+        YTActionSheetAction *action = [%c(YTActionSheetAction) actionWithTitle:item.title subtitle:item.subtitle iconImage:item.iconImage handler:^(__unused YTActionSheetAction *action) {
+            if (item.handler) item.handler();
+        }];
         [sheet addAction:action];
     }
     if (sender) {
@@ -1112,6 +1087,10 @@ static void YouModPresentMenu(NSString *title, NSArray <YouModMenuItem *> *items
             }
             if (completion) completion(fileURL, nil);
         }];
+        // Immediately show 0% so UI starts at zero rather than waiting for first chunk.
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self updateDownloadProgressWithCurrentBytes:0 expectedBytes:expectedBytes];
+        });
         [self.rangeDownloader start];
         return;
     }
@@ -1152,7 +1131,9 @@ static void YouModPresentMenu(NSString *title, NSArray <YouModMenuItem *> *items
 - (void)updateDownloadProgressWithCurrentBytes:(unsigned long long)currentBytes expectedBytes:(unsigned long long)expectedBytes {
     unsigned long long total = self.totalBytes ?: expectedBytes;
     float progress = total ? (float)(self.completedBytes + currentBytes) / (float)total : 0.0f;
-    progress = fminf(fmaxf(progress, 0.0f), 0.985f);
+    // Allow the progress pill to reflect near-complete download percentages
+    // and update every percent — cap at 99.9% while downloading.
+    progress = fminf(fmaxf(progress, 0.0f), 1f);
 
     NSTimeInterval now = [NSDate timeIntervalSinceReferenceDate];
     NSTimeInterval elapsed = now - self.downloadStartTime;

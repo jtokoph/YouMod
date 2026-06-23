@@ -599,10 +599,7 @@ extern BOOL useBackwardIconForButton;
 
     // Remove old markers (tag 9900)
     for (UIView *sub in [playerBar.subviews copy]) {
-        if (sub.tag == 9900) {
-            [sub removeFromSuperview];
-            break;
-        }
+        if (sub.tag == 9900) [sub removeFromSuperview];
     }
 
     if (!segments || segments.count == 0) return;
@@ -624,7 +621,6 @@ extern BOOL useBackwardIconForButton;
         } else if ([sub isKindOfClass:%c(YTPlayerBarScrubberDotDecorationView)]) {
             scrubberView = sub;
         }
-        if (referenceView && scrubberView) break;
     }
 
     // Fallback Y/height if reference view not found
