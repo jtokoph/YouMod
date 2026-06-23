@@ -866,7 +866,7 @@ static NSArray <YouModMediaFormat *> *YouModFormatsForPlayer(YTPlayerViewControl
     NSMutableSet *seen = [NSMutableSet set];
     for (YouModMediaFormat *format in formats) {
         NSString *key = video
-            ? [NSString stringWithFormat:@"%@-%ld-%@", format.qualityLabel, format.fps, YouModMimeDetail(format.mimeType)]
+            ? [NSString stringWithFormat:@"%@-%@-%@", format.qualityLabel, (NSString *)format.fps, YouModMimeDetail(format.mimeType)]
             : [NSString stringWithFormat:@"%@-%@", format.qualityLabel, YouModMimeDetail(format.mimeType)];
         if ([seen containsObject:key]) continue;
         [seen addObject:key];
@@ -1133,7 +1133,7 @@ static void YouModPresentMenu(NSString *title, NSArray <YouModMenuItem *> *items
     float progress = total ? (float)(self.completedBytes + currentBytes) / (float)total : 0.0f;
     // Allow the progress pill to reflect near-complete download percentages
     // and update every percent — cap at 99.9% while downloading.
-    progress = fminf(fmaxf(progress, 0.0f), 1f);
+    progress = fminf(fmaxf(progress, 0.0f), 1.0f);
 
     NSTimeInterval now = [NSDate timeIntervalSinceReferenceDate];
     NSTimeInterval elapsed = now - self.downloadStartTime;
