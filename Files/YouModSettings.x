@@ -777,7 +777,7 @@ static const void *kYMTabSnapshotKey = &kYMTabSnapshotKey;
             [titleButton setValue:[UIColor whiteColor] forKey:@"_desiredCustomTitleColor"];
         }
     } else {
-        if (backbutton) {
+        if (backButton) {
             backButton.tintColor = [UIColor blackColor];
         }
         if (titleButton) {
