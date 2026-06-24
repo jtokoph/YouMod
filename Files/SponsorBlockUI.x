@@ -604,7 +604,7 @@ extern BOOL useBackwardIconForButton;
     YTInlinePlayerBarContainerView *containerView = barController.playerBar;
     UIView *playerBar;
 
-    for (UIView *subview in self.subviews) {
+    for (UIView *subview in containerView.subviews) {
         if ([subview isKindOfClass:%c(YTModularPlayerBarView)]) {
             playerBar = subview;
             break;
