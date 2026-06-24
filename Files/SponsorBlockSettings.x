@@ -171,13 +171,13 @@ static const void *kSBColorIndexPathKey = &kSBColorIndexPathKey;
     if (self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
         backButton.tintColor = [UIColor whiteColor];
         titleButton.titleLabel.textColor = [UIColor whiteColor];
-        if (customTitle != nil) {
+        if (customTitle) {
             [titleButton setValue:[UIColor whiteColor] forKey:@"_desiredCustomTitleColor"];
         }
     } else {
         backButton.tintColor = [UIColor blackColor];
         titleButton.titleLabel.textColor = [UIColor blackColor];
-        if (customTitle != nil) {
+        if (customTitle) {
             [titleButton setValue:[UIColor blackColor] forKey:@"_desiredCustomTitleColor"];
         }
     }

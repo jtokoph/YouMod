@@ -27,7 +27,7 @@ The reason is because of YTLite no longer free. So I'll try my best to recreate 
 
 ## Features
 This tweak can hide, remove elements and others in YouTube. Such as:
-- Downloading (Currently support up to 1080p60)
+- Downloading (Currently supports up to 1080p60)
 - Appearance
 - Navigation bar
 - Player

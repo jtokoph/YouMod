@@ -12,7 +12,6 @@ static BOOL isProductList(YTICommand *command) {
 NSString *getAdString(NSString *description) {
     for (NSString *str in @[
         @"brand_promo",
-        @"brand_video_singleton",
         @"carousel_footered_layout",
         @"carousel_headered_layout",
         @"eml.expandable_metadata",
@@ -33,7 +32,6 @@ NSString *getAdString(NSString *description) {
         @"text_search_ad",
         @"video_display_full_layout",
         @"video_display_full_buttoned_layout"
-        // @"video_display_button_group_layout"
     ])
         if ([description containsString:str]) return str;
     return nil;
@@ -71,7 +69,7 @@ static NSMutableArray <YTIItemSectionRenderer *> *filteredArray(NSArray <YTIItem
                     } else {
                         if ([description containsString:@"shorts_video_cell.eml"]) return YES;
                     }
-                    if ([description containsString:@"shorts_grid_shelf_footer.eml"] || ([description containsString:@"shelf_header.eml"] && [description containsString:@"youtube_shorts"])) return YES;
+                    if ([description containsString:@"shelf_header.eml"] && [description containsString:@"youtube_shorts_24_cairo"]) return YES;
                 }
                 // Filter feed posts
                 if (IS_ENABLED(HideFeedPost) && ([description containsString:@"poll_post_root.eml"] || [description containsString:@"options_post_root.eml"] || [description containsString:@"images_post_root_slim.eml"] || [description containsString:@"options_post_responsive_root.eml"] || [description containsString:@"post_base_wrapper_slim.eml"])) {

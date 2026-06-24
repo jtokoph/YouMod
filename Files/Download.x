@@ -137,18 +137,6 @@ static UIImage *YouModIconImage(NSInteger iconType) {
 @implementation YouModMediaFormat
 @end
 
-@interface YouModAudioOutputFormat : NSObject
-@property (nonatomic, copy) NSString *identifier;
-@property (nonatomic, copy) NSString *title;
-@property (nonatomic, copy) NSString *subtitle;
-@property (nonatomic, copy) NSString *fileExtension;
-@property (nonatomic, assign) BOOL passthroughWhenCompatible;
-@property (nonatomic, assign) BOOL supported;
-@end
-
-@implementation YouModAudioOutputFormat
-@end
-
 typedef void (^YouModFileDownloadCompletion)(NSURL *fileURL, NSError *error);
 typedef void (^YouModMergeCompletion)(BOOL success, NSError *error);
 typedef void (^YouModRangeDownloadProgress)(unsigned long long completedBytes);
@@ -210,12 +198,10 @@ typedef void (^YouModRangeDownloadProgress)(unsigned long long completedBytes);
 @property (nonatomic, assign) NSTimeInterval downloadStartTime;
 + (instancetype)sharedCoordinator;
 - (void)startVideoDownloadWithVideoFormat:(YouModMediaFormat *)videoFormat audioFormat:(YouModMediaFormat *)audioFormat fileName:(NSString *)fileName videoID:(NSString *)videoID presenter:(UIViewController *)presenter;
-- (void)startAudioDownloadWithAudioFormat:(YouModMediaFormat *)audioFormat fileName:(NSString *)fileName videoID:(NSString *)videoID presenter:(UIViewController *)presenter;
-- (void)startAudioDownloadWithAudioFormat:(YouModMediaFormat *)audioFormat fileName:(NSString *)fileName videoID:(NSString *)videoID outputFormat:(YouModAudioOutputFormat *)outputFormat presenter:(UIViewController *)presenter;
+- (void)startAudioDownloadWithAudioFormat:(YouModMediaFormat *)audioFormat fileName:(NSString *)fileName presenter:(UIViewController *)presenter;
 - (void)startDirectVideoDownloadWithVideoFormat:(YouModMediaFormat *)videoFormat audioFormat:(YouModMediaFormat *)audioFormat fileName:(NSString *)fileName videoID:(NSString *)videoID presenter:(UIViewController *)presenter;
 - (void)startDirectSingleVideoDownloadWithFormat:(YouModMediaFormat *)format fileName:(NSString *)fileName videoID:(NSString *)videoID presenter:(UIViewController *)presenter;
-- (void)startDirectAudioDownloadWithAudioFormat:(YouModMediaFormat *)audioFormat fileName:(NSString *)fileName videoID:(NSString *)videoID presenter:(UIViewController *)presenter;
-- (void)startDirectAudioDownloadWithAudioFormat:(YouModMediaFormat *)audioFormat fileName:(NSString *)fileName videoID:(NSString *)videoID outputFormat:(YouModAudioOutputFormat *)outputFormat presenter:(UIViewController *)presenter;
+- (void)startDirectAudioDownloadWithAudioFormat:(YouModMediaFormat *)audioFormat fileName:(NSString *)fileName presenter:(UIViewController *)presenter;
 - (void)mergeVideoURL:(NSURL *)videoURL audioURL:(NSURL *)audioURL fileName:(NSString *)fileName outputExtension:(NSString *)outputExtension durationMs:(unsigned long long)durationMs presenter:(UIViewController *)presenter;
 - (void)mergeVideoWithAVFoundationVideoURL:(NSURL *)videoURL audioURL:(NSURL *)audioURL outputURL:(NSURL *)outputURL durationMs:(unsigned long long)durationMs presenter:(UIViewController *)presenter fallbackError:(NSError *)fallbackError;
 - (void)trimSingleVideoURL:(NSURL *)inputURL outputURL:(NSURL *)outputURL durationMs:(unsigned long long)durationMs presenter:(UIViewController *)presenter;
@@ -245,7 +231,7 @@ static NSString *YouModYouTubeCookiesString(void) {
 }
 
 static NSString *YouModNativeUserAgent(void) {
-    NSString *version = @"21.18.4";
+    NSString *version = @"21.25.5";
     NSString *sysVersion = [[UIDevice currentDevice].systemVersion stringByReplacingOccurrencesOfString:@"." withString:@"_"] ?: @"18_7";
     return [NSString stringWithFormat:@"com.google.ios.youtube/%@ (iPhone; CPU iPhone OS %@ like Mac OS X)", version, sysVersion];
 }
@@ -735,32 +721,6 @@ static BOOL YouModVideoFileCanSaveToPhotos(NSURL *fileURL) {
     return YouModPathExtensionIsPhotosVideo(fileURL.pathExtension);
 }
 
-static YouModAudioOutputFormat *YouModAudioOutputFormatMake(NSString *identifier, NSString *title, NSString *subtitle, NSString *fileExtension, BOOL passthroughWhenCompatible, BOOL supported) {
-    YouModAudioOutputFormat *format = [YouModAudioOutputFormat new];
-    format.identifier = identifier;
-    format.title = title;
-    format.subtitle = subtitle;
-    format.fileExtension = fileExtension;
-    format.passthroughWhenCompatible = passthroughWhenCompatible;
-    format.supported = supported;
-    return format;
-}
-
-static NSArray <YouModAudioOutputFormat *> *YouModAudioOutputFormats(void) {
-    static NSArray <YouModAudioOutputFormat *> *formats = nil;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        formats = @[
-            YouModAudioOutputFormatMake(@"m4a", @"M4A", @"", @"m4a", YES, YES),
-        ];
-    });
-    return formats;
-}
-
-static YouModAudioOutputFormat *YouModDefaultAudioOutputFormat(void) {
-    return [YouModAudioOutputFormats() firstObject];
-}
-
 static NSString *YouModFormatSubtitle(YouModMediaFormat *format) {
     NSMutableArray *parts = [NSMutableArray array];
     NSString *detail = YouModMimeDetail(format.mimeType);
@@ -1246,31 +1206,18 @@ static void YouModPresentMenu(NSString *title, NSArray <YouModMenuItem *> *items
     }];
 }
 
-- (void)startAudioDownloadWithAudioFormat:(YouModMediaFormat *)audioFormat fileName:(NSString *)fileName videoID:(NSString *)videoID presenter:(UIViewController *)presenter {
-    [self startAudioDownloadWithAudioFormat:audioFormat fileName:fileName videoID:videoID outputFormat:nil presenter:presenter];
-}
-
-- (void)startAudioDownloadWithAudioFormat:(YouModMediaFormat *)audioFormat fileName:(NSString *)fileName videoID:(NSString *)videoID outputFormat:(YouModAudioOutputFormat *)outputFormat presenter:(UIViewController *)presenter {
+- (void)startAudioDownloadWithAudioFormat:(YouModMediaFormat *)audioFormat fileName:(NSString *)fileName presenter:(UIViewController *)presenter {
     if (self.active) {
         YouModSendToast(LOC(@"ALREADY_DOWNLOADING"));
         return;
     }
-    [self startDirectAudioDownloadWithAudioFormat:audioFormat fileName:fileName videoID:videoID outputFormat:outputFormat presenter:presenter];
+    [self startDirectAudioDownloadWithAudioFormat:audioFormat fileName:fileName presenter:presenter];
 }
 
-- (void)startDirectAudioDownloadWithAudioFormat:(YouModMediaFormat *)audioFormat fileName:(NSString *)fileName videoID:(NSString *)videoID presenter:(UIViewController *)presenter {
-    [self startDirectAudioDownloadWithAudioFormat:audioFormat fileName:fileName videoID:videoID outputFormat:nil presenter:presenter];
-}
-
-- (void)startDirectAudioDownloadWithAudioFormat:(YouModMediaFormat *)audioFormat fileName:(NSString *)fileName videoID:(NSString *)videoID outputFormat:(YouModAudioOutputFormat *)outputFormat presenter:(UIViewController *)presenter {
+- (void)startDirectAudioDownloadWithAudioFormat:(YouModMediaFormat *)audioFormat fileName:(NSString *)fileName presenter:(UIViewController *)presenter {
     NSURL *audioURL = [NSURL URLWithString:audioFormat.urlString];
     if (!audioURL) {
         YouModSendError(LOC(@"NO_AUDIO_URL"));
-        return;
-    }
-    outputFormat = outputFormat ?: YouModDefaultAudioOutputFormat();
-    if (!outputFormat.supported) {
-        YouModSendError([NSString stringWithFormat:@"%@ not supported", outputFormat.title ?: @"Format"]);
         return;
     }
 
@@ -1558,7 +1505,7 @@ static void YouModShowVideoQualitySheet(YTPlayerViewController *player, UIViewCo
     YouModPresentMenu(LOC(@"DOWNLOAD_VIDEO"), items, presenter, sender);
 }
 
-static void YouModShowAudioSourceSheet(YTPlayerViewController *player, YouModAudioOutputFormat *outputFormat, UIViewController *presenter, UIView *sender) {
+static void YouModStartDownloadAudio(YTPlayerViewController *player, UIViewController *presenter, UIView *sender) {
     NSArray <YouModMediaFormat *> *audioFormats = YouModFormatsForPlayer(player, NO);
     NSString *title = YouModTitleForPlayer(player);
     NSString *videoID = player.currentVideoID;
@@ -1569,12 +1516,7 @@ static void YouModShowAudioSourceSheet(YTPlayerViewController *player, YouModAud
     }
 
     YouModMediaFormat *bestFormat = audioFormats.firstObject;
-    [[YouModDownloadCoordinator sharedCoordinator] startAudioDownloadWithAudioFormat:bestFormat fileName:title videoID:videoID outputFormat:outputFormat presenter:presenter];
-}
-
-static void YouModShowAudioSheet(YTPlayerViewController *player, UIViewController *presenter, UIView *sender) {
-    YouModAudioOutputFormat *defaultFormat = YouModDefaultAudioOutputFormat();
-    YouModShowAudioSourceSheet(player, defaultFormat, presenter, sender);
+    [[YouModDownloadCoordinator sharedCoordinator] startAudioDownloadWithAudioFormat:bestFormat fileName:title presenter:presenter];
 }
 
 static void YouModShowCaptionsSheet(YTPlayerViewController *player, UIViewController *presenter, UIView *sender) {
@@ -1647,7 +1589,7 @@ static void YouModShowDownloadManager(YTPlayerViewController *player, UIViewCont
         }]];
     }
     [items addObject:[YouModMenuItem itemWithTitle:LOC(@"DOWNLOAD_AUDIO") subtitle:LOC(@"DOWNLOAD_AUDIO_DESC") icon:YouModIconImage(21) handler:^{
-        YouModShowAudioSheet(player, presenter, sender);
+        YouModStartDownloadAudio(player, presenter, sender);
     }]];
     [items addObject:[YouModMenuItem itemWithTitle:LOC(@"DOWNLOAD_CAPTIONS") subtitle:LOC(@"DOWNLOAD_CAPTIONS_DESC") icon:YouModIconImage(637) handler:^{
         YouModShowCaptionsSheet(player, presenter, sender);
