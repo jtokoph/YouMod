@@ -517,8 +517,15 @@ extern BOOL useBackwardIconForButton;
 
 - (void)layoutSubviews {
     %orig;
+    UIView *playerBar;
 
-    UIView *playerBar = self.modularPlayerBar.view;
+    for (UIView *subview in self.subviews) {
+        if ([subview isKindOfClass:%c(YTModularPlayerBarView)]) {
+            playerBar = subview;
+            break;
+        }
+    }
+
     CGFloat barWidth = playerBar.bounds.size.width;
     if (barWidth <= 0) return;
 
@@ -595,7 +602,14 @@ extern BOOL useBackwardIconForButton;
     YTMainAppVideoPlayerOverlayViewController *overlay = [self activeVideoPlayerOverlay];
     YTPlayerBarController *barController = [overlay playerBarController];
     YTInlinePlayerBarContainerView *containerView = barController.playerBar;
-    UIView *playerBar = containerView.modularPlayerBar.view;
+    UIView *playerBar;
+
+    for (UIView *subview in self.subviews) {
+        if ([subview isKindOfClass:%c(YTModularPlayerBarView)]) {
+            playerBar = subview;
+            break;
+        }
+    }
 
     // Remove old markers (tag 9900)
     for (UIView *sub in [playerBar.subviews copy]) {
