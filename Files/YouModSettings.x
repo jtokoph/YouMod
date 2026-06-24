@@ -144,7 +144,9 @@ static const void *kYMSwitchKeyAssoc = &kYMSwitchKeyAssoc;
 - (void)setItems:(NSArray<YMSettingsItem *> *)items { objc_setAssociatedObject(self, kYMItemsKey, items, OBJC_ASSOCIATION_RETAIN_NONATOMIC); }
 
 - (void)viewDidLoad {
-    [%c(YTStyledViewController) viewDidLoad];
+    Class ytStyled = objc_getClass("YTStyledViewController");
+    struct objc_super superStruct = { self, ytStyled ?: [UIViewController class] };
+    ((void (*)(struct objc_super *, SEL))objc_msgSendSuper)(&superStruct, @selector(viewDidLoad));
 
     self.title = self.navTitle;
 
@@ -176,11 +178,15 @@ static const void *kYMSwitchKeyAssoc = &kYMSwitchKeyAssoc;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
-    [%c(YTStyledViewController) viewWillAppear:animated];
+    Class ytStyled = objc_getClass("YTStyledViewController");
+    struct objc_super superStruct = { self, ytStyled ?: [UIViewController class] };
+    ((void (*)(struct objc_super *, SEL, BOOL))objc_msgSendSuper)(&superStruct, @selector(viewWillAppear:), animated);
 }
 
 - (void)viewDidLayoutSubviews {
-    [%c(YTStyledViewController) viewDidLayoutSubviews];
+    Class ytStyled = objc_getClass("YTStyledViewController");
+    struct objc_super superStruct = { self, ytStyled ?: [UIViewController class] };
+    ((void (*)(struct objc_super *, SEL))objc_msgSendSuper)(&superStruct, @selector(viewDidLayoutSubviews));
     YTQTMButton *backButton = [self valueForKey:@"_backButton"];
     YTQTMButton *titleButton = [self valueForKey:@"_titleButton"];
     UIColor *customTitle = [titleButton valueForKey:@"_desiredCustomTitleColor"];
@@ -685,7 +691,9 @@ static const void *kYMTabSnapshotKey = &kYMTabSnapshotKey;
 }
 
 - (void)viewDidLoad {
-    [%c(YTStyledViewController) viewDidLoad];
+    Class ytStyled = objc_getClass("YTStyledViewController");
+    struct objc_super superStruct = { self, ytStyled ?: [UIViewController class] };
+    ((void (*)(struct objc_super *, SEL))objc_msgSendSuper)(&superStruct, @selector(viewDidLoad));
 
     self.title = YMLOC(@"MANAGE_TABS");
     [self loadTabData];
@@ -743,11 +751,15 @@ static const void *kYMTabSnapshotKey = &kYMTabSnapshotKey;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
-    [%c(YTStyledViewController) viewWillAppear:animated];
+    Class ytStyled = objc_getClass("YTStyledViewController");
+    struct objc_super superStruct = { self, ytStyled ?: [UIViewController class] };
+    ((void (*)(struct objc_super *, SEL, BOOL))objc_msgSendSuper)(&superStruct, @selector(viewWillAppear:), animated);
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
-    [%c(YTStyledViewController) viewWillDisappear:animated];
+    Class ytStyled = objc_getClass("YTStyledViewController");
+    struct objc_super superStruct = { self, ytStyled ?: [UIViewController class] };
+    ((void (*)(struct objc_super *, SEL, BOOL))objc_msgSendSuper)(&superStruct, @selector(viewWillDisappear:), animated);
 
     // Update the button and title color to prevent bugs
     YTQTMButton *backButton = [self valueForKey:@"_backButton"];
@@ -790,7 +802,9 @@ static const void *kYMTabSnapshotKey = &kYMTabSnapshotKey;
 }
 
 - (void)viewDidLayoutSubviews {
-    [%c(YTStyledViewController) viewDidLayoutSubviews];
+    Class ytStyled = objc_getClass("YTStyledViewController");
+    struct objc_super superStruct = { self, ytStyled ?: [UIViewController class] };
+    ((void (*)(struct objc_super *, SEL))objc_msgSendSuper)(&superStruct, @selector(viewDidLayoutSubviews));
     YTQTMButton *backButton = [self valueForKey:@"_backButton"];
     YTQTMButton *titleButton = [self valueForKey:@"_titleButton"];
     UIColor *customTitle = [titleButton valueForKey:@"_desiredCustomTitleColor"];

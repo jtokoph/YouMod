@@ -52,7 +52,6 @@
 #import <YouTubeHeader/YTAppViewControllerImpl.h>
 #import <YouTubeHeader/YTAppViewController.h>
 #import <YouTubeHeader/YTDefaultSheetController.h>
-#import <YouTubeHeader/YTStyledViewController.h>
 
 // For Settings.x and SponsorBlockSettings.x
 #import <PSHeader/Misc.h>
