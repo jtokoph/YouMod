@@ -189,13 +189,20 @@ static const void *kYMSwitchKeyAssoc = &kYMSwitchKeyAssoc;
     ((void (*)(struct objc_super *, SEL))objc_msgSendSuper)(&superStruct, @selector(viewDidLayoutSubviews));
     YTQTMButton *backButton = [self valueForKey:@"_backButton"];
     YTQTMButton *titleButton = [self valueForKey:@"_titleButton"];
+    UIColor *customTitle = [titleButton valueForKey:@"_desiredCustomTitleColor"];
 
     if (self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
         backButton.tintColor = [UIColor whiteColor];
         titleButton.titleLabel.textColor = [UIColor whiteColor];
+        if (customTitle != nil) {
+            [titleButton setValue:[UIColor whiteColor] forKey:@"_desiredCustomTitleColor"];
+        }
     } else {
         backButton.tintColor = [UIColor blackColor];
         titleButton.titleLabel.textColor = [UIColor blackColor];
+        if (customTitle != nil) {
+            [titleButton setValue:[UIColor blackColor] forKey:@"_desiredCustomTitleColor"];
+        }
     }
 }
 
@@ -776,13 +783,20 @@ static const void *kYMTabSnapshotKey = &kYMTabSnapshotKey;
     ((void (*)(struct objc_super *, SEL))objc_msgSendSuper)(&superStruct, @selector(viewDidLayoutSubviews));
     YTQTMButton *backButton = [self valueForKey:@"_backButton"];
     YTQTMButton *titleButton = [self valueForKey:@"_titleButton"];
+    UIColor *customTitle = [titleButton valueForKey:@"_desiredCustomTitleColor"];
 
     if (self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
         backButton.tintColor = [UIColor whiteColor];
         titleButton.titleLabel.textColor = [UIColor whiteColor];
+        if (customTitle != nil) {
+            [titleButton setValue:[UIColor whiteColor] forKey:@"_desiredCustomTitleColor"];
+        }
     } else {
         backButton.tintColor = [UIColor blackColor];
         titleButton.titleLabel.textColor = [UIColor blackColor];
+        if (customTitle != nil) {
+            [titleButton setValue:[UIColor blackColor] forKey:@"_desiredCustomTitleColor"];
+        }
     }
 }
 
