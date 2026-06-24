@@ -525,6 +525,7 @@ extern BOOL useBackwardIconForButton;
             break;
         }
     }
+    if (!playerBar) return;
 
     CGFloat barWidth = playerBar.bounds.size.width;
     if (barWidth <= 0) return;
@@ -610,6 +611,7 @@ extern BOOL useBackwardIconForButton;
             break;
         }
     }
+    if (!playerBar) return;
 
     // Remove old markers (tag 9900)
     for (UIView *sub in [playerBar.subviews copy]) {

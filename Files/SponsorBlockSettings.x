@@ -121,9 +121,7 @@ static const void *kSBColorIndexPathKey = &kSBColorIndexPathKey;
 - (void)setActiveColorIndexPath:(NSIndexPath *)ip { objc_setAssociatedObject(self, kSBColorIndexPathKey, ip, OBJC_ASSOCIATION_RETAIN_NONATOMIC); }
 
 - (void)viewDidLoad {
-    Class ytStyled = objc_getClass("YTStyledViewController");
-    struct objc_super superStruct = { self, ytStyled ?: [UIViewController class] };
-    ((void (*)(struct objc_super *, SEL))objc_msgSendSuper)(&superStruct, @selector(viewDidLoad));
+    [%c(YTStyledViewController) viewDidLoad];
 
     self.title = @"SponsorBlock";
 
@@ -155,15 +153,11 @@ static const void *kSBColorIndexPathKey = &kSBColorIndexPathKey;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
-    Class ytStyled = objc_getClass("YTStyledViewController");
-    struct objc_super superStruct = { self, ytStyled ?: [UIViewController class] };
-    ((void (*)(struct objc_super *, SEL, BOOL))objc_msgSendSuper)(&superStruct, @selector(viewWillAppear:), animated);
+    [%c(YTStyledViewController) viewWillAppear:animated];
 }
 
 - (void)viewDidLayoutSubviews {
-    Class ytStyled = objc_getClass("YTStyledViewController");
-    struct objc_super superStruct = { self, ytStyled ?: [UIViewController class] };
-    ((void (*)(struct objc_super *, SEL))objc_msgSendSuper)(&superStruct, @selector(viewDidLayoutSubviews));
+    [%c(YTStyledViewController) viewDidLayoutSubviews];
     YTQTMButton *backButton = [self valueForKey:@"_backButton"];
     YTQTMButton *titleButton = [self valueForKey:@"_titleButton"];
     UIColor *customTitle = [titleButton valueForKey:@"_desiredCustomTitleColor"];

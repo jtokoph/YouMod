@@ -144,9 +144,7 @@ static const void *kYMSwitchKeyAssoc = &kYMSwitchKeyAssoc;
 - (void)setItems:(NSArray<YMSettingsItem *> *)items { objc_setAssociatedObject(self, kYMItemsKey, items, OBJC_ASSOCIATION_RETAIN_NONATOMIC); }
 
 - (void)viewDidLoad {
-    Class ytStyled = objc_getClass("YTStyledViewController");
-    struct objc_super superStruct = { self, ytStyled ?: [UIViewController class] };
-    ((void (*)(struct objc_super *, SEL))objc_msgSendSuper)(&superStruct, @selector(viewDidLoad));
+    [%c(YTStyledViewController) viewDidLoad];
 
     self.title = self.navTitle;
 
@@ -178,15 +176,11 @@ static const void *kYMSwitchKeyAssoc = &kYMSwitchKeyAssoc;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
-    Class ytStyled = objc_getClass("YTStyledViewController");
-    struct objc_super superStruct = { self, ytStyled ?: [UIViewController class] };
-    ((void (*)(struct objc_super *, SEL, BOOL))objc_msgSendSuper)(&superStruct, @selector(viewWillAppear:), animated);
+    [%c(YTStyledViewController) viewWillAppear:animated];
 }
 
 - (void)viewDidLayoutSubviews {
-    Class ytStyled = objc_getClass("YTStyledViewController");
-    struct objc_super superStruct = { self, ytStyled ?: [UIViewController class] };
-    ((void (*)(struct objc_super *, SEL))objc_msgSendSuper)(&superStruct, @selector(viewDidLayoutSubviews));
+    [%c(YTStyledViewController) viewDidLayoutSubviews];
     YTQTMButton *backButton = [self valueForKey:@"_backButton"];
     YTQTMButton *titleButton = [self valueForKey:@"_titleButton"];
     UIColor *customTitle = [titleButton valueForKey:@"_desiredCustomTitleColor"];
@@ -345,7 +339,7 @@ static const void *kYMSwitchKeyAssoc = &kYMSwitchKeyAssoc;
     UISegmentedControl *segment = [[UISegmentedControl alloc] initWithItems:items];
 
     for (NSInteger i = 0; i < (NSInteger)item.segmentIcons.count; i++) {
-        YTIIcon *ytIcon = [NSClassFromString(@"YTIIcon") new];
+        YTIIcon *ytIcon = [%c(YTIIcon) new];
         if (ytIcon) {
             ((void (*)(id, SEL, int))objc_msgSend)(ytIcon, @selector(setIconType:), [item.segmentIcons[i] intValue]);
             UIImage *iconImage = nil;
@@ -660,7 +654,7 @@ static const void *kYMTabSnapshotKey = &kYMTabSnapshotKey;
     static YTAssetLoader *cachedLoader = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        cachedLoader = [[NSClassFromString(@"YTAssetLoader") alloc] initWithBundle:YMSettingsBundle()];
+        cachedLoader = [[%c(YTAssetLoader) alloc] initWithBundle:YMSettingsBundle()];
     });
 
     if ([tabID isEqualToString:@"create"]) {
@@ -672,7 +666,7 @@ static const void *kYMTabSnapshotKey = &kYMTabSnapshotKey;
 
     NSNumber *iconType = ytIconTypes[tabID];
     if (iconType) {
-        YTIIcon *icon = [NSClassFromString(@"YTIIcon") new];
+        YTIIcon *icon = [%c(YTIIcon) new];
         if (icon) {
             ((void (*)(id, SEL, int))objc_msgSend)(icon, @selector(setIconType:), [iconType intValue]);
             if ([icon respondsToSelector:@selector(iconImageWithColor:)]) {
@@ -691,9 +685,7 @@ static const void *kYMTabSnapshotKey = &kYMTabSnapshotKey;
 }
 
 - (void)viewDidLoad {
-    Class ytStyled = objc_getClass("YTStyledViewController");
-    struct objc_super superStruct = { self, ytStyled ?: [UIViewController class] };
-    ((void (*)(struct objc_super *, SEL))objc_msgSendSuper)(&superStruct, @selector(viewDidLoad));
+    [%c(YTStyledViewController) viewDidLoad];
 
     self.title = YMLOC(@"MANAGE_TABS");
     [self loadTabData];
@@ -751,36 +743,54 @@ static const void *kYMTabSnapshotKey = &kYMTabSnapshotKey;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
-    Class ytStyled = objc_getClass("YTStyledViewController");
-    struct objc_super superStruct = { self, ytStyled ?: [UIViewController class] };
-    ((void (*)(struct objc_super *, SEL, BOOL))objc_msgSendSuper)(&superStruct, @selector(viewWillAppear:), animated);
+    [%c(YTStyledViewController) viewWillAppear:animated];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
-    Class ytStyled = objc_getClass("YTStyledViewController");
-    struct objc_super superStruct = { self, ytStyled ?: [UIViewController class] };
-    ((void (*)(struct objc_super *, SEL, BOOL))objc_msgSendSuper)(&superStruct, @selector(viewWillDisappear:), animated);
+    [%c(YTStyledViewController) viewWillDisappear:animated];
+
+    // Update the button and title color to prevent bugs
+    YTQTMButton *backButton = [self valueForKey:@"_backButton"];
+    YTQTMButton *titleButton = [self valueForKey:@"_titleButton"];
+    UIColor *customTitle = [titleButton valueForKey:@"_desiredCustomTitleColor"];
+
+    if (self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+        if (backButton) {
+            backButton.tintColor = [UIColor whiteColor];
+        }
+        if (titleButton) {
+            titleButton.titleLabel.textColor = [UIColor whiteColor];
+        }
+        if (customTitle != nil) {
+            [titleButton setValue:[UIColor whiteColor] forKey:@"_desiredCustomTitleColor"];
+        }
+    } else {
+        if (backbutton) {
+            backButton.tintColor = [UIColor blackColor];
+        }
+        if (titleButton) {
+            titleButton.titleLabel.textColor = [UIColor blackColor];
+        }
+        if (customTitle != nil) {
+            [titleButton setValue:[UIColor blackColor] forKey:@"_desiredCustomTitleColor"];
+        }
+    }
 
     if ([self hasRealChanges]) {
-        Class alertClass = NSClassFromString(@"YTAlertView");
-        if (alertClass) {
-            YTAlertView *alert = [alertClass confirmationDialogWithAction:^{
-                [[UIApplication sharedApplication] performSelector:@selector(suspend)];
-                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                    exit(0);
-                });
-            } actionTitle:YMLOC(@"RESTART_NOW")];
-            alert.title = YMLOC(@"RESTART_REQUIRED");
-            alert.subtitle = YMLOC(@"RESTART_REQUIRED_DESC");
-            [alert show];
-        }
+        YTAlertView *alert = [%c(YTAlertView) confirmationDialogWithAction:^{
+            [[UIApplication sharedApplication] performSelector:@selector(suspend)];
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                exit(0);
+            });
+        } actionTitle:YMLOC(@"RESTART_NOW")];
+        alert.title = YMLOC(@"RESTART_REQUIRED");
+        alert.subtitle = YMLOC(@"RESTART_REQUIRED_DESC");
+        [alert show];
     }
 }
 
 - (void)viewDidLayoutSubviews {
-    Class ytStyled = objc_getClass("YTStyledViewController");
-    struct objc_super superStruct = { self, ytStyled ?: [UIViewController class] };
-    ((void (*)(struct objc_super *, SEL))objc_msgSendSuper)(&superStruct, @selector(viewDidLayoutSubviews));
+    [%c(YTStyledViewController) viewDidLayoutSubviews];
     YTQTMButton *backButton = [self valueForKey:@"_backButton"];
     YTQTMButton *titleButton = [self valueForKey:@"_titleButton"];
     UIColor *customTitle = [titleButton valueForKey:@"_desiredCustomTitleColor"];
@@ -937,13 +947,10 @@ static const void *kYMTabSnapshotKey = &kYMTabSnapshotKey;
 
     if (wantsEnabled && [self enabledCount] >= kYMTabMaxEnabled) {
         sender.on = NO;
-        Class alertClass = NSClassFromString(@"YTAlertView");
-        if (alertClass) {
-            YTAlertView *alert = [alertClass infoDialog];
-            alert.title = YMLOC(@"TAB_LIMIT");
-            alert.subtitle = YMLOC(@"TAB_LIMIT_DESC");
-            [alert show];
-        }
+        YTAlertView *alert = [%c(YTAlertView) infoDialog];
+        alert.title = YMLOC(@"TAB_LIMIT");
+        alert.subtitle = YMLOC(@"TAB_LIMIT_DESC");
+        [alert show];
         return;
     }
 
@@ -1058,8 +1065,7 @@ void YMPushSubSettings(NSString *title, NSArray<YMSettingsItem *> *items, id set
 #pragma mark - Runtime Class Registration
 
 static void ymRegisterStyledSubclass(Class sourceClass, const char *name) {
-    Class ytStyled = objc_getClass("YTStyledViewController");
-    if (!ytStyled) return;
+    Class ytStyled = %c(YTStyledViewController);
     Class newClass = objc_allocateClassPair(ytStyled, name, 0);
     if (!newClass) return;
 

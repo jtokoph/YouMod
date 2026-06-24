@@ -171,6 +171,7 @@ static void YouModAddEndTime(YTPlayerViewController *self, YTSingleVideoControll
                 break;
             }
         }
+        if (!playerBar) return;
         
         // 2. ดึงพิกัดนิ้วที่กดสัมผัสเทียบกับหน้าจอหลัก (Window)
         // ดึงหน้าต่างหลักแบบปลอดภัยสำหรับแอปยุคใหม่ (iOS 13+ และ Multiple Scenes Support)
