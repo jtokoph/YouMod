@@ -6,7 +6,7 @@
 static void ApplyAndroidTestSuiteSpoof(YTIClientInfo *context) {
     // The spoof is adapted from Morphe. https://github.com/MorpheApp/morphe-patches/blob/main/extensions/shared-youtube/library/src/main/java/app/morphe/extension/shared/spoof/ClientType.java
     if (context) {
-        context.clientName = 14;
+        // context.clientName = 14;
         context.deviceMake = @"Google";
         context.deviceModel = @"Pixel 10 Pro XL";
         context.osName = @"Android";
