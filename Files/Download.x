@@ -1481,7 +1481,6 @@ static void YouModShowVideoQualitySheet(YTPlayerViewController *player, UIViewCo
     NSArray <YouModMediaFormat *> *videoFormats = YouModFormatsForPlayer(player, YES);
     YouModMediaFormat *audioFormat = YouModBestAudioFormatForPlayer(player);
     NSString *title = YouModTitleForPlayer(player);
-    NSString *videoID = player.currentVideoID;
 
     if (videoFormats.count == 0 || !audioFormat) {
         YouModSendError(LOC(@"NO_VID_AUDIO_STREAM_FOUND"));
