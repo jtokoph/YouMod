@@ -197,10 +197,10 @@ typedef void (^YouModRangeDownloadProgress)(unsigned long long completedBytes);
 @property (nonatomic, copy) NSString *baseProgressTitle;
 @property (nonatomic, assign) NSTimeInterval downloadStartTime;
 + (instancetype)sharedCoordinator;
-- (void)startVideoDownloadWithVideoFormat:(YouModMediaFormat *)videoFormat audioFormat:(YouModMediaFormat *)audioFormat fileName:(NSString *)fileName videoID:(NSString *)videoID presenter:(UIViewController *)presenter;
+- (void)startVideoDownloadWithVideoFormat:(YouModMediaFormat *)videoFormat audioFormat:(YouModMediaFormat *)audioFormat fileName:(NSString *)fileName presenter:(UIViewController *)presenter;
 - (void)startAudioDownloadWithAudioFormat:(YouModMediaFormat *)audioFormat fileName:(NSString *)fileName presenter:(UIViewController *)presenter;
-- (void)startDirectVideoDownloadWithVideoFormat:(YouModMediaFormat *)videoFormat audioFormat:(YouModMediaFormat *)audioFormat fileName:(NSString *)fileName videoID:(NSString *)videoID presenter:(UIViewController *)presenter;
-- (void)startDirectSingleVideoDownloadWithFormat:(YouModMediaFormat *)format fileName:(NSString *)fileName videoID:(NSString *)videoID presenter:(UIViewController *)presenter;
+- (void)startDirectVideoDownloadWithVideoFormat:(YouModMediaFormat *)videoFormat audioFormat:(YouModMediaFormat *)audioFormat fileName:(NSString *)fileName presenter:(UIViewController *)presenter;
+- (void)startDirectSingleVideoDownloadWithFormat:(YouModMediaFormat *)format fileName:(NSString *)fileName presenter:(UIViewController *)presenter;
 - (void)startDirectAudioDownloadWithAudioFormat:(YouModMediaFormat *)audioFormat fileName:(NSString *)fileName presenter:(UIViewController *)presenter;
 - (void)mergeVideoURL:(NSURL *)videoURL audioURL:(NSURL *)audioURL fileName:(NSString *)fileName outputExtension:(NSString *)outputExtension durationMs:(unsigned long long)durationMs presenter:(UIViewController *)presenter;
 - (void)mergeVideoWithAVFoundationVideoURL:(NSURL *)videoURL audioURL:(NSURL *)audioURL outputURL:(NSURL *)outputURL durationMs:(unsigned long long)durationMs presenter:(UIViewController *)presenter fallbackError:(NSError *)fallbackError;
@@ -1124,15 +1124,15 @@ static void YouModPresentMenu(NSString *title, NSArray <YouModMenuItem *> *items
     }
 }
 
-- (void)startVideoDownloadWithVideoFormat:(YouModMediaFormat *)videoFormat audioFormat:(YouModMediaFormat *)audioFormat fileName:(NSString *)fileName videoID:(NSString *)videoID presenter:(UIViewController *)presenter {
+- (void)startVideoDownloadWithVideoFormat:(YouModMediaFormat *)videoFormat audioFormat:(YouModMediaFormat *)audioFormat fileName:(NSString *)fileName presenter:(UIViewController *)presenter {
     if (self.active) {
         YouModSendToast(LOC(@"ALREADY_DOWNLOADING"));
         return;
     }
-    [self startDirectVideoDownloadWithVideoFormat:videoFormat audioFormat:audioFormat fileName:fileName videoID:videoID presenter:presenter];
+    [self startDirectVideoDownloadWithVideoFormat:videoFormat audioFormat:audioFormat fileName:fileName presenter:presenter];
 }
 
-- (void)startDirectVideoDownloadWithVideoFormat:(YouModMediaFormat *)videoFormat audioFormat:(YouModMediaFormat *)audioFormat fileName:(NSString *)fileName videoID:(NSString *)videoID presenter:(UIViewController *)presenter {
+- (void)startDirectVideoDownloadWithVideoFormat:(YouModMediaFormat *)videoFormat audioFormat:(YouModMediaFormat *)audioFormat fileName:(NSString *)fileName presenter:(UIViewController *)presenter {
     NSURL *videoURL = [NSURL URLWithString:videoFormat.urlString];
     NSURL *audioURL = [NSURL URLWithString:audioFormat.urlString];
     if (!videoURL || !audioURL) {
@@ -1173,7 +1173,7 @@ static void YouModPresentMenu(NSString *title, NSArray <YouModMenuItem *> *items
     }];
 }
 
-- (void)startDirectSingleVideoDownloadWithFormat:(YouModMediaFormat *)format fileName:(NSString *)fileName videoID:(NSString *)videoID presenter:(UIViewController *)presenter {
+- (void)startDirectSingleVideoDownloadWithFormat:(YouModMediaFormat *)format fileName:(NSString *)fileName presenter:(UIViewController *)presenter {
     NSURL *videoURL = [NSURL URLWithString:format.urlString];
     if (!videoURL) {
         YouModSendError(LOC(@"NO_STREAM_URL"));
@@ -1493,11 +1493,11 @@ static void YouModShowVideoQualitySheet(YTPlayerViewController *player, UIViewCo
         NSString *subtitle = YouModFormatSubtitle(format);
         if (isShorts) {
             [items addObject:[YouModMenuItem itemWithTitle:rowTitle subtitle:subtitle icon:YouModIconImage(769) handler:^{
-                [[YouModDownloadCoordinator sharedCoordinator] startVideoDownloadWithVideoFormat:format audioFormat:audioFormat fileName:title videoID:videoID presenter:presenter];
+                [[YouModDownloadCoordinator sharedCoordinator] startVideoDownloadWithVideoFormat:format audioFormat:audioFormat fileName:title presenter:presenter];
             }]];
         } else {
             [items addObject:[YouModMenuItem itemWithTitle:rowTitle subtitle:subtitle icon:YouModIconImage(658) handler:^{
-                [[YouModDownloadCoordinator sharedCoordinator] startVideoDownloadWithVideoFormat:format audioFormat:audioFormat fileName:title videoID:videoID presenter:presenter];
+                [[YouModDownloadCoordinator sharedCoordinator] startVideoDownloadWithVideoFormat:format audioFormat:audioFormat fileName:title presenter:presenter];
             }]];
         }
     }
@@ -1507,7 +1507,6 @@ static void YouModShowVideoQualitySheet(YTPlayerViewController *player, UIViewCo
 static void YouModStartDownloadAudio(YTPlayerViewController *player, UIViewController *presenter, UIView *sender) {
     NSArray <YouModMediaFormat *> *audioFormats = YouModFormatsForPlayer(player, NO);
     NSString *title = YouModTitleForPlayer(player);
-    NSString *videoID = player.currentVideoID;
 
     if (audioFormats.count == 0) {
         YouModSendError(LOC(@"NO_AUDIO_STREAM_FOUND"));
