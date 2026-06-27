@@ -674,9 +674,7 @@ extern BOOL useBackwardIconForButton;
     }
 
     // Keep scrubber dot on top
-    if (scrubberView) {
-        [playerBar bringSubviewToFront:scrubberView];
-    }
+    [playerBar bringSubviewToFront:scrubberView];
 }
 
 // On fullscreen enter/exit and other layout transitions, YouTube swaps the

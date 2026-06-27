@@ -1073,6 +1073,12 @@ static void ymRegisterStyledSubclass(Class sourceClass, const char *name) {
                 [self setValue:[UIColor blackColor] forKey:@"_desiredCustomTitleColor"];
             }
         }
+    } else if ([self.accessibilityIdentifier isEqualToString:@"id.ui.browse.back.button"]) {
+        if (self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+            self.tintColor = [UIColor whiteColor];
+        } else {
+            self.tintColor = [UIColor blackColor];
+        }
     }
 }
 %end
