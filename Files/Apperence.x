@@ -81,7 +81,7 @@ static BOOL isDarkMode(UIView *view) {
                 break;
             } else if ([responder isKindOfClass:%c(YTMySubsFilterHeaderViewController)]) {
                 YTMySubsFilterHeaderViewController *controller = (YTMySubsFilterHeaderViewController *)responder;
-                YTIMySubsFilterHeaderRenderer *renderer = controller.renderer;
+                YTIMySubsFilterHeaderRenderer *renderer = [controller valueForKey:@"_renderer"];
                 NSString *description = [renderer description];
                 if ([description containsString:@"subscriptions_chip_bar.eml"]) {
                     self.backgroundColor = [UIColor blackColor];
@@ -107,7 +107,7 @@ static BOOL isDarkMode(UIView *view) {
                 break;
             } else if ([responder isKindOfClass:%c(YTMySubsFilterHeaderViewController)]) {
                 YTMySubsFilterHeaderViewController *controller = (YTMySubsFilterHeaderViewController *)responder;
-                YTIMySubsFilterHeaderRenderer *renderer = controller.renderer;
+                YTIMySubsFilterHeaderRenderer *renderer = [controller valueForKey:@"_renderer"];
                 NSString *description = [renderer description];
                 if ([description containsString:@"subscriptions_chip_bar.eml"]) {
                     self.backgroundColor = [UIColor clearColor];
@@ -144,7 +144,7 @@ static BOOL isDarkMode(UIView *view) {
                 break;
             } else if ([responder isKindOfClass:%c(YTMySubsFilterHeaderViewController)]) {
                 YTMySubsFilterHeaderViewController *controller = (YTMySubsFilterHeaderViewController *)responder;
-                YTIMySubsFilterHeaderRenderer *renderer = controller.renderer;
+                YTIMySubsFilterHeaderRenderer *renderer = [controller valueForKey:@"_renderer"];
                 NSString *description = [renderer description];
                 if ([description containsString:@"subscriptions_chip_bar.eml"]) {
                     self.backgroundColor = [UIColor blackColor];
@@ -170,7 +170,7 @@ static BOOL isDarkMode(UIView *view) {
                 break;
             } else if ([responder isKindOfClass:%c(YTMySubsFilterHeaderViewController)]) {
                 YTMySubsFilterHeaderViewController *controller = (YTMySubsFilterHeaderViewController *)responder;
-                YTIMySubsFilterHeaderRenderer *renderer = controller.renderer;
+                YTIMySubsFilterHeaderRenderer *renderer = [controller valueForKey:@"_renderer"];
                 NSString *description = [renderer description];
                 if ([description containsString:@"subscriptions_chip_bar.eml"]) {
                     self.backgroundColor = [UIColor clearColor];
@@ -244,7 +244,7 @@ static BOOL isDarkMode(UIView *view) {
 - (void)layoutSubviews {
     %orig;
     YTEngagementPanelIdentifier *identifier = self.engagementPanelIdentifier;
-    if ([identifier.identifierString isEqualToString:@"PAmodern_transcript_view"]) return;
+    if ([identifier.tag isEqualToString:@"PAmodern_transcript_view"]) return;
     if (localPageStyle == 1) {
         self.backgroundColor = [UIColor blackColor];
     } else {

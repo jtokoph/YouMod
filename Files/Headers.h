@@ -330,7 +330,7 @@ typedef NS_ENUM(NSUInteger, GestureSection) {
 @end
 
 @interface YTEngagementPanelIdentifier : NSObject
-@property (nonatomic, copy, readonly) NSString *identifierString;
+@property (nonatomic, copy, readonly) NSString *tag;
 @end
 
 @interface YTEngagementPanelHeaderView : UIView
@@ -341,7 +341,6 @@ typedef NS_ENUM(NSUInteger, GestureSection) {
 @end
 
 @interface YTMySubsFilterHeaderViewController : UIViewController
-- (YTIMySubsFilterHeaderRenderer *)renderer;
 @end
 
 @interface YTMainAppControlsOverlayView (YouMod)
@@ -400,6 +399,7 @@ typedef NS_ENUM(NSUInteger, GestureSection) {
 @property (nonatomic, assign) YTPlayerViewController *parentViewController;
 - (NSString *)videoID;
 - (CGFloat)mediaTime;
+- (void)setVideoFreeZoomOverlayController:(id)arg;
 @end
 
 @interface YTSingleVideoController (YouMod)
