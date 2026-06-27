@@ -41,6 +41,10 @@
 "DOWNLOAD_MANAGER_DESC" = "유튜브 기본 다운로더 대신 YouMod 전용 다운로더를 사용합니다. 동영상, 오디오, 자막, 썸네일을 다운로드할 수 있습니다.";
 "DOWNLOAD_SAVE_PHOTOS" = "사진 앱에 자동 저장";
 "DOWNLOAD_SAVE_PHOTOS_DESC" = "다운로드한 동영상과 이미지를 기기의 사진(갤러리) 앱에 바로 저장합니다.";
+"ADD_SHORTS_DOWNLOAD" = "Adds a download button to Shorts";
+"ADD_SHORTS_DOWNLOAD_DESC" = "Adds a download button to Shorts video overlay.";
+"DOWNLOAD_SHORTS" = "Download Shorts";
+"DOWNLOAD_SHORTS_DESC" = "Choose Shorts quality";
 "COPY_VID_INFO" = "Copy video information";
 "COPY_VID_INFO_DESC" = "Copy title and URL";
 "SAVE_THUMBNAIL" = "Save thumbnail";
@@ -126,6 +130,8 @@
 "QUALITY_WIFI_DESC" = "Automatically applies the selected quality when streaming over Wi-Fi.";
 "QUALITY_CELLULAR" = "Playback quality on Cellular";
 "QUALITY_CELLULAR_DESC" = "Automatically applies the selected quality when streaming over mobile data.";
+"QUALITY_LOW_POWER" = "Playback quality on Power saver mode";
+"QUALITY_LOW_POWER_DESC" = "Automatically applies the selected quality when when Low power mode is enabled on your device.";
 "DEFAULT" = "Default";
 "BEST" = "Best";
 "AUDIO_TRACK" = "Preferred audio track";
@@ -228,6 +234,14 @@
 "FORCE_MINIPLAYER_DESC" = "아동용 동영상을 포함한 모든 영상을 아래로 내렸을 때 미니 플레이어에서 재생되도록 강제합니다.";
 "FORCE_SEEKBAR" = "진행 바 항상 표시";
 "FORCE_SEEKBAR_DESC" = "전체화면 모드에서 영상을 볼 때 하단에 재생 진행 바를 항상 띄워둡니다.";
+"TAP_TO_SEEK" = "Tap to seek";
+"TAP_TO_SEEK_DSC" = "Quickly jump to any point by tapping the progress bar.";
+"DISABLES_ZOOM" = "Disable free zoom gesture";
+"DISABLES_ZOOM_DESC" = "Disables new free zoom gestures.";
+"USES_24_HOURS_TIME" = "24-hour format";
+"USES_24_HOURS_TIME_DESC" = "Shows end time in 24-hour format.";
+"PAUSE_TWO_FINGERS" = "Pause using two fingers";
+"PAUSE_TWO_FINGERS_DESC" = "Pause/Resume playback by tapping on the screen using two fingers.";
 
 "SHORTS" = "쇼츠 (Shorts)";
 "SHORTS_ACTION" = "Shorts action after the video ends";

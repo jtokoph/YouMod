@@ -83,32 +83,25 @@ static void YouModAddEndTime(YTPlayerViewController *self, YTSingleVideoControll
     CGFloat rate = playbackRate != 0 ? playbackRate : 1.0;
     NSTimeInterval remainingSeconds = (lround(video.totalMediaTime) - lround(time.time)) / rate;
 
-    int hours = (int)(remainingSeconds / 3600);
-    int minutes = (int)(((int)remainingSeconds % 3600) / 60);
-    int seconds = (int)((int)remainingSeconds % 60);
-
     NSString *remainingTimeText;
-    if (hours > 0) {
-        remainingTimeText = [NSString stringWithFormat:@"%d:%02d:%02d", hours, minutes, seconds];
+    if (IS_ENABLED(Uses24HoursTime)) {
+        NSDate *estimatedEndTime = [NSDate dateWithTimeIntervalSinceNow:remainingSeconds];
+
+        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+        [dateFormatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"]];
+        [dateFormatter setDateFormat:@"HH:mm"];
+
+        remainingTimeText = [dateFormatter stringFromDate:estimatedEndTime];
     } else {
-        remainingTimeText = [NSString stringWithFormat:@"%d:%02d", minutes, seconds];
+        int hours = (int)(remainingSeconds / 3600);
+        int minutes = (int)(((int)remainingSeconds % 3600) / 60);
+        int seconds = (int)((int)remainingSeconds % 60);
+        if (hours > 0) {
+            remainingTimeText = [NSString stringWithFormat:@"%d:%02d:%02d", hours, minutes, seconds];
+        } else {
+            remainingTimeText = [NSString stringWithFormat:@"%d:%02d", minutes, seconds];
+        }
     }
-    
-    /*
-    CGFloat rate = playbackRate != 0 ? playbackRate : 1.0;
-    NSTimeInterval remainingTimetext = (lround(video.totalMediaTime) - lround(time.time)) / rate;
-    NSString *remainingTime = remainingTimetext;
-
-    // NSDate *estimatedEndTime = [NSDate dateWithTimeIntervalSinceNow:remainingTime];
-
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    [dateFormatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"]];
-    [dateFormatter setDateFormat:@"HH:mm"];
-    // [dateFormatter setDateFormat:ytlBool(@"24hrFormat") ? @"HH:mm" : @"h:mm a"];
-    */
-
-    // NSString *formattedEndTime = [dateFormatter stringFromDate:estimatedEndTime];
-
     YTPlayerView *playerView = (YTPlayerView *)self.playerView;
     if (![playerView.overlayView isKindOfClass:%c(YTMainAppVideoPlayerOverlayView)]) return;
 
@@ -121,23 +114,12 @@ static void YouModAddEndTime(YTPlayerViewController *self, YTSingleVideoControll
     }
 }
 
-// ประกาศคลาสเพื่อให้ Compiler รู้จัก
-@interface YTInlineScrubGestureView : UIView
-@end
-
 %hook YTInlinePlayerBarContainerView
-
 - (void)layoutSubviews {
-    %orig; // ปล่อยให้แอปจัดหน้าตาตามปกติก่อน
-    
-    // เช็กค่า Preference สวิตช์เปิด/ปิด Tap to seek ของคุณก่อน
-    // if (!BOOLFORVAL(TapToSeekEnabled)) return;
-
-    // วนลูปหาเจ้าตัวแสบ YTInlineScrubGestureView ที่ซ่อนอยู่ใน subviews
+    %orig;
+    if (!IS_ENABLED(TapToSeek)) return;
     for (UIView *subview in self.subviews) {
         if ([subview isKindOfClass:%c(YTInlineScrubGestureView)]) {
-            
-            // ป้องกันไม่ให้แอปแอด Gesture ซ้ำซ้อนเวลา layoutSubviews ถูกเรียกถี่ๆ
             BOOL hasCustomTap = NO;
             for (UIGestureRecognizer *gesture in subview.gestureRecognizers) {
                 if ([gesture isKindOfClass:[UITapGestureRecognizer class]] && 
@@ -146,23 +128,19 @@ static void YouModAddEndTime(YTPlayerViewController *self, YTSingleVideoControll
                     break;
                 }
             }
-            
-            // ถ้ายังไม่มีของเรา ค่อยแอดเข้าไป
             if (!hasCustomTap) {
                 UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleYouModScrubTap:)];
-                tap.name = @"YouModTapToSeek"; // ตั้งชื่อระบุตัวตนไว้ตรวจสอบซ้ำ
+                tap.name = @"YouModTapToSeek";
                 [subview addGestureRecognizer:tap];
             }
-            break; // เจอแล้วออกลูปได้เลย
+            break;
         }
     }
 }
-
-// เมธอดจัดการเมื่อเกิดการแตะบนจุด Scrubber
 %new
 - (void)handleYouModScrubTap:(UITapGestureRecognizer *)gesture {
     if (gesture.state == UIGestureRecognizerStateEnded) {
-        UIView *gestureView = gesture.view; // คลาส YTInlineScrubGestureView (ตัวแม่)
+        UIView *gestureView = gesture.view;
         UIView *progressBar;
 
         for (UIView *subview in self.subviews) {
@@ -173,51 +151,36 @@ static void YouModAddEndTime(YTPlayerViewController *self, YTSingleVideoControll
         }
         if (!progressBar) return;
         
-        // 2. ดึงพิกัดนิ้วที่กดสัมผัสเทียบกับหน้าจอหลัก (Window)
-        // ดึงหน้าต่างหลักแบบปลอดภัยสำหรับแอปยุคใหม่ (iOS 13+ และ Multiple Scenes Support)
         UIWindow *keyWindow = nil;
-        if (@available(iOS 13.0, *)) {
-            for (UIWindowScene *scene in [UIApplication sharedApplication].connectedScenes) {
-                if (scene.activationState == UISceneActivationStateForegroundActive) {
-                    for (UIWindow *window in scene.windows) {
-                        if (window.isKeyWindow) {
-                            keyWindow = window;
-                            break;
-                        }
+        for (UIWindowScene *scene in [UIApplication sharedApplication].connectedScenes) {
+            if (scene.activationState == UISceneActivationStateForegroundActive) {
+                for (UIWindow *window in scene.windows) {
+                    if (window.isKeyWindow) {
+                        keyWindow = window;
+                        break;
                     }
                 }
-                if (keyWindow) break;
             }
+            if (keyWindow) break;
         }
 
-
         CGPoint touchPointInWindow = [gesture locationInView:keyWindow];
-        
-        // 3. เริ่มลอจิกคำนวณพิกัดแบบไดนามิก
         CGFloat barStartX = 0.0;
         CGFloat barWidth = gestureView.bounds.size.width;
         
         if (progressBar) {
-            // 🔥 มหาเทพแห่งความแม่นยำ: แปลงพิกัดของเส้นสีแดงจริงๆ ออกมาเทียบกับหน้าจอหลัก Window
-            // ไม่ว่าเส้นสีแดงจะอยู่โหมดไหน เต็มจอ (ห่างขอบ 30) หรือแนวตั้ง (ห่างขอบเท่าไหร่ก็ช่าง)
-            // คำสั่งนี้จะดึงพิกัดพิกเซลจริงบนจอของเส้นสีแดงออกมาให้เลย
             CGRect barFrameInWindow = [progressBar convertRect:progressBar.bounds toView:keyWindow];
-            
-            barStartX = barFrameInWindow.origin.x; // พิกัดขอบซ้ายสุดของเส้นแดงบนจอจริง
-            barWidth = barFrameInWindow.size.width;  // ความกว้างของเส้นแดงจริงๆ (อย่างตอนเต็มจอก็คือ 1144)
+            barStartX = barFrameInWindow.origin.x;
+            barWidth = barFrameInWindow.size.width;
         }
         
-        // 4. คำนวณเปอร์เซ็นต์เวลาจากพิกัดจริง
         if (barWidth > 0) {
-            // เอาจุดที่นิ้วกด ลบด้วย พิกัดเริ่มต้นของเส้นแดง
             CGFloat relativeX = touchPointInWindow.x - barStartX;
             CGFloat percentage = relativeX / barWidth;
             
-            // 🔒 บังคับล็อกขอบเขต (Clamp) ป้องกันค่าติดลบหรือเกิน 1.0
             if (percentage < 0.0) percentage = 0.0;
             if (percentage > 1.0) percentage = 1.0;
             
-            // หาตำแหน่ง View Controller ปลายทางเพื่อสั่งการเลื่อนเวลา
             UIResponder *responder = self.nextResponder;
             while (responder && ![responder isKindOfClass:%c(YTMainAppVideoPlayerOverlayViewController)]) {
                 responder = responder.nextResponder;
@@ -233,7 +196,6 @@ static void YouModAddEndTime(YTPlayerViewController *self, YTSingleVideoControll
         }
     }
 }
-
 %end
 
 %hook YTMainAppControlsOverlayView
@@ -304,6 +266,8 @@ static void YouModAddEndTime(YTPlayerViewController *self, YTSingleVideoControll
     if (vidID.length)
         UIPasteboard.generalPasteboard.string = [NSString stringWithFormat:@"https://www.youtube.com/watch?v=%@&t=%lds", vidID, (long)mediaTimeIn];
 }
+// Disables free zoom gesture
+- (void)setVideoFreeZoomOverlayController:(id)arg { if (!IS_ENABLED(DisablesFreeZoom)) %orig; }
 %end
 
 %hook YTColdConfig
@@ -595,6 +559,7 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
 %new
 - (void)YouModAutoQuality {
     NSInteger kQualityIndex = isWiFiConnected() ? INTFORVAL(WifiQualityIndex) : INTFORVAL(CellQualityIndex);
+    if ([NSProcessInfo processInfo].lowPowerModeEnabled) kQualityIndex = INTFORVAL(LowPowerQualityIndex);
 
     NSString *bestQualityLabel;
     int highestResolution = 0;
@@ -821,16 +786,21 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
 %end
 
 // Gestures - @bhackel (YTLitePlus)
-%group Gestures
 %hook YTWatchLayerViewController
 // invoked when the player view controller is either created or destroyed
 - (void)watchController:(YTWatchController *)watchController didSetPlayerViewController:(YTPlayerViewController *)playerViewController {
     if (playerViewController) {
         // check to see if the pan gesture is already created
-        if (!playerViewController.YouModPanGesture) {
+        if (!playerViewController.YouModPanGesture && IS_ENABLED(GestureControls)) {
             playerViewController.YouModPanGesture = [[UIPanGestureRecognizer alloc] initWithTarget:playerViewController action:@selector(YouModHandlePanGesture:)];
             playerViewController.YouModPanGesture.delegate = playerViewController;
             [playerViewController.playerView addGestureRecognizer:playerViewController.YouModPanGesture];
+        }
+        if (!playerViewController.YouModTapGesture && IS_ENABLED(PauseTwoFingers)) {
+            playerViewController.YouModTapGesture = [[UITapGestureRecognizer alloc] initWithTarget:playerViewController action:@selector(YouModHandleTapGesture:)];
+            playerViewController.YouModTapGesture.numberOfTouchesRequired = 2;
+            playerViewController.YouModTapGesture.delegate = playerViewController;
+            [playerViewController.playerView addGestureRecognizer:playerViewController.YouModTapGesture];
         }        
     }
     %orig;
@@ -839,6 +809,7 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
 
 %hook YTPlayerViewController
 %property (nonatomic, retain) UIPanGestureRecognizer *YouModPanGesture;
+%property (nonatomic, retain) UITapGestureRecognizer *YouModTapGesture;
 %property (nonatomic, retain) UILabel *YouModGestureHUD;
 %new
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer {
@@ -1045,7 +1016,17 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
     }
     return YES;
 }
-%end
+// Pause using Two fingers
+%new
+- (void)YouModHandleTapGesture:(UITapGestureRecognizer *)tapGestureRecognizer {
+    if (tapGestureRecognizer.state == UIGestureRecognizerStateEnded) {
+        if (self.playerState == 3) {
+            [self pause];
+        } else if (self.playerState == 4) {
+            [self play];
+        }
+    }
+}
 %end
 
 %ctor {
@@ -1055,9 +1036,6 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
     }
     if (IS_ENABLED(ExtraSpeed) || IS_ENABLED(GestureControls) || INTFORVAL(HoldToSpeedIndex) >= 9 || INTFORVAL(AutoSpeedIndex) >= 9) {
         %init(Speed);
-    }
-    if (IS_ENABLED(GestureControls)) {
-        %init(Gestures);
     }
     if (IS_ENABLED(ForceMiniPlayer)) {
         %init(ForceMiniPlayer);

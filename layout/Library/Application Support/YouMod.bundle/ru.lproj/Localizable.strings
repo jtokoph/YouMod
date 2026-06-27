@@ -41,6 +41,10 @@
 "DOWNLOAD_MANAGER_DESC" = "Replaces YouTube's video downloader with YouMod one. With ablity to downloading videos, audios, captions, and thumbnails";
 "DOWNLOAD_SAVE_PHOTOS" = "Automatically save to Photos";
 "DOWNLOAD_SAVE_PHOTOS_DESC" = "Automatically saves downloaded videos and images directly to your Photos app.";
+"ADD_SHORTS_DOWNLOAD" = "Adds a download button to Shorts";
+"ADD_SHORTS_DOWNLOAD_DESC" = "Adds a download button to Shorts video overlay.";
+"DOWNLOAD_SHORTS" = "Download Shorts";
+"DOWNLOAD_SHORTS_DESC" = "Choose Shorts quality";
 "COPY_VID_INFO" = "Copy video information";
 "COPY_VID_INFO_DESC" = "Copy title and URL";
 "SAVE_THUMBNAIL" = "Save thumbnail";
@@ -126,6 +130,8 @@
 "QUALITY_WIFI_DESC" = "Automatically applies the selected quality when streaming over Wi-Fi.";
 "QUALITY_CELLULAR" = "Playback quality on Cellular";
 "QUALITY_CELLULAR_DESC" = "Automatically applies the selected quality when streaming over mobile data.";
+"QUALITY_LOW_POWER" = "Playback quality on Power saver mode";
+"QUALITY_LOW_POWER_DESC" = "Automatically applies the selected quality when when Low power mode is enabled on your device.";
 "DEFAULT" = "Default";
 "BEST" = "Best";
 "AUDIO_TRACK" = "Preferred audio track";
@@ -227,6 +233,14 @@
 "FORCE_MINIPLAYER_DESC" = "Allows all videos, including those made for kids, to play in the miniplayer when dismissing the player.";
 "FORCE_SEEKBAR" = "Always show progress bar";
 "FORCE_SEEKBAR_DESC" = "Ensures the progress bar (seekbar) remains visible at all times while in fullscreen mode.";
+"TAP_TO_SEEK" = "Tap to seek";
+"TAP_TO_SEEK_DSC" = "Quickly jump to any point by tapping the progress bar.";
+"DISABLES_ZOOM" = "Disable free zoom gesture";
+"DISABLES_ZOOM_DESC" = "Disables new free zoom gestures.";
+"USES_24_HOURS_TIME" = "24-hour format";
+"USES_24_HOURS_TIME_DESC" = "Shows end time in 24-hour format.";
+"PAUSE_TWO_FINGERS" = "Pause using two fingers";
+"PAUSE_TWO_FINGERS_DESC" = "Pause/Resume playback by tapping on the screen using two fingers.";
 
 "SHORTS" = "Shorts";
 "SHORTS_ACTION" = "Shorts action after the video ends";

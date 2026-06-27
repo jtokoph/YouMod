@@ -194,6 +194,7 @@ static NSArray *getAllSystemLanguageTitles() {
         YMPushSubSettings(LOC(@"DOWNLOADING"), @[
             YMToggle(LOC(@"DOWNLOAD_MANAGER"), LOC(@"DOWNLOAD_MANAGER_DESC"), DownloadManager),
             YMToggle(LOC(@"DOWNLOAD_SAVE_PHOTOS"), LOC(@"DOWNLOAD_SAVE_PHOTOS_DESC"), DownloadSaveToPhotos),
+            YMToggle(LOC(@"ADD_SHORTS_DOWNLOAD"), LOC(@"ADD_SHORTS_DOWNLOAD_DESC"), AddDownloadToShorts),
         ], settingsViewController, [self parentResponder]);
         return YES;
     }];
@@ -260,6 +261,7 @@ static NSArray *getAllSystemLanguageTitles() {
         YMPushSubSettings(LOC(@"PLAYER"), @[
             YMPicker(LOC(@"QUALITY_WIFI"), LOC(@"QUALITY_WIFI_DESC"), WifiQualityIndex, (@[LOC(@"DEFAULT"), LOC(@"BEST"), @"2160p60", @"2160p", @"1440p60", @"1440p", @"1080p60", @"1080p", @"720p60", @"720p", @"480p", @"360p", @"240p", @"144p"]), 0),
             YMPicker(LOC(@"QUALITY_CELLULAR"), LOC(@"QUALITY_CELLULAR_DESC"), CellQualityIndex, (@[LOC(@"DEFAULT"), LOC(@"BEST"), @"2160p60", @"2160p", @"1440p60", @"1440p", @"1080p60", @"1080p", @"720p60", @"720p", @"480p", @"360p", @"240p", @"144p"]), 0),
+            YMPicker(LOC(@"QUALITY_LOW_POWER"), LOC(@"QUALITY_LOW_POWER_DESC"), LowPowerQualityIndex, (@[LOC(@"DEFAULT"), LOC(@"BEST"), @"2160p60", @"2160p", @"1440p60", @"1440p", @"1080p60", @"1080p", @"720p60", @"720p", @"480p", @"360p", @"240p", @"144p"]), 0),
             YMTextSegment(LOC(@"AUDIO_TRACK"), AudioTrack, (@[LOC(@"DEFAULT"), LOC(@"ORIGINAL"), LOC(@"SELECT_MANUALLY")]), 0),
             YMPicker(LOC(@"AUDIO_TRACK_SELECT"), LOC(@"AUDIO_TRACK_SELECT_DESC"), AudioTrackLangIndex, getAllSystemLanguageTitles(), 0),
             YMToggle(LOC(@"NO_AUTO_DUBBED"), LOC(@"NO_AUTO_DUBBED_DESC"), NoDubbedAudioTrack),
@@ -279,16 +281,20 @@ static NSArray *getAllSystemLanguageTitles() {
             YMToggle(LOC(@"HIDE_WATERMARK"), LOC(@"HIDE_WATERMARK_DESC"), HideWaterMark),
             YMToggle(LOC(@"HIDE_FULLSCREEN_ACTIONS"), LOC(@"HIDE_FULLSCREEN_ACTIONS_DESC"), HideFullAction),
             YMToggle(LOC(@"FORCE_SEEKBAR"), LOC(@"FORCE_SEEKBAR_DESC"), AlwaysShowSeekbar),
+            YMToggle(LOC(@"TAP_TO_SEEK"), LOC(@"TAP_TO_SEEK_DESC"), TapToSeek),
             YMToggle(LOC(@"PORTRAIT_FULLSCREEN"), LOC(@"PORTRAIT_FULLSCREEN_DESC"), PortFull),
             YMToggle(LOC(@"DISABLES_DOUBLE_TAP"), LOC(@"DISABLES_DOUBLE_TAP_DESC"), DisablesDoubleTap),
             YMToggle(LOC(@"DISABLES_LONG_HOLD"), LOC(@"DISABLES_LONG_HOLD_DESC"), DisablesLongHold),
+            YMToggle(LOC(@"DISABLES_ZOOM"), LOC(@"DISABLES_ZOOM_DESC"), DisablesFreeZoom),
             YMToggle(LOC(@"DISABLES_SNAP_TO_CHAPTER"), LOC(@"DISABLES_SNAP_TO_CHAPTER_DESC"), DontSnapToChapter),
             YMToggle(LOC(@"DISABLES_ENGAGE_PANEL"), LOC(@"DISABLES_ENGAGE_PANEL_DESC"), DisablesEngagementPanel),
             YMToggle(LOC(@"DISABLES_SHOW_REMAINING"), LOC(@"DISABLES_SHOW_REMAINING_DESC"), DisablesShowRemaining),
             YMToggle(LOC(@"ALWAYS_SHOW_REMAINING"), LOC(@"ALWAYS_SHOW_REMAINING_DESC"), AlwaysShowRemaining),
             YMToggle(LOC(@"SHOW_REMAINING_EXTRA"), LOC(@"SHOW_REMAINING_EXTRA_DESC"), ShowExtraTimeRemaining),
+            YMToggle(LOC(@"USES_24_HOURS_TIME"), LOC(@"USES_24_HOURS_TIME_DESC"), Uses24HoursTime),
             YMToggle(LOC(@"COPY_TIMESTAMP_ON_PAUSE"), LOC(@"COPY_TIMESTAMP_ON_PAUSE_DESC"), CopyWithTimestampOnPause),
             YMToggle(LOC(@"PAUSE_ON_OVERLAY"), LOC(@"PAUSE_ON_OVERLAY_DESC"), PauseOnOverlay),
+            YMToggle(LOC(@"PAUSE_TWO_FINGERS"), LOC(@"PAUSE_TWO_FINGERS_DESC"), PauseTwoFingers),
             YMToggle(LOC(@"OLD_QUALITY_PICKER"), LOC(@"OLD_QUALITY_PICKER_DESC"), OldQualityPicker),
             YMToggle(LOC(@"EXTRA_SPEED"), LOC(@"EXTRA_SPEED_DESC"), ExtraSpeed),
             YMHeader(LOC(@"PLAYER_ACTIONS")),

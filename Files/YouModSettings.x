@@ -188,21 +188,11 @@ static const void *kYMSwitchKeyAssoc = &kYMSwitchKeyAssoc;
     struct objc_super superStruct = { self, ytStyled ?: [UIViewController class] };
     ((void (*)(struct objc_super *, SEL))objc_msgSendSuper)(&superStruct, @selector(viewDidLayoutSubviews));
     YTQTMButton *backButton = [self valueForKey:@"_backButton"];
-    YTQTMButton *titleButton = [self valueForKey:@"_titleButton"];
-    UIColor *customTitle = [titleButton valueForKey:@"_desiredCustomTitleColor"];
 
     if (self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
         backButton.tintColor = [UIColor whiteColor];
-        titleButton.titleLabel.textColor = [UIColor whiteColor];
-        if (customTitle) {
-            [titleButton setValue:[UIColor whiteColor] forKey:@"_desiredCustomTitleColor"];
-        }
     } else {
         backButton.tintColor = [UIColor blackColor];
-        titleButton.titleLabel.textColor = [UIColor blackColor];
-        if (customTitle) {
-            [titleButton setValue:[UIColor blackColor] forKey:@"_desiredCustomTitleColor"];
-        }
     }
 }
 
@@ -779,21 +769,11 @@ static const void *kYMTabSnapshotKey = &kYMTabSnapshotKey;
     struct objc_super superStruct = { self, ytStyled ?: [UIViewController class] };
     ((void (*)(struct objc_super *, SEL))objc_msgSendSuper)(&superStruct, @selector(viewDidLayoutSubviews));
     YTQTMButton *backButton = [self valueForKey:@"_backButton"];
-    YTQTMButton *titleButton = [self valueForKey:@"_titleButton"];
-    UIColor *customTitle = [titleButton valueForKey:@"_desiredCustomTitleColor"];
 
     if (self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
         backButton.tintColor = [UIColor whiteColor];
-        titleButton.titleLabel.textColor = [UIColor whiteColor];
-        if (customTitle) {
-            [titleButton setValue:[UIColor whiteColor] forKey:@"_desiredCustomTitleColor"];
-        }
     } else {
         backButton.tintColor = [UIColor blackColor];
-        titleButton.titleLabel.textColor = [UIColor blackColor];
-        if (customTitle) {
-            [titleButton setValue:[UIColor blackColor] forKey:@"_desiredCustomTitleColor"];
-        }
     }
 }
 
@@ -1075,6 +1055,27 @@ static void ymRegisterStyledSubclass(Class sourceClass, const char *name) {
 
     objc_registerClassPair(newClass);
 }
+
+%hook YTQTMButton
+- (void)layoutSubviews {
+    %orig;
+    if ([self.accessibilityIdentifier isEqualToString:@"id.ui.title.tab.button"]) {
+        UIColor *customTitle = [self valueForKey:@"_desiredCustomTitleColor"];
+
+        if (self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+            self.titleLabel.textColor = [UIColor whiteColor];
+            if (customTitle) {
+                [self setValue:[UIColor whiteColor] forKey:@"_desiredCustomTitleColor"];
+            }
+        } else {
+            self.titleLabel.textColor = [UIColor blackColor];
+            if (customTitle) {
+                [self setValue:[UIColor blackColor] forKey:@"_desiredCustomTitleColor"];
+            }
+        }
+    }
+}
+%end
 
 %ctor {
     ymRegisterStyledSubclass([YMSubSettingsViewController class], "YMSubSettingsViewControllerStyled");

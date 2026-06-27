@@ -126,7 +126,7 @@ Class YTILikeResponseClass, YTIDislikeResponseClass, YTIRemoveLikeResponseClass;
 // Remove flyout menu options
 %hook YTDefaultSheetController
 - (void)addAction:(YTActionSheetAction *)action {
-    if (![action.button isKindOfClass:NSClassFromString(@"YTMenuItemMDCButton")]) {
+    if (![action.button isKindOfClass:%c(YTMenuItemMDCButton)]) {
         %orig;
         return;
     }

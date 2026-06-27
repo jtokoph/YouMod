@@ -41,6 +41,10 @@
 "DOWNLOAD_MANAGER_DESC" = "Thay thế trình tải xuống của YouTube bằng YouMod. Với khả năng tải video, âm thanh, phụ đề, và ảnh thu nhỏ";
 "DOWNLOAD_SAVE_PHOTOS" = "Tự động lưu vào Thư viện ảnh";
 "DOWNLOAD_SAVE_PHOTOS_DESC" = "Tự động lưu video và ảnh trực tiếp vào ứng dụng Ảnh.";
+"ADD_SHORTS_DOWNLOAD" = "Adds a download button to Shorts";
+"ADD_SHORTS_DOWNLOAD_DESC" = "Adds a download button to Shorts video overlay.";
+"DOWNLOAD_SHORTS" = "Download Shorts";
+"DOWNLOAD_SHORTS_DESC" = "Choose Shorts quality";
 "COPY_VID_INFO" = "Copy video information";
 "COPY_VID_INFO_DESC" = "Copy title and URL";
 "SAVE_THUMBNAIL" = "Save thumbnail";
@@ -126,6 +130,8 @@
 "QUALITY_WIFI_DESC" = "Automatically applies the selected quality when streaming over Wi-Fi.";
 "QUALITY_CELLULAR" = "Playback quality on Cellular";
 "QUALITY_CELLULAR_DESC" = "Automatically applies the selected quality when streaming over mobile data.";
+"QUALITY_LOW_POWER" = "Playback quality on Power saver mode";
+"QUALITY_LOW_POWER_DESC" = "Automatically applies the selected quality when when Low power mode is enabled on your device.";
 "DEFAULT" = "Default";
 "BEST" = "Best";
 "AUDIO_TRACK" = "Preferred audio track";
@@ -227,6 +233,14 @@
 "FORCE_MINIPLAYER_DESC" = "Cho phép tất cả các video, bao gồm cả video dành cho trẻ em, phát trong trình phát thu nhỏ khi vuốt đóng video.";
 "FORCE_SEEKBAR" = "Luôn hiện thanh tiến trình";
 "FORCE_SEEKBAR_DESC" = "Làm cho thanh tiến trình (thanh tua) luôn hiển thị ở mọi lúc khi ở chế độ toàn màn hình.";
+"TAP_TO_SEEK" = "Tap to seek";
+"TAP_TO_SEEK_DSC" = "Quickly jump to any point by tapping the progress bar.";
+"DISABLES_ZOOM" = "Disable free zoom gesture";
+"DISABLES_ZOOM_DESC" = "Disables new free zoom gestures.";
+"USES_24_HOURS_TIME" = "24-hour format";
+"USES_24_HOURS_TIME_DESC" = "Shows end time in 24-hour format.";
+"PAUSE_TWO_FINGERS" = "Pause using two fingers";
+"PAUSE_TWO_FINGERS_DESC" = "Pause/Resume playback by tapping on the screen using two fingers.";
 
 "SHORTS" = "Shorts";
 "SHORTS_ACTION" = "Shorts action after the video ends";

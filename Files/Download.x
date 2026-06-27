@@ -8,13 +8,6 @@
 #import <dlfcn.h>
 #import <stdarg.h>
 #import <stdlib.h>
-#import <YouTubeHeader/YTDefaultSheetController.h>
-#import <YouTubeHeader/YTIFormatStream.h>
-#import <YouTubeHeader/YTIPlayerResponse.h>
-#import <YouTubeHeader/YTPlayerResponse.h>
-#import <YouTubeHeader/YTIVideoDetails.h>
-#import <YouTubeHeader/YTIStreamingData.h>
-#import <YouTubeHeader/YTIFormattedString.h>
 
 #define TweakName @"YouMod"
 
@@ -32,65 +25,6 @@ static NSBundle *YouModBundle() {
 }
 
 #define LOC(x) [YouModBundle() localizedStringForKey:x value:nil table:nil]
-
-@interface YTDefaultSheetController (YouModDownload)
-+ (instancetype)sheetControllerWithParentResponder:(id)parentResponder;
-- (void)addAction:(YTActionSheetAction *)action;
-- (void)presentFromView:(UIView *)view animated:(BOOL)animated completion:(void (^)(void))completion;
-- (void)presentFromViewController:(UIViewController *)vc animated:(BOOL)animated completion:(void (^)(void))completion;
-@end
-
-@interface YTPlayerViewController (YouModDownload)
-- (YTPlayerResponse *)contentPlayerResponse;
-- (YTPlayerResponse *)playerResponse;
-@end
-
-@interface YTICaptionTrackEntry : GPBMessage
-- (NSString *)baseURL;
-- (NSString *)languageCode;
-- (YTIFormattedString *)name;
-@end
-
-@interface YTIPlayerCaptionsTrackListRenderer : GPBMessage
-- (NSMutableArray *)captionTracksArray;
-@end
-
-@interface YTIAudioTrack (YouModDownload)
-- (BOOL)hasId_p;
-@end
-
-@interface YTICaptionsSupportedRenderers : GPBMessage
-- (YTIPlayerCaptionsTrackListRenderer *)playerCaptionsTracklistRenderer;
-@end
-
-@interface YTIPlayerResponse (YouModDownload)
-- (YTIStreamingData *)streamingData;
-- (YTICaptionsSupportedRenderers *)captions;
-@end
-
-@interface YTIFormatStream (YouModDownload)
-- (NSString *)mimeType;
-- (NSInteger)contentLength;
-- (NSUInteger)approxDurationMs;
-- (int)height;
-- (int)fps;
-- (YTIAudioTrack *)audioTrack;
-- (int)itag;
-@end
-
-@interface YTIFormattedString (YouModDownload)
-- (NSString *)dropdownOptionTitle;
-@end
-
-@interface YTIVideoDetails (YouModDownload)
-- (NSString *)title;
-- (NSString *)author;
-- (NSString *)shortDescription;
-@end
-
-@interface YTDataUtils : NSObject
-+ (instancetype)generateClientSideNonce;
-@end
 
 static UIImage *YouModIconImage(NSInteger iconType) {
     YTIIcon *icon = [%c(YTIIcon) new];
@@ -655,9 +589,9 @@ static BOOL YouModCMTimeIsUsable(CMTime time) {
 
 static CMTime YouModHalfCMTime(CMTime time) {
     if (!YouModCMTimeIsUsable(time)) return kCMTimeInvalid;
-    int64_t halfValue = time.value / 2;
-    if (halfValue <= 0) halfValue = 1;
-    return CMTimeMake(halfValue, time.timescale);
+    CMTime halfDuration = CMTimeMultiplyByRatio(time, 1, 2);
+    if (!CMTIME_IS_VALID(halfDuration) || !CMTIME_IS_NUMERIC(halfDuration)) return kCMTimeInvalid;
+    return halfDuration;
 }
 
 static CMTime YouModMinUsableDuration(CMTime first, CMTime second) {
@@ -1533,7 +1467,7 @@ static void YouModShowCaptionsSheet(YTPlayerViewController *player, UIViewContro
         YTIFormattedString *nameObj = track.name;
         NSString *nameStr = nameObj.dropdownOptionTitle;
         
-        [items addObject:[YouModMenuItem itemWithTitle:nameStr subtitle:languageCode icon:YouModIconImage(637) handler:^{
+        [items addObject:[YouModMenuItem itemWithTitle:nameStr subtitle:languageCode icon:YouModIconImage(50) handler:^{
             NSString *vttURL = [baseURL stringByAppendingString:@"&fmt=vtt"];
             NSURL *url = [NSURL URLWithString:vttURL];
             if (!url) {
@@ -1573,12 +1507,9 @@ static void YouModShowDownloadManager(YTPlayerViewController *player, UIViewCont
 
     NSString *videoID = player.currentVideoID;
     NSMutableArray *items = [NSMutableArray array];
-    NSString *videoTitle = LOC(@"DOWNLOAD_VIDEO");
-    NSString *shortsTitle = [NSString stringWithFormat:@"%@ Shorts", videoTitle];
-    NSString *videoDesc = LOC(@"DOWNLOAD_VIDEO_DESC");
-    NSString *shortsDesc = [NSString stringWithFormat:@"%@ Shorts", videoDesc];
+
     if (isShorts) {
-        [items addObject:[YouModMenuItem itemWithTitle:shortsTitle subtitle:shortsDesc icon:YouModIconImage(769) handler:^{
+        [items addObject:[YouModMenuItem itemWithTitle:LOC(@"DOWNLOAD_SHORTS") subtitle:LOC(@"DOWNLOAD_SHORTS_DESC") icon:YouModIconImage(769) handler:^{
             YouModShowVideoQualitySheet(player, presenter, sender, YES);
         }]];
     } else {
@@ -1589,7 +1520,7 @@ static void YouModShowDownloadManager(YTPlayerViewController *player, UIViewCont
     [items addObject:[YouModMenuItem itemWithTitle:LOC(@"DOWNLOAD_AUDIO") subtitle:LOC(@"DOWNLOAD_AUDIO_DESC") icon:YouModIconImage(21) handler:^{
         YouModStartDownloadAudio(player, presenter, sender);
     }]];
-    [items addObject:[YouModMenuItem itemWithTitle:LOC(@"DOWNLOAD_CAPTIONS") subtitle:LOC(@"DOWNLOAD_CAPTIONS_DESC") icon:YouModIconImage(637) handler:^{
+    [items addObject:[YouModMenuItem itemWithTitle:LOC(@"DOWNLOAD_CAPTIONS") subtitle:LOC(@"DOWNLOAD_CAPTIONS_DESC") icon:YouModIconImage(50) handler:^{
         YouModShowCaptionsSheet(player, presenter, sender);
     }]];
     [items addObject:[YouModMenuItem itemWithTitle:LOC(@"SAVE_THUMBNAIL") subtitle:LOC(@"SAVE_THUMBNAIL_DESC") icon:YouModIconImage(367) handler:^{
@@ -1684,7 +1615,7 @@ void YouModConfigureDownloadButton(_ASDisplayView *view) {
 
 - (void)layoutSubviews {
     %orig;
-    if (!IS_ENABLED(DownloadManager)) return;
+    if (!IS_ENABLED(DownloadManager) || !IS_ENABLED(AddDownloadToShorts)) return;
     UIView *likeButtonView = nil;
     for (UIView *subview in self.subviews) {
         if ([subview isKindOfClass:%c(YTReelPlayerButton)]) {

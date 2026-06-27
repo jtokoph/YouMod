@@ -52,6 +52,12 @@
 #import <YouTubeHeader/YTAppViewControllerImpl.h>
 #import <YouTubeHeader/YTAppViewController.h>
 #import <YouTubeHeader/YTDefaultSheetController.h>
+#import <YouTubeHeader/YTIFormatStream.h>
+#import <YouTubeHeader/YTIPlayerResponse.h>
+#import <YouTubeHeader/YTPlayerResponse.h>
+#import <YouTubeHeader/YTIVideoDetails.h>
+#import <YouTubeHeader/YTIStreamingData.h>
+#import <YouTubeHeader/YTIFormattedString.h>
 
 // For Settings.x and SponsorBlockSettings.x
 #import <PSHeader/Misc.h>
@@ -67,6 +73,8 @@
 // Downloading
 #define DownloadManager @"YouModDownloadManager"
 #define DownloadSaveToPhotos @"YouModDownloadSaveToPhotos"
+#define AddDownloadToShorts @"YouModAddDownloadToShorts"
+// #define PreferDRC @"YouModDownloadPreferDRC"
 // Cache
 #define AutoClearCache @"YouModAutoClearCache"
 // Appearance
@@ -91,6 +99,7 @@
 // Player
 #define WifiQualityIndex @"YouModWifiQualityIndex"
 #define CellQualityIndex @"YouModCellQualityIndex"
+#define LowPowerQualityIndex @"YouModLowPowerQualityIndex"
 #define AudioTrack @"YouModAudioTrackSegment"
 #define AudioTrackLangIndex @"YouModAudioTrackLangIndex"
 #define NoDubbedAudioTrack @"YouModNoDubbedAudioTrack"
@@ -124,6 +133,7 @@
 #define DisablesShowRemaining @"YouModDisablesShowRemainingTime"
 #define AlwaysShowRemaining @"YouModAlwaysShowRemainingTime"
 #define ShowExtraTimeRemaining @"YouModShowExtraTimeRemaining"
+#define Uses24HoursTime @"YouModUses24HoursTime"
 #define CopyWithTimestampOnPause @"YouModCopyWithTimestampOnPause"
 #define HideFullAction @"YouModHideFullScreenAction"
 #define HideFullvidTitle @"YouModHideFullscreenVideoTitle"
@@ -135,6 +145,9 @@
 #define ExtraSpeed @"YouModAddExtraSpeed"
 #define ForceMiniPlayer @"YouModForceMiniPlayer"
 #define AlwaysShowSeekbar @"YouModAlwaysShowSeekbar"
+#define DisablesFreeZoom @"YouModDisablesFreeZoom"
+#define TapToSeek @"YouModTapToSeek"
+#define PauseTwoFingers @"YouModPauseTwoFingers"
 // Shorts
 #define RemoveShortsLive @"YouModRemoveShortsLive"
 #define ShortsToRegular @"YouModShortsToRegular"
@@ -206,8 +219,9 @@
 @end
 
 @interface YTDefaultSheetController (YouMod)
-+ (instancetype)sheetControllerWithParentResponder:(id)responder;
++ (instancetype)sheetControllerWithParentResponder:(id)parentResponder;
 - (void)addAction:(YTActionSheetAction *)action;
+- (void)presentFromView:(UIView *)view animated:(BOOL)animated completion:(void (^)(void))completion;
 - (void)presentFromViewController:(UIViewController *)vc animated:(BOOL)animated completion:(void (^)(void))completion;
 @end
 
@@ -220,6 +234,12 @@ typedef NS_ENUM(NSUInteger, GestureSection) {
 
 @interface YTWatchController (YouMod)
 - (void)reload;
+@end
+
+@interface YTInlineScrubGestureView : UIView
+@end
+
+@interface YTEngagementPanelHeaderView : UIView
 @end
 
 @interface YTPivotBarView : UIView
@@ -289,6 +309,7 @@ typedef NS_ENUM(NSUInteger, GestureSection) {
 
 @interface YTPlayerViewController (YouMod) <UIGestureRecognizerDelegate>
 @property (nonatomic, retain) UIPanGestureRecognizer *YouModPanGesture;
+@property (nonatomic, retain) UITapGestureRecognizer *YouModTapGesture;
 @property (nonatomic, retain) UILabel *YouModGestureHUD;
 @property (nonatomic, weak, readwrite) UIViewController *parentViewController;
 @property (nonatomic, assign, readonly) BOOL isInlinePlaybackActive;
@@ -303,6 +324,9 @@ typedef NS_ENUM(NSUInteger, GestureSection) {
 - (void)setPlaybackRate:(float)rate;
 - (void)play;
 - (void)pause;
+- (NSInteger)playerState;
+- (YTPlayerResponse *)contentPlayerResponse;
+- (YTPlayerResponse *)playerResponse;
 @end
 
 @interface SSOConfiguration : NSObject
@@ -356,6 +380,7 @@ typedef NS_ENUM(NSUInteger, GestureSection) {
 
 @interface YTIAudioTrack (YouMod)
 @property (nonatomic, assign, readwrite) BOOL isAutoDubbed;
+- (BOOL)hasId_p;
 @end
 
 // Player Gestures - @bhackel (YTLitePlus)
@@ -374,6 +399,49 @@ typedef NS_ENUM(NSUInteger, GestureSection) {
 @interface YTReelPlayerViewController (YouMod)
 - (void)reelContentViewRequestsAdvanceToNextVideo:(id)arg;
 - (void)reelContentViewRequestsPlayPauseToggle:(id)arg;
+@end
+
+@interface YTICaptionTrackEntry : GPBMessage
+- (NSString *)baseURL;
+- (NSString *)languageCode;
+- (YTIFormattedString *)name;
+@end
+
+@interface YTIPlayerCaptionsTrackListRenderer : GPBMessage
+- (NSMutableArray *)captionTracksArray;
+@end
+
+@interface YTICaptionsSupportedRenderers : GPBMessage
+- (YTIPlayerCaptionsTrackListRenderer *)playerCaptionsTracklistRenderer;
+@end
+
+@interface YTIPlayerResponse (YouMod)
+- (YTIStreamingData *)streamingData;
+- (YTICaptionsSupportedRenderers *)captions;
+@end
+
+@interface YTIFormatStream (YouMod)
+- (NSString *)mimeType;
+- (NSInteger)contentLength;
+- (NSUInteger)approxDurationMs;
+- (int)height;
+- (int)fps;
+- (YTIAudioTrack *)audioTrack;
+- (int)itag;
+@end
+
+@interface YTIFormattedString (YouMod)
+- (NSString *)dropdownOptionTitle;
+@end
+
+@interface YTIVideoDetails (YouMod)
+- (NSString *)title;
+- (NSString *)author;
+- (NSString *)shortDescription;
+@end
+
+@interface YTDataUtils : NSObject
++ (instancetype)generateClientSideNonce;
 @end
 
 // SponsorBlock action modes
