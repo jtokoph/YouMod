@@ -530,19 +530,7 @@ extern BOOL useBackwardIconForButton;
     CGFloat barWidth = playerBar.bounds.size.width;
     if (barWidth <= 0) return;
 
-    // Find reference view for Y
-    UIView *referenceView = nil;
-    for (UIView *sub in playerBar.subviews) {
-        if ([sub isKindOfClass:%c(YTPlayerBarRectangleDecorationView)] ||
-            [sub isKindOfClass:%c(YTPlayerBarProgressDecorationView)]) {
-            referenceView = sub;
-            break;
-        }
-    }
-
-    CGFloat markerY = referenceView ? referenceView.frame.origin.y : (playerBar.bounds.size.height - 3.0);
-    CGFloat markerHeight = referenceView ? referenceView.frame.size.height : 3.0;
-    if (markerHeight < 2.0) markerHeight = 3.0;
+    CGFloat markerY = playerBar.bounds.size.height;
 
     for (UIView *sub in playerBar.subviews) {
         if (sub.tag != 9900) continue;
@@ -558,7 +546,7 @@ extern BOOL useBackwardIconForButton;
         if (isPoi) { w = 3.0; x = MAX(0, x - 1.5); }
         else if (w < 2.0) w = 2.0;
 
-        sub.frame = CGRectMake(x, markerY, w, markerHeight);
+        sub.frame = CGRectMake(x, markerY, w, markerY);
     }
 }
 
@@ -627,23 +615,16 @@ extern BOOL useBackwardIconForButton;
     CGFloat barWidth = playerBar.bounds.size.width;
     if (barWidth <= 0) return;
 
-    // Find reference track view for Y position and height
-    UIView *referenceView = nil;
+    // Find scrubberdot view
     UIView *scrubberView = nil;
     for (UIView *sub in playerBar.subviews) {
-        if ([sub isKindOfClass:%c(YTPlayerBarRectangleDecorationView)]) {
-            referenceView = sub;
-        } else if ([sub isKindOfClass:%c(YTPlayerBarProgressDecorationView)]) {
-            if (!referenceView) referenceView = sub;
-        } else if ([sub isKindOfClass:%c(YTPlayerBarScrubberDotDecorationView)]) {
+        if ([sub isKindOfClass:%c(YTPlayerBarScrubberDotDecorationView)]) {
             scrubberView = sub;
+            break;
         }
     }
 
-    // Fallback Y/height if reference view not found
-    CGFloat markerY = referenceView ? referenceView.frame.origin.y : (playerBar.bounds.size.height - 3.0);
-    CGFloat markerHeight = referenceView ? referenceView.frame.size.height : 3.0;
-    if (markerHeight < 2.0) markerHeight = 3.0;
+    CGFloat markerY = playerBar.bounds.size.height;
 
     for (SBSegment *segment in segments) {
         SBSegmentAction action = [segment configuredAction];
@@ -663,18 +644,19 @@ extern BOOL useBackwardIconForButton;
             if (w < 2.0) w = 2.0;
         }
 
-        UIView *marker = [[UIView alloc] initWithFrame:CGRectMake(x, markerY, w, markerHeight)];
+        UIView *marker = [[UIView alloc] initWithFrame:CGRectMake(x, markerY, w, markerY)];
         marker.backgroundColor = [segment segmentColor];
         marker.userInteractionEnabled = NO;
         marker.tag = 9900;
         objc_setAssociatedObject(marker, @selector(sbSegmentData), @[@(startFrac), @(endFrac), @(isPoi)], OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 
-        [playerBar insertSubview:marker aboveSubview:referenceView];
+        [playerBar addSubview:marker];
+        [playerBar bringSubviewToFront:marker];
     }
 
     // Keep scrubber dot on top
     if (scrubberView) {
-        [playerBar bringSubviewToFront:scrubberView.superview ?: scrubberView];
+        [playerBar bringSubviewToFront:scrubberView];
     }
 }
 
