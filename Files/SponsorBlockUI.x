@@ -530,7 +530,19 @@ extern BOOL useBackwardIconForButton;
     CGFloat barWidth = playerBar.bounds.size.width;
     if (barWidth <= 0) return;
 
-    CGFloat markerY = playerBar.bounds.size.height;
+    // Find reference view for Y
+    UIView *referenceView = nil;
+    for (UIView *sub in playerBar.subviews) {
+        if ([sub isKindOfClass:%c(YTPlayerBarRectangleDecorationView)] ||
+            [sub isKindOfClass:%c(YTPlayerBarProgressDecorationView)]) {
+            referenceView = sub;
+            break;
+        }
+    }
+
+    CGFloat markerY = referenceView ? referenceView.frame.origin.y : (playerBar.bounds.size.height - 3.0);
+    CGFloat markerHeight = referenceView ? referenceView.frame.size.height : 3.0;
+    if (markerHeight < 2.0) markerHeight = 3.0;
 
     for (UIView *sub in playerBar.subviews) {
         if (sub.tag != 9900) continue;
@@ -546,7 +558,7 @@ extern BOOL useBackwardIconForButton;
         if (isPoi) { w = 3.0; x = MAX(0, x - 1.5); }
         else if (w < 2.0) w = 2.0;
 
-        sub.frame = CGRectMake(x, markerY, w, markerY);
+        sub.frame = CGRectMake(x, markerY, w, markerHeight);
     }
 }
 
@@ -615,16 +627,23 @@ extern BOOL useBackwardIconForButton;
     CGFloat barWidth = playerBar.bounds.size.width;
     if (barWidth <= 0) return;
 
-    // Find scrubberdot view
+    // Find reference track view for Y position and height
+    UIView *referenceView = nil;
     UIView *scrubberView = nil;
     for (UIView *sub in playerBar.subviews) {
-        if ([sub isKindOfClass:%c(YTPlayerBarScrubberDotDecorationView)]) {
+        if ([sub isKindOfClass:%c(YTPlayerBarRectangleDecorationView)]) {
+            referenceView = sub;
+        } else if ([sub isKindOfClass:%c(YTPlayerBarProgressDecorationView)]) {
+            if (!referenceView) referenceView = sub;
+        } else if ([sub isKindOfClass:%c(YTPlayerBarScrubberDotDecorationView)]) {
             scrubberView = sub;
-            break;
         }
     }
 
-    CGFloat markerY = playerBar.bounds.size.height;
+    // Fallback Y/height if reference view not found
+    CGFloat markerY = referenceView ? referenceView.frame.origin.y : (playerBar.bounds.size.height - 3.0);
+    CGFloat markerHeight = referenceView ? referenceView.frame.size.height : 3.0;
+    if (markerHeight < 2.0) markerHeight = 3.0;
 
     for (SBSegment *segment in segments) {
         SBSegmentAction action = [segment configuredAction];
@@ -644,7 +663,7 @@ extern BOOL useBackwardIconForButton;
             if (w < 2.0) w = 2.0;
         }
 
-        UIView *marker = [[UIView alloc] initWithFrame:CGRectMake(x, markerY, w, markerY)];
+        UIView *marker = [[UIView alloc] initWithFrame:CGRectMake(x, markerY, w, markerHeight)];
         marker.backgroundColor = [segment segmentColor];
         marker.userInteractionEnabled = NO;
         marker.tag = 9900;
