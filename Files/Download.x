@@ -453,18 +453,6 @@ void YouModDownloadSetCurrentPlayer(YTPlayerViewController *player) {
     YouModCurrentPlayerViewController = player;
 }
 
-static id YouModObjectFromSelector(id object, SEL selector) {
-    if (!object) return nil;
-    if ([object respondsToSelector:selector]) {
-        return ((id (*)(id, SEL))objc_msgSend)(object, selector);
-    }
-    @try {
-        return [object valueForKey:NSStringFromSelector(selector)];
-    } @catch (__unused NSException *exception) {
-        return nil;
-    }
-}
-
 static UIViewController *YouModTopViewController(UIViewController *root) {
     if (!root) {
         UIWindow *keyWindow = nil;
@@ -585,13 +573,6 @@ static BOOL YouModCMTimeIsUsable(CMTime time) {
     if (!CMTIME_IS_VALID(time) || !CMTIME_IS_NUMERIC(time) || CMTIME_IS_INDEFINITE(time)) return NO;
     Float64 seconds = CMTimeGetSeconds(time);
     return isfinite(seconds) && seconds > 0.0;
-}
-
-static CMTime YouModHalfCMTime(CMTime time) {
-    if (!YouModCMTimeIsUsable(time)) return kCMTimeInvalid;
-    CMTime halfDuration = CMTimeMultiplyByRatio(time, 1, 2);
-    if (!CMTIME_IS_VALID(halfDuration) || !CMTIME_IS_NUMERIC(halfDuration)) return kCMTimeInvalid;
-    return halfDuration;
 }
 
 static CMTime YouModMinUsableDuration(CMTime first, CMTime second) {
@@ -795,7 +776,7 @@ static YTPlayerViewController *YouModPlayerFromViewController(UIViewController *
     UIViewController *cursor = vc;
     while (cursor) {
         if (playerClass && [cursor isKindOfClass:playerClass]) return (YTPlayerViewController *)cursor;
-        id player = YouModObjectFromSelector(cursor, @selector(playerViewController));
+        YTPlayerViewController *player = YouModObjectFromSelector(cursor, @selector(playerViewController));
         if (playerClass && [player isKindOfClass:playerClass]) return (YTPlayerViewController *)player;
         cursor = cursor.parentViewController;
     }
@@ -1218,9 +1199,7 @@ static void YouModPresentMenu(NSString *title, NSArray <YouModMenuItem *> *items
 
     AVMutableCompositionTrack *compositionAudio = [composition addMutableTrackWithMediaType:AVMediaTypeAudio preferredTrackID:kCMPersistentTrackID_Invalid];
     CMTime audioDuration = YouModMinUsableDuration(duration, audioTrack.timeRange.duration);
-    CMTime trimmedAudioDuration = YouModHalfCMTime(audioDuration);
-    if (!YouModCMTimeIsUsable(trimmedAudioDuration)) trimmedAudioDuration = audioDuration;
-    [compositionAudio insertTimeRange:CMTimeRangeMake(kCMTimeZero, trimmedAudioDuration) ofTrack:audioTrack atTime:kCMTimeZero error:&insertError];
+    [compositionAudio insertTimeRange:CMTimeRangeMake(kCMTimeZero, audioDuration) ofTrack:audioTrack atTime:kCMTimeZero error:&insertError];
     if (insertError) {
         [self failWithError:insertError];
         return;
@@ -1278,10 +1257,8 @@ static void YouModPresentMenu(NSString *title, NSArray <YouModMenuItem *> *items
     AVAssetTrack *audioTrack = [[asset tracksWithMediaType:AVMediaTypeAudio] firstObject];
     if (audioTrack) {
         CMTime audioDuration = YouModMinUsableDuration(duration, audioTrack.timeRange.duration);
-        CMTime trimmedAudioDuration = YouModHalfCMTime(audioDuration);
-        if (!YouModCMTimeIsUsable(trimmedAudioDuration)) trimmedAudioDuration = audioDuration;
         AVMutableCompositionTrack *compositionAudio = [composition addMutableTrackWithMediaType:AVMediaTypeAudio preferredTrackID:kCMPersistentTrackID_Invalid];
-        [compositionAudio insertTimeRange:CMTimeRangeMake(kCMTimeZero, trimmedAudioDuration) ofTrack:audioTrack atTime:kCMTimeZero error:&insertError];
+        [compositionAudio insertTimeRange:CMTimeRangeMake(kCMTimeZero, audioDuration) ofTrack:audioTrack atTime:kCMTimeZero error:&insertError];
         if (insertError) {
             [self failWithError:insertError];
             return;
