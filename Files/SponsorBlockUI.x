@@ -669,8 +669,8 @@ extern BOOL useBackwardIconForButton;
         marker.tag = 9900;
         objc_setAssociatedObject(marker, @selector(sbSegmentData), @[@(startFrac), @(endFrac), @(isPoi)], OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 
-        [referenceView addSubview:marker];
-        [referenceView bringSubviewToFront:marker];
+        [playerBar addSubview:marker];
+        [playerBar bringSubviewToFront:marker];
     }
 
     // Keep scrubber dot on top
