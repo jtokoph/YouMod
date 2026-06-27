@@ -600,6 +600,7 @@ extern BOOL useBackwardIconForButton;
 - (void)sbRefreshMarkers:(NSArray<SBSegment *> *)segments {
     if (!segments) segments = self.sbSegments;
 
+    if (![[self activeVideoPlayerOverlay] isKindOfClass:%c(YTMainAppVideoPlayerOverlayViewController)]) return;
     YTMainAppVideoPlayerOverlayViewController *overlay = [self activeVideoPlayerOverlay];
     YTPlayerBarController *barController = [overlay playerBarController];
     YTInlinePlayerBarContainerView *containerView = barController.playerBar;

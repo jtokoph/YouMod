@@ -103,14 +103,14 @@ static BOOL isDarkMode(UIView *view) {
         UIResponder *responder = self.nextResponder;
         while (responder != nil) {
             if ([responder isKindOfClass:%c(YTActionSheetDialogViewController)] || [responder isKindOfClass:%c(YTBotttomSheetController)]) {
-                self.backgroundColor = [UIColor blackColor];
+                self.backgroundColor = [UIColor clearColor];
                 break;
             } else if ([responder isKindOfClass:%c(YTMySubsFilterHeaderViewController)]) {
                 YTMySubsFilterHeaderViewController *controller = (YTMySubsFilterHeaderViewController *)responder;
                 YTIMySubsFilterHeaderRenderer *renderer = controller.renderer;
                 NSString *description = [renderer description];
                 if ([description containsString:@"subscriptions_chip_bar.eml"]) {
-                    self.backgroundColor = [UIColor blackColor];
+                    self.backgroundColor = [UIColor clearColor];
                     break;
                 }
             }
@@ -166,14 +166,14 @@ static BOOL isDarkMode(UIView *view) {
         UIResponder *responder = self.nextResponder;
         while (responder != nil) {
             if ([responder isKindOfClass:%c(YTActionSheetDialogViewController)] || [responder isKindOfClass:%c(YTBotttomSheetController)]) {
-                self.backgroundColor = [UIColor blackColor];
+                self.backgroundColor = [UIColor clearColor];
                 break;
             } else if ([responder isKindOfClass:%c(YTMySubsFilterHeaderViewController)]) {
                 YTMySubsFilterHeaderViewController *controller = (YTMySubsFilterHeaderViewController *)responder;
                 YTIMySubsFilterHeaderRenderer *renderer = controller.renderer;
                 NSString *description = [renderer description];
                 if ([description containsString:@"subscriptions_chip_bar.eml"]) {
-                    self.backgroundColor = [UIColor blackColor];
+                    self.backgroundColor = [UIColor clearColor];
                     break;
                 }
             }
