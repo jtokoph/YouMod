@@ -239,9 +239,6 @@ typedef NS_ENUM(NSUInteger, GestureSection) {
 @interface YTInlineScrubGestureView : UIView
 @end
 
-@interface YTEngagementPanelHeaderView : UIView
-@end
-
 @interface YTPivotBarView : UIView
 @end
 
@@ -330,6 +327,21 @@ typedef NS_ENUM(NSUInteger, GestureSection) {
 @end
 
 @interface SSOConfiguration : NSObject
+@end
+
+@interface YTEngagementPanelIdentifier : NSObject
+@property (nonatomic, copy, readonly) NSString *identifierString;
+@end
+
+@interface YTEngagementPanelHeaderView : UIView
+- (YTEngagementPanelIdentifier *)engagementPanelIdentifier;
+@end
+
+@interface YTIMySubsFilterHeaderRenderer : GPBMessage
+@end
+
+@interface YTMySubsFilterHeaderViewController : UIViewController
+- (YTIMySubsFilterHeaderRenderer *)renderer;
 @end
 
 @interface YTMainAppControlsOverlayView (YouMod)

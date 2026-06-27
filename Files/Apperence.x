@@ -67,6 +67,7 @@ static BOOL isDarkMode(UIView *view) {
         // @"id.elements.components.comment_composer",
         // @"eml.cvr",
         @"id.subs.subscriptions_channel_bar",
+        @"brand_promo.view",
         @"eml.live_chat_text_message", nil
     ];  
     if (localPageStyle == 1) {
@@ -75,9 +76,17 @@ static BOOL isDarkMode(UIView *view) {
         // Action dialog
         UIResponder *responder = self.nextResponder;
         while (responder != nil) {
-            if ([responder isKindOfClass:%c(YTActionSheetDialogViewController)] || [responder isKindOfClass:%c(YTBotttomSheetController)] || [responder isKindOfClass:%c(YTMySubsFilterHeaderViewController)]) {
+            if ([responder isKindOfClass:%c(YTActionSheetDialogViewController)] || [responder isKindOfClass:%c(YTBotttomSheetController)]) {
                 self.backgroundColor = [UIColor blackColor];
                 break;
+            } else if ([responder isKindOfClass:%c(YTMySubsFilterHeaderViewController)]) {
+                YTMySubsFilterHeaderViewController *controller = (YTMySubsFilterHeaderViewController *)responder;
+                YTIMySubsFilterHeaderRenderer *renderer = controller.renderer;
+                NSString *description = [renderer description];
+                if ([description containsString:@"subscriptions_chip_bar.eml"]) {
+                    self.backgroundColor = [UIColor blackColor];
+                    break;
+                }
             }
             responder = responder.nextResponder;
         }
@@ -93,9 +102,17 @@ static BOOL isDarkMode(UIView *view) {
         // Action dialog
         UIResponder *responder = self.nextResponder;
         while (responder != nil) {
-            if ([responder isKindOfClass:%c(YTActionSheetDialogViewController)] || [responder isKindOfClass:%c(YTBotttomSheetController)] || [responder isKindOfClass:%c(YTMySubsFilterHeaderViewController)]) {
-                self.backgroundColor = [UIColor clearColor];
+            if ([responder isKindOfClass:%c(YTActionSheetDialogViewController)] || [responder isKindOfClass:%c(YTBotttomSheetController)]) {
+                self.backgroundColor = [UIColor blackColor];
                 break;
+            } else if ([responder isKindOfClass:%c(YTMySubsFilterHeaderViewController)]) {
+                YTMySubsFilterHeaderViewController *controller = (YTMySubsFilterHeaderViewController *)responder;
+                YTIMySubsFilterHeaderRenderer *renderer = controller.renderer;
+                NSString *description = [renderer description];
+                if ([description containsString:@"subscriptions_chip_bar.eml"]) {
+                    self.backgroundColor = [UIColor blackColor];
+                    break;
+                }
             }
             responder = responder.nextResponder;
         }
@@ -113,6 +130,7 @@ static BOOL isDarkMode(UIView *view) {
         // @"id.elements.components.comment_composer",
         // @"eml.cvr",
         @"id.subs.subscriptions_channel_bar",
+        @"brand_promo.view",
         @"eml.live_chat_text_message", nil
     ];  
     if (localPageStyle == 1) {
@@ -121,9 +139,17 @@ static BOOL isDarkMode(UIView *view) {
         // Action dialog
         UIResponder *responder = self.nextResponder;
         while (responder != nil) {
-            if ([responder isKindOfClass:%c(YTActionSheetDialogViewController)] || [responder isKindOfClass:%c(YTBotttomSheetController)] || [responder isKindOfClass:%c(YTMySubsFilterHeaderViewController)]) {
+            if ([responder isKindOfClass:%c(YTActionSheetDialogViewController)] || [responder isKindOfClass:%c(YTBotttomSheetController)]) {
                 self.backgroundColor = [UIColor blackColor];
                 break;
+            } else if ([responder isKindOfClass:%c(YTMySubsFilterHeaderViewController)]) {
+                YTMySubsFilterHeaderViewController *controller = (YTMySubsFilterHeaderViewController *)responder;
+                YTIMySubsFilterHeaderRenderer *renderer = controller.renderer;
+                NSString *description = [renderer description];
+                if ([description containsString:@"subscriptions_chip_bar.eml"]) {
+                    self.backgroundColor = [UIColor blackColor];
+                    break;
+                }
             }
             responder = responder.nextResponder;
         }
@@ -139,9 +165,17 @@ static BOOL isDarkMode(UIView *view) {
         // Action dialog
         UIResponder *responder = self.nextResponder;
         while (responder != nil) {
-            if ([responder isKindOfClass:%c(YTActionSheetDialogViewController)] || [responder isKindOfClass:%c(YTBotttomSheetController)] || [responder isKindOfClass:%c(YTMySubsFilterHeaderViewController)]) {
-                self.backgroundColor = [UIColor clearColor];
+            if ([responder isKindOfClass:%c(YTActionSheetDialogViewController)] || [responder isKindOfClass:%c(YTBotttomSheetController)]) {
+                self.backgroundColor = [UIColor blackColor];
                 break;
+            } else if ([responder isKindOfClass:%c(YTMySubsFilterHeaderViewController)]) {
+                YTMySubsFilterHeaderViewController *controller = (YTMySubsFilterHeaderViewController *)responder;
+                YTIMySubsFilterHeaderRenderer *renderer = controller.renderer;
+                NSString *description = [renderer description];
+                if ([description containsString:@"subscriptions_chip_bar.eml"]) {
+                    self.backgroundColor = [UIColor blackColor];
+                    break;
+                }
             }
             responder = responder.nextResponder;
         }
@@ -209,6 +243,8 @@ static BOOL isDarkMode(UIView *view) {
 %hook YTEngagementPanelHeaderView
 - (void)layoutSubviews {
     %orig;
+    YTEngagementPanelIdentifier *identifier = self.engagementPanelIdentifier;
+    if ([identifier.identifierString isEqualToString:@"PAmodern_transcript_view"]) return;
     if (localPageStyle == 1) {
         self.backgroundColor = [UIColor blackColor];
     } else {
