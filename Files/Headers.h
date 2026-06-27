@@ -236,6 +236,10 @@ typedef NS_ENUM(NSUInteger, GestureSection) {
 - (void)reload;
 @end
 
+@interface YTELMViewController : UIViewController
+- (YTIElementRenderer *)renderer;
+@end
+
 @interface YTInlineScrubGestureView : UIView
 @end
 

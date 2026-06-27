@@ -266,15 +266,6 @@ static void YouModAddEndTime(YTPlayerViewController *self, YTSingleVideoControll
     if (vidID.length)
         UIPasteboard.generalPasteboard.string = [NSString stringWithFormat:@"https://www.youtube.com/watch?v=%@&t=%lds", vidID, (long)mediaTimeIn];
 }
-// Disables free zoom gesture
-- (id)videoFreeZoomOverlayController {
-    id value = %orig;
-    if (value && IS_ENABLED(DisablesFreeZoom)) {
-        [self setVideoFreeZoomOverlayController:nil];
-        return nil;
-    }
-    return value;
-}
 - (BOOL)isZoomEnabled { return IS_ENABLED(DisablesFreeZoom) ? NO : %orig; }
 %end
 
