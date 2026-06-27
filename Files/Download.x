@@ -453,6 +453,18 @@ void YouModDownloadSetCurrentPlayer(YTPlayerViewController *player) {
     YouModCurrentPlayerViewController = player;
 }
 
+static id YouModObjectFromSelector(id object, SEL selector) {
+    if (!object) return nil;
+    if ([object respondsToSelector:selector]) {
+        return ((id (*)(id, SEL))objc_msgSend)(object, selector);
+    }
+    @try {
+        return [object valueForKey:NSStringFromSelector(selector)];
+    } @catch (__unused NSException *exception) {
+        return nil;
+    }
+}
+
 static UIViewController *YouModTopViewController(UIViewController *root) {
     if (!root) {
         UIWindow *keyWindow = nil;
@@ -776,7 +788,7 @@ static YTPlayerViewController *YouModPlayerFromViewController(UIViewController *
     UIViewController *cursor = vc;
     while (cursor) {
         if (playerClass && [cursor isKindOfClass:playerClass]) return (YTPlayerViewController *)cursor;
-        YTPlayerViewController *player = YouModObjectFromSelector(cursor, @selector(playerViewController));
+        id player = YouModObjectFromSelector(cursor, @selector(playerViewController));
         if (playerClass && [player isKindOfClass:playerClass]) return (YTPlayerViewController *)player;
         cursor = cursor.parentViewController;
     }
