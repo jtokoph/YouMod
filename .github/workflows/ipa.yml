@@ -182,7 +182,6 @@ jobs:
           }
           echo "THEOS_COMMIT=$(get_commit_hash "https://github.com/theos/theos")" >> $GITHUB_ENV
           echo "OPENYT_COMMIT=$(get_commit_hash "https://github.com/BillyCurtis/OpenYouTubeSafariExtension")" >> $GITHUB_ENV
-          echo "ALDERIS_COMMIT=$(get_commit_hash "https://github.com/hbang/Alderis")" >> $GITHUB_ENV
 
       - name: Cache Theos
         id: cache-theos
@@ -295,19 +294,9 @@ jobs:
 
       - name: Clone YouSlider
         if: ${{ inputs.youslider }}
-        run: git clone --quiet --depth=1 https://github.com/PoomSmart/YouSlider.git
-
-      - name: Cache Alderis
-        id: cache-alderis
-        if: ${{ inputs.youslider }}
-        uses: actions/cache@v5
-        with:
-          path: Alderis
-          key: Alderis-${{ env.ALDERIS_COMMIT }}
-
-      - name: Clone Alderis
-        if: ${{ inputs.youslider && steps.cache-alderis.outputs.cache-hit != 'true' }}
-        run: git clone --quiet --depth=1 https://github.com/hbang/Alderis.git
+        run: |
+          git clone --quiet --depth=1 https://github.com/PoomSmart/YouSlider.git
+          wget --no-verbose --quiet https://github.com/Tonwalter888/Tonwalter888.github.io/raw/refs/heads/main/deb/alderis.deb
 
       - name: Clone YouShare
         if: ${{ inputs.youshare }}
@@ -429,13 +418,6 @@ jobs:
           cd YouSlider
           make clean package DEBUG=0 FINALPACKAGE=1 THEOS_PACKAGE_SCHEME=rootless
           mv packages/*.deb ${{ github.workspace }}/youslider.deb
-
-      - name: Build Alderis
-        if: ${{ inputs.youslider }}
-        run: |
-          cd Alderis
-          make clean package DEBUG=0 FINALPACKAGE=1 ARCHS=arm64
-          mv packages/*.deb ${{ github.workspace }}/alderis.deb
 
       - name: Build YouShare
         if: ${{ inputs.youshare }}
