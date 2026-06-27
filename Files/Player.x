@@ -275,6 +275,7 @@ static void YouModAddEndTime(YTPlayerViewController *self, YTSingleVideoControll
     }
     return value;
 }
+- (BOOL)isZoomEnabled
 %end
 
 %hook YTColdConfig

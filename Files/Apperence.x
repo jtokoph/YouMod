@@ -200,10 +200,10 @@ static BOOL isDarkMode(UIView *view) {
     */
     if (localPageStyle == 1) {
         if ([self.accessibilityIdentifier isEqualToString:@"subs_channel_bar.collection"]) self.backgroundColor = [UIColor blackColor];
-        if ([self.accessibilityIdentifier isEqualToString:@"id.elements.components.more_drawer_collection"]) self.superview.backgroundColor = [UIColor blackColor];
+        // if ([self.accessibilityIdentifier isEqualToString:@"id.elements.components.more_drawer_collection"]) self.superview.backgroundColor = [UIColor blackColor];
     } else {
         if ([self.accessibilityIdentifier isEqualToString:@"subs_channel_bar.collection"]) self.backgroundColor = [UIColor clearColor];
-        if ([self.accessibilityIdentifier isEqualToString:@"id.elements.components.more_drawer_collection"]) self.superview.backgroundColor = [UIColor whiteColor];
+        // if ([self.accessibilityIdentifier isEqualToString:@"id.elements.components.more_drawer_collection"]) self.superview.backgroundColor = [UIColor whiteColor];
     }
 }
 - (void)layoutSubviews {
@@ -216,10 +216,29 @@ static BOOL isDarkMode(UIView *view) {
     */
     if (localPageStyle == 1) {
         if ([self.accessibilityIdentifier isEqualToString:@"subs_channel_bar.collection"]) self.backgroundColor = [UIColor blackColor];
-        if ([self.accessibilityIdentifier isEqualToString:@"id.elements.components.more_drawer_collection"]) self.superview.backgroundColor = [UIColor blackColor];
+        // if ([self.accessibilityIdentifier isEqualToString:@"id.elements.components.more_drawer_collection"]) self.superview.backgroundColor = [UIColor blackColor];
     } else {
         if ([self.accessibilityIdentifier isEqualToString:@"subs_channel_bar.collection"]) self.backgroundColor = [UIColor clearColor];
-        if ([self.accessibilityIdentifier isEqualToString:@"id.elements.components.more_drawer_collection"]) self.superview.backgroundColor = [UIColor whiteColor];
+        // if ([self.accessibilityIdentifier isEqualToString:@"id.elements.components.more_drawer_collection"]) self.superview.backgroundColor = [UIColor whiteColor];
+    }
+}
+%end
+
+@interface YTELMViewController : UIViewController
+- (YTIElementRenderer *)renderer;
+@end
+
+%hook YTELMViewController
+- (void)loadWithModel:(id)arg {
+    %orig;
+    YTIElementRenderer *renderer = self.renderer;
+    NSString *description = [renderer description];
+    if (![description containsString:@"more_drawer.eml"]) return;
+    _ASDisplayView *view = (_ASDisplayView *)self.viewIfLoaded;
+    if (localPageStyle == 1) {
+        view.backgroundColor = [UIColor blackColor];
+    } else {
+        view.backgroundColor = [UIColor clearColor];
     }
 }
 %end

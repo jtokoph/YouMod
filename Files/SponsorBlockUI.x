@@ -511,28 +511,18 @@ extern BOOL useBackwardIconForButton;
 
 %end
 
-#pragma mark - YTInlinePlayerBarContainerView Hook (Marker Repositioning)
+#pragma mark - YTModularPlayerBarView Hook (Marker Repositioning)
 
-%hook YTInlinePlayerBarContainerView
+%hook YTModularPlayerBarView
 
 - (void)layoutSubviews {
     %orig;
-    UIView *playerBar;
-
-    for (UIView *subview in self.subviews) {
-        if ([subview isKindOfClass:%c(YTModularPlayerBarView)]) {
-            playerBar = subview;
-            break;
-        }
-    }
-    if (!playerBar) return;
-
-    CGFloat barWidth = playerBar.bounds.size.width;
+    CGFloat barWidth = self.bounds.size.width;
     if (barWidth <= 0) return;
 
     // Find reference view for Y
     UIView *referenceView = nil;
-    for (UIView *sub in playerBar.subviews) {
+    for (UIView *sub in self.subviews) {
         if ([sub isKindOfClass:%c(YTPlayerBarRectangleDecorationView)] ||
             [sub isKindOfClass:%c(YTPlayerBarProgressDecorationView)]) {
             referenceView = sub;
@@ -540,11 +530,7 @@ extern BOOL useBackwardIconForButton;
         }
     }
 
-    CGFloat markerY = referenceView ? referenceView.frame.origin.y : (playerBar.bounds.size.height - 3.0);
-    CGFloat markerHeight = referenceView ? referenceView.frame.size.height : 3.0;
-    if (markerHeight < 2.0) markerHeight = 3.0;
-
-    for (UIView *sub in playerBar.subviews) {
+    for (UIView *sub in self.subviews) {
         if (sub.tag != 9900) continue;
         NSArray *data = objc_getAssociatedObject(sub, @selector(sbSegmentData));
         if (!data || data.count < 3) continue;
@@ -558,14 +544,11 @@ extern BOOL useBackwardIconForButton;
         if (isPoi) { w = 3.0; x = MAX(0, x - 1.5); }
         else if (w < 2.0) w = 2.0;
 
-        sub.frame = CGRectMake(x, markerY, w, markerHeight);
+        sub.frame = CGRectMake(x, referenceView.frame.origin.y, w, referenceView.frame.size.height);
     }
 }
 
 %end
-
-// YTModularPlayerBarView hook removed — class may not exist in YT 21.17.3
-// Seek bar markers will use YTInlinePlayerBarContainerView directly instead
 
 #pragma mark - YTPlayerViewController Hook (Notification Observer)
 
@@ -638,12 +621,8 @@ extern BOOL useBackwardIconForButton;
         } else if ([sub isKindOfClass:%c(YTPlayerBarScrubberDotDecorationView)]) {
             scrubberView = sub;
         }
+        if (referenceView && scrubberView) break;
     }
-
-    // Fallback Y/height if reference view not found
-    CGFloat markerY = referenceView ? referenceView.frame.origin.y : (playerBar.bounds.size.height - 3.0);
-    CGFloat markerHeight = referenceView ? referenceView.frame.size.height : 3.0;
-    if (markerHeight < 2.0) markerHeight = 3.0;
 
     for (SBSegment *segment in segments) {
         SBSegmentAction action = [segment configuredAction];
@@ -663,7 +642,7 @@ extern BOOL useBackwardIconForButton;
             if (w < 2.0) w = 2.0;
         }
 
-        UIView *marker = [[UIView alloc] initWithFrame:CGRectMake(x, markerY, w, markerHeight)];
+        UIView *marker = [[UIView alloc] initWithFrame:CGRectMake(x, referenceView.frame.origin.y, w, referenceView.frame.size.height)];
         marker.backgroundColor = [segment segmentColor];
         marker.userInteractionEnabled = NO;
         marker.tag = 9900;
