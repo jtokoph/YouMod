@@ -553,13 +553,14 @@ static void YouModManageHoldToSpeed(UILongPressGestureRecognizer *gesture, YTMai
 - (void)playerItem:(id)arg1 hasSelectableVideoFormats:(id)arg2 {
     %orig;
     if (!arg2) return;
-    if (INTFORVAL(WifiQualityIndex) != 0 || INTFORVAL(CellQualityIndex) != 0) [self YouModAutoQuality];
+    [self YouModAutoQuality];
 }
 
 %new
 - (void)YouModAutoQuality {
     NSInteger kQualityIndex = isWiFiConnected() ? INTFORVAL(WifiQualityIndex) : INTFORVAL(CellQualityIndex);
     if ([NSProcessInfo processInfo].lowPowerModeEnabled) kQualityIndex = INTFORVAL(LowPowerQualityIndex);
+    if (kQualityIndex == 0) return;
 
     NSString *bestQualityLabel;
     int highestResolution = 0;
