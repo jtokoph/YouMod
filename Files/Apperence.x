@@ -67,12 +67,13 @@ static BOOL isDarkMode(UIView *view) {
         // @"id.elements.components.comment_composer",
         // @"eml.cvr",
         @"id.subs.subscriptions_channel_bar",
-        @"brand_promo.view",
+        @"eml.vwc",
         @"eml.live_chat_text_message", nil
     ];  
     if (localPageStyle == 1) {
         if ([blackViews containsObject:self.accessibilityIdentifier]) self.backgroundColor = [UIColor blackColor];
         // if ([self.accessibilityIdentifier isEqualToString:@"id.elements.components.text_field"]) self.superview.backgroundColor = [UIColor blackColor];
+        if ([self.accessibilityIdentifier isEqualToString:@"brand_promo.view"]) self.superview.backgroundColor = [UIColor blackColor]; 
         // Action dialog
         UIResponder *responder = self.nextResponder;
         while (responder != nil) {
@@ -105,8 +106,9 @@ static BOOL isDarkMode(UIView *view) {
         }
         */
     } else {
-        if ([blackViews containsObject:self.accessibilityIdentifier]) self.backgroundColor = [UIColor clearColor];     
-        // if ([self.accessibilityIdentifier isEqualToString:@"id.elements.components.text_field"]) self.superview.backgroundColor = [UIColor clearColor]; 
+        if ([blackViews containsObject:self.accessibilityIdentifier]) self.backgroundColor = [UIColor clearColor];      
+        // if ([self.accessibilityIdentifier isEqualToString:@"id.elements.components.text_field"]) self.superview.backgroundColor = [UIColor clearColor];
+        if ([self.accessibilityIdentifier isEqualToString:@"brand_promo.view"]) self.superview.backgroundColor = [UIColor clearColor];  
         // Action dialog
         UIResponder *responder = self.nextResponder;
         while (responder != nil) {
@@ -146,12 +148,13 @@ static BOOL isDarkMode(UIView *view) {
         // @"id.elements.components.comment_composer",
         // @"eml.cvr",
         @"id.subs.subscriptions_channel_bar",
-        @"brand_promo.view",
+        @"eml.vwc",
         @"eml.live_chat_text_message", nil
     ];  
     if (localPageStyle == 1) {
         if ([blackViews containsObject:self.accessibilityIdentifier]) self.backgroundColor = [UIColor blackColor];
-        // if ([self.accessibilityIdentifier isEqualToString:@"id.elements.components.text_field"]) self.superview.backgroundColor = [UIColor blackColor]; 
+        // if ([self.accessibilityIdentifier isEqualToString:@"id.elements.components.text_field"]) self.superview.backgroundColor = [UIColor blackColor];
+        if ([self.accessibilityIdentifier isEqualToString:@"brand_promo.view"]) self.superview.backgroundColor = [UIColor blackColor]; 
         // Action dialog
         UIResponder *responder = self.nextResponder;
         while (responder != nil) {
@@ -185,7 +188,8 @@ static BOOL isDarkMode(UIView *view) {
         */
     } else {
         if ([blackViews containsObject:self.accessibilityIdentifier]) self.backgroundColor = [UIColor clearColor];      
-        // if ([self.accessibilityIdentifier isEqualToString:@"id.elements.components.text_field"]) self.superview.backgroundColor = [UIColor clearColor]; 
+        // if ([self.accessibilityIdentifier isEqualToString:@"id.elements.components.text_field"]) self.superview.backgroundColor = [UIColor clearColor];
+        if ([self.accessibilityIdentifier isEqualToString:@"brand_promo.view"]) self.superview.backgroundColor = [UIColor clearColor];  
         // Action dialog
         UIResponder *responder = self.nextResponder;
         while (responder != nil) {
