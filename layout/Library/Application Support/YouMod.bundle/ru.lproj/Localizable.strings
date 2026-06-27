@@ -234,7 +234,7 @@
 "FORCE_SEEKBAR" = "Always show progress bar";
 "FORCE_SEEKBAR_DESC" = "Ensures the progress bar (seekbar) remains visible at all times while in fullscreen mode.";
 "TAP_TO_SEEK" = "Tap to seek";
-"TAP_TO_SEEK_DSC" = "Quickly jump to any point by tapping the progress bar.";
+"TAP_TO_SEEK_DESC" = "Quickly jump to any point by tapping the progress bar.";
 "DISABLES_ZOOM" = "Disable free zoom gesture";
 "DISABLES_ZOOM_DESC" = "Disables new free zoom gestures.";
 "USES_24_HOURS_TIME" = "24-hour format";
