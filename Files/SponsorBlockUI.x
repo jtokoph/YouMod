@@ -657,7 +657,6 @@ extern BOOL useBackwardIconForButton;
 
         UIView *marker = [[UIView alloc] initWithFrame:CGRectMake(x, referenceView.frame.origin.y, w, referenceView.frame.size.height)];
         marker.backgroundColor = [segment segmentColor];
-        marker
         marker.userInteractionEnabled = NO;
         marker.tag = 9900;
         objc_setAssociatedObject(marker, @selector(sbSegmentData), @[@(startFrac), @(endFrac), @(isPoi)], OBJC_ASSOCIATION_RETAIN_NONATOMIC);
