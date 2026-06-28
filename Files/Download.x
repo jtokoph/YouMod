@@ -1196,7 +1196,6 @@ static void YouModPresentMenu(NSString *title, NSArray <YouModMenuItem *> *items
                 }
             });
         }];
-        [self completeWithFileURL:fileURL isVideo:NO presenter:presenter];
     }];
 }
 
