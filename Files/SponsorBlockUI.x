@@ -511,27 +511,18 @@ extern BOOL useBackwardIconForButton;
 
 %end
 
-#pragma mark - YTInlinePlayerBarContainerView Hook (Marker Repositioning)
+#pragma mark - YTModularPlayerBarView Hook (Marker Repositioning)
 
-%hook YTInlinePlayerBarContainerView
+%hook YTModularPlayerBarView
 
 - (void)layoutSubviews {
     %orig;
-    UIView *playerBar = nil;
-    for (UIView *subview in self.subviews) {
-        if ([subview isKindOfClass:%c(YTModularPlayerBarView)]) {
-            playerBar = subview;
-            break;
-        }
-    }
-    if (!playerBar) return;
-
-    CGFloat barWidth = playerBar.bounds.size.width;
+    CGFloat barWidth = self.bounds.size.width;
     if (barWidth <= 0) return;
 
     // Find reference view for Y
     UIView *referenceView = nil;
-    for (UIView *sub in playerBar.subviews) {
+    for (UIView *sub in self.subviews) {
         if ([sub isKindOfClass:%c(YTPlayerBarRectangleDecorationView)] ||
             [sub isKindOfClass:%c(YTPlayerBarProgressDecorationView)]) {
             referenceView = sub;
@@ -607,7 +598,7 @@ extern BOOL useBackwardIconForButton;
     if (!playerBar) return;
 
     // Remove old markers (tag 9900)
-    for (UIView *sub in [containerView.subviews copy]) {
+    for (UIView *sub in [playerBar.subviews copy]) {
         if (sub.tag == 9900) [sub removeFromSuperview];
     }
 
@@ -628,7 +619,7 @@ extern BOOL useBackwardIconForButton;
         } else if ([sub isKindOfClass:%c(YTPlayerBarProgressDecorationView)]) {
             if (!referenceView) referenceView = sub;
         } else if ([sub isKindOfClass:%c(YTPlayerBarScrubberDotDecorationView)]) {
-            scrubberView = sub;
+            scrubberView = sub.subviews.firstObject;
         }
         if (referenceView && scrubberView) break;
     }
@@ -662,7 +653,7 @@ extern BOOL useBackwardIconForButton;
         marker.tag = 9900;
         objc_setAssociatedObject(marker, @selector(sbSegmentData), @[@(startFrac), @(endFrac), @(isPoi)], OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 
-        [containerView insertSubview:marker belowSubview:scrubberView];
+        [playerBar insertSubview:marker belowSubview:scrubberView];
     }
 
     // Keep scrubber dot on top
