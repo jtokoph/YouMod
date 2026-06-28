@@ -631,7 +631,7 @@ extern BOOL useBackwardIconForButton;
         CGFloat startFrac = segment.startTime / totalTime;
         CGFloat endFrac;
         if (segment.endTime > totalTime) {
-            endFrac = totalTime;
+            endFrac = 1;
         } else {
             endFrac = segment.endTime / totalTime;
         }
