@@ -629,7 +629,12 @@ extern BOOL useBackwardIconForButton;
         if (action == SBSegmentActionDisable) continue;
 
         CGFloat startFrac = segment.startTime / totalTime;
-        CGFloat endFrac = segment.endTime / totalTime;
+        CGFloat endFrac;
+        if (segment.endTime > totalTime) {
+            endFrac = totalTime;
+        } else {
+            endFrac = segment.endTime / totalTime;
+        }
         CGFloat x = startFrac * barWidth;
         CGFloat w = (endFrac - startFrac) * barWidth;
 
