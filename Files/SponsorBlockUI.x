@@ -517,6 +517,7 @@ extern BOOL useBackwardIconForButton;
 
 - (void)layoutSubviews {
     %orig;
+    UIView *playerBar = nil;
     for (UIView *subview in self.subviews) {
         if ([subview isKindOfClass:%c(YTModularPlayerBarView)]) {
             playerBar = subview;
