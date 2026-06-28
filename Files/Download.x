@@ -1166,6 +1166,36 @@ static void YouModPresentMenu(NSString *title, NSArray <YouModMenuItem *> *items
             [self failWithError:error ?: [NSError errorWithDomain:@"YouMod" code:4 userInfo:@{NSLocalizedDescriptionKey: @"Audio download failed"}]];
             return;
         }
+        AVURLAsset *asset = [AVURLAsset URLAssetWithURL:fileURL options:nil];
+        AVAssetExportSession *exportSession = [AVAssetExportSession exportSessionWithAsset:asset presetName:AVAssetExportPresetAppleM4A];
+        
+        if (!exportSession) {
+            [self failWithError:[NSError errorWithDomain:@"YouMod" code:5 userInfo:@{NSLocalizedDescriptionKey: @"Failed to create export session"}]];
+            return;
+        }
+
+        CMTime totalDuration = asset.duration;
+        
+        // YouTube's audio streams send the audio duration times 2 by the actual audio duration 
+        // Divided by 2 to get the actual audio duration
+        CMTime halfDuration = CMTimeMultiplyByFloat64(totalDuration, 0.5); 
+        CMTime startTime = kCMTimeZero; 
+        exportSession.timeRange = CMTimeRangeMake(startTime, halfDuration);
+        
+        exportSession.outputURL = finalURL;
+        exportSession.outputFileType = AVFileTypeAppleM4A;
+        
+        [exportSession exportAsynchronouslyWithCompletionHandler:^{
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [[NSFileManager defaultManager] removeItemAtURL:fileURL error:nil];
+                
+                if (exportSession.status == AVAssetExportSessionStatusCompleted) {
+                    [self completeWithFileURL:finalURL isVideo:NO presenter:presenter];
+                } else {
+                    [self failWithError:exportSession.error ?: [NSError errorWithDomain:@"YouMod" code:6 userInfo:@{NSLocalizedDescriptionKey: @"Audio trim failed"}]];
+                }
+            });
+        }];
         [self completeWithFileURL:fileURL isVideo:NO presenter:presenter];
     }];
 }
