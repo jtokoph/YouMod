@@ -653,11 +653,11 @@ extern BOOL useBackwardIconForButton;
         marker.tag = 9900;
         objc_setAssociatedObject(marker, @selector(sbSegmentData), @[@(startFrac), @(endFrac), @(isPoi)], OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 
-        [playerBar insertSubview:marker aboveSubview:playerBar];
+        [containerView insertSubview:marker aboveSubview:playerBar];
     }
 
     // Keep scrubber dot on top
-    [playerBar bringSubviewToFront:scrubberView];
+    [containerView bringSubviewToFront:scrubberView];
 }
 
 // On fullscreen enter/exit and other layout transitions, YouTube swaps the
